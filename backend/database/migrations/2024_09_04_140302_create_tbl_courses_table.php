@@ -13,10 +13,16 @@ return new class extends Migration
     {
         Schema::create('tbl_courses', function (Blueprint $table) {
             $table->id('course_id');
+            $table->unsignedBigInteger('department_id');
             $table->string('course');
-            $table->string('year_level');
             $table->tinyInteger('is_deleted')->default(0);
             $table->timestamps();
+
+            $table->foreign('department_id')
+                ->references('department_id')
+                ->on('tbl_departments')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 

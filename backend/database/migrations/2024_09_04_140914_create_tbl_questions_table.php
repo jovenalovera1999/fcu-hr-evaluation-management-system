@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tbl_questions', function (Blueprint $table) {
             $table->id('question_id');
             $table->unsignedBigInteger('category_id');
-            $table->string('question', 255);
+            $table->text('question');
             $table->tinyInteger('is_deleted')->default(0);
             $table->timestamps();
 

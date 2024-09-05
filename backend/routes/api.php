@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\PositionController;
+use App\Http\Controllers\Api\StudentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,9 +28,22 @@ Route::controller(DepartmentController::class)->prefix('department')->group(func
     Route::get('/index', 'index');
 });
 
+Route::controller(CourseController::class)->prefix('course')->group(function () {
+    Route::get('/index/{departmentId}', 'index');
+});
+
 Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
     Route::get('/index', 'index');
     Route::post('/store', 'store');
+});
+
+Route::controller(StudentController::class)->prefix('student')->group(function () {
+    Route::get('/index', 'index');
+    Route::post('/store', 'store');
+});
+
+Route::controller(CategoryController::class)->prefix('category')->group(function () {
+    Route::get('/index', 'index');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

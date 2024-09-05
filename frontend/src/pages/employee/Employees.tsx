@@ -26,7 +26,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
 
   const handleLoadEmployees = async () => {
     await axios
-      .get(`${baseUrl}/api/employee/index`)
+      .get(`${baseUrl}/employee/index`)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -69,6 +69,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
   const content = (
     <>
       <div className="mx-auto mt-3">
+        <h5 className="mb-3">LIST OF EMPLOYEES</h5>
         <div className="table-responsive">
           <table className="table table-hover border-bottom">
             <thead>
@@ -77,7 +78,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
                 <th>NAME OF EMPLOYEES</th>
                 <th>POSITION</th>
                 <th>DEPARTMENT</th>
-                <th>ACTION</th>
+                {/* <th>ACTION</th> */}
               </tr>
             </thead>
             <tbody>
@@ -87,7 +88,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
                   <td>{handleEmployeeFullName(employee)}</td>
                   <td>{employee.position}</td>
                   <td>{employee.department}</td>
-                  <td>
+                  {/* <td>
                     <div className="btn-group">
                       <Link to={"#"} className="btn btn-theme">
                         EDIT
@@ -96,7 +97,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
                         DELETE
                       </Link>
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>
