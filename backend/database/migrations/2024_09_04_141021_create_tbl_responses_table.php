@@ -13,10 +13,28 @@ return new class extends Migration
     {
         Schema::create('tbl_responses', function (Blueprint $table) {
             $table->id('response_id');
-            $table->unsignedBigInteger('student_id')->default(0);
-            $table->unsignedBigInteger('employee_id')->default(0);
-            $table->unsignedBigInteger('question_id')->default(0);
+            $table->unsignedBigInteger('student_id');
+            $table->unsignedBigInteger('employee_id');
+            $table->unsignedBigInteger('question_id');
             $table->timestamps();
+
+            $table->foreign('student_id')
+                ->references('student_id')
+                ->on('tbl_students')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreign('employee_id')
+                ->references('employee_id')
+                ->on('tbl_employees')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreign('question_id')
+                ->references('question_id')
+                ->on('tbl_questions')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 

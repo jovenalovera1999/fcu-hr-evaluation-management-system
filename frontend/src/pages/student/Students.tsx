@@ -1,6 +1,11 @@
+import { useEffect } from "react";
 import Layout from "../layout/Layout";
 
-const Employees = () => {
+const Students = () => {
+  useEffect(() => {
+    document.title = "LIST OF STUDENTS | FCU HR EMS";
+  });
+
   const content = (
     <>
       <div className="mx-auto mt-3">
@@ -9,9 +14,9 @@ const Employees = () => {
             <thead>
               <tr>
                 <th>NO.</th>
-                <th>NAME OF EMPLOYEES</th>
-                <th>POSITION</th>
+                <th>NAME OF STUDENTS</th>
                 <th>DEPARTMENT</th>
+                <th>COURSE</th>
                 <th>ACTION</th>
               </tr>
             </thead>
@@ -24,4 +29,4 @@ const Employees = () => {
   return <Layout content={content} />;
 };
 
-export default Employees;
+export default Students;

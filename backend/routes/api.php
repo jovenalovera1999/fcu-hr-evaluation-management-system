@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\PositionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::controller(PositionController::class)->prefix('position')->group(function () {
+    Route::get('/index', 'index');
+});
+
+Route::controller(DepartmentController::class)->prefix('department')->group(function () {
+    Route::get('/index', 'index');
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

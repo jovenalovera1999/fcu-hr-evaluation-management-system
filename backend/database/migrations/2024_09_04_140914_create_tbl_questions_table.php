@@ -13,9 +13,16 @@ return new class extends Migration
     {
         Schema::create('tbl_questions', function (Blueprint $table) {
             $table->id('question_id');
-            $table->unsignedBigInteger('category_id')->default(0);
+            $table->unsignedBigInteger('category_id');
             $table->string('question', 255);
+            $table->tinyInteger('is_deleted')->default(0);
             $table->timestamps();
+
+            $table->foreign('category_id')
+                ->references('category_id')
+                ->on('tbl_categories')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 

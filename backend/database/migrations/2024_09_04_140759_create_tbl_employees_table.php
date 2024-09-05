@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('middle_name', 55)->nullable();
             $table->string('last_name', 55);
             $table->string('suffix_name', 55)->nullable();
-            $table->unsignedBigInteger('position_id')->default(0);
-            $table->unsignedBigInteger('department_id')->default(0);
+            $table->unsignedBigInteger('position_id');
+            $table->unsignedBigInteger('department_id');
             $table->tinyInteger('is_deleted')->default(0);
             $table->timestamps();
 
