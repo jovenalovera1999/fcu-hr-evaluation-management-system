@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\PositionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,11 @@ Route::controller(PositionController::class)->prefix('position')->group(function
 
 Route::controller(DepartmentController::class)->prefix('department')->group(function () {
     Route::get('/index', 'index');
+});
+
+Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
+    Route::get('/index', 'index');
+    Route::post('/store', 'store');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
