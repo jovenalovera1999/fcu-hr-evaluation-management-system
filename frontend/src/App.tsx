@@ -4,6 +4,7 @@ import AddEmployee from "./pages/employee/AddEmployee";
 import AddStudent from "./pages/student/AddStudent";
 import Students from "./pages/student/Students";
 import AddQuestion from "./pages/question/AddQuestion";
+import Questions from "./pages/question/Questions";
 
 const App = () => {
   const baseUrl = "http://127.0.0.1:8000/api";
@@ -23,6 +24,10 @@ const App = () => {
         <Route
           path="/student/add"
           element={<AddStudent baseUrl={baseUrl} csrfToken={csrfToken} />}
+        />
+        <Route
+          path="/question/list"
+          element={<Questions baseUrl={baseUrl} />}
         />
         <Route
           path="/question/add"

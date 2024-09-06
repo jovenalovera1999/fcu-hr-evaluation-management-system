@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\PositionController;
+use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\StudentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,11 @@ Route::controller(StudentController::class)->prefix('student')->group(function (
 
 Route::controller(CategoryController::class)->prefix('category')->group(function () {
     Route::get('/index', 'index');
+});
+
+Route::controller(QuestionController::class)->prefix('question')->group(function () {
+    Route::get('/index', 'index');
+    Route::post('/store', 'store');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
