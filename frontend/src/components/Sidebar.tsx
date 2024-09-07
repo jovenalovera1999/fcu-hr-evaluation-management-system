@@ -22,7 +22,9 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                 aria-expanded="false"
                 aria-controls="employees"
               >
-                EMPLOYEES
+                EMPLOYEES/TEACHERS/
+                <br />
+                STAFFS
               </Link>
               <ul
                 id="employees"
@@ -97,7 +99,7 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                 </li>
               </ul>
             </li>
-            {/* <li className="sidebar-item">
+            <li className="sidebar-item">
               <Link
                 to={"#"}
                 className="sidebar-link collapsed"
@@ -114,17 +116,17 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                 data-bs-parent="#sidebar"
               >
                 <li className="sidebar-item">
-                  <Link to={"/question/list"} className="sidebar-link">
-                    LIST
+                  <Link to={"/evaluation/to/students"} className="sidebar-link">
+                    SEND AN EVALUATION TO STUDENTS
                   </Link>
                 </li>
                 <li className="sidebar-item">
-                  <Link to={"/question/add"} className="sidebar-link">
-                    ADD
+                  <Link to={"#"} className="sidebar-link">
+                    SEND AN EVALUATION TO TEACHERS/EMPLOYEES/STAFFS
                   </Link>
                 </li>
               </ul>
-            </li> */}
+            </li>
           </ul>
         </div>
       </aside>

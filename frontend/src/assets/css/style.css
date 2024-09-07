@@ -11,11 +11,6 @@ body {
   margin: 0;
 }
 
-h3 {
-  font-size: 1.2375rem;
-  color: #000;
-}
-
 a {
   cursor: pointer;
   text-decoration: none;
@@ -36,8 +31,12 @@ li {
 
 .navbar {
   position: -webkit-sticky;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #0c1e7d;
+  box-shadow: 0 2px 4px rgba(12, 30, 125, 0.1);
+}
+
+.navbar-toggler-icon {
+  filter: invert(1) brightness(2);
 }
 
 #sidebar {
@@ -49,9 +48,9 @@ li {
   max-width: 264px;
   min-width: 264px;
   transition: all 0.35s ease-in-out;
-  box-shadow: 0 0 35px 0 rgba(59, 140, 232, 0.5);
+  box-shadow: 0 0 35px 0 rgba(12, 30, 125, 0.5);
   z-index: 1111;
-  background-color: #fff;
+  background-color: #0c1e7d;
 }
 
 /* Sidebar collapse */
@@ -74,7 +73,7 @@ li {
 }
 
 .sidebar-logo a {
-  color: #000;
+  color: #fff;
   font-size: 1.25rem;
   font-weight: 600;
 }
@@ -84,17 +83,22 @@ li {
 }
 
 .sidebar-header {
-  color: #000;
+  color: #fff;
   font-size: .75rem;
   padding: 1.5rem 1.5rem .375rem;
 }
 
 a.sidebar-link {
   padding: .625rem 1.625rem;
-  color: #000;
+  color: #fff;
   position: relative;
   display: block;
   font-size: 1rem;
+}
+
+a.sidebar-link:hover {
+  background-color: #fff;
+  color: #000;
 }
 
 .sidebar-link[data-bs-toggle="collapse"]::after {
@@ -146,13 +150,14 @@ a.sidebar-link {
 .btn-theme,
 .btn-theme:active,
 .btn-theme:visited {
-  background-color: rgb(55, 139, 236) !important;
-  color: #fff !important;
+  border-color: #0c1e7d !important;
+  background-color: #fff !important;
+  color: #000 !important;
   transition: background-color 0.3s ease;
 }
 
 .btn-theme:hover {
-  background-color: rgb(45, 116, 197) !important;
+  background-color: #0c1e7d !important;
   color: #fff !important;
 }
 
@@ -163,6 +168,16 @@ a.sidebar-link {
 
 .form-control:focus,
 .form-select:focus {
-  border-color: rgb(55, 139, 236) !important;
-  box-shadow: 0 0 0 0.2rem rgb(55, 139, 236, 0.25) !important;
+  border-color: #0c1e7d !important;
+  box-shadow: 0 0 0 0 transparent !important;
+}
+
+option {
+  background-color: #0c1e7d;
+  color: #fff;
+}
+
+option:hover {
+  background-color: #fff;
+  color: #000;
 }

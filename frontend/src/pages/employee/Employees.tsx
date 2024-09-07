@@ -68,40 +68,32 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
 
   const content = (
     <>
-      <div className="mx-auto mt-3">
-        <h5 className="mb-3">LIST OF EMPLOYEES</h5>
-        <div className="table-responsive">
-          <table className="table table-hover border-bottom">
-            <thead>
-              <tr>
-                <th>NO.</th>
-                <th>NAME OF EMPLOYEES</th>
-                <th>POSITION</th>
-                <th>DEPARTMENT</th>
-                {/* <th>ACTION</th> */}
-              </tr>
-            </thead>
-            <tbody>
-              {state.employees.map((employee, index) => (
-                <tr key={employee.employee_id}>
-                  <td>{index + 1}</td>
-                  <td>{handleEmployeeFullName(employee)}</td>
-                  <td>{employee.position}</td>
-                  <td>{employee.department}</td>
-                  {/* <td>
-                    <div className="btn-group">
-                      <Link to={"#"} className="btn btn-theme">
-                        EDIT
-                      </Link>
-                      <Link to={"#"} className="btn btn-theme">
-                        DELETE
-                      </Link>
-                    </div>
-                  </td> */}
+      <div className="card shadow mx-auto mt-3 p-3">
+        <h5 className="card-title">LIST OF EMPLOYEES</h5>
+        <div className="card-body">
+          <div className="table-responsive">
+            <table className="table table-hover">
+              <thead>
+                <tr>
+                  <th>NO.</th>
+                  <th>NAME OF EMPLOYEES</th>
+                  <th>POSITION</th>
+                  <th>DEPARTMENT</th>
+                  {/* <th>ACTION</th> */}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {state.employees.map((employee, index) => (
+                  <tr key={employee.employee_id}>
+                    <td>{index + 1}</td>
+                    <td>{handleEmployeeFullName(employee)}</td>
+                    <td>{employee.position}</td>
+                    <td>{employee.department}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>

@@ -5,6 +5,7 @@ import AddStudent from "./pages/student/AddStudent";
 import Students from "./pages/student/Students";
 import AddQuestion from "./pages/question/AddQuestion";
 import Questions from "./pages/question/Questions";
+import SendAnEvaluationToStudents from "./pages/evaluation/SendAnEvaluationToStudents";
 
 const App = () => {
   const baseUrl = "http://127.0.0.1:8000/api";
@@ -32,6 +33,10 @@ const App = () => {
         <Route
           path="/question/add"
           element={<AddQuestion baseUrl={baseUrl} csrfToken={csrfToken} />}
+        />
+        <Route
+          path="/evaluation/to/students"
+          element={<SendAnEvaluationToStudents />}
         />
       </Routes>
     </Router>
