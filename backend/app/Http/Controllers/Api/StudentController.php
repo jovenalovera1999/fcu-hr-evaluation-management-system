@@ -15,6 +15,9 @@ class StudentController extends Controller
             ->leftJoin('tbl_departments', 'tbl_courses.department_id', '=', 'tbl_departments.department_id')
             ->where('tbl_students.is_deleted', 0)
             ->orderBy('tbl_students.last_name', 'asc')
+            ->orderBy('tbl_departments.department', 'asc')
+            ->orderBy('tbl_courses.course', 'asc')
+            ->orderBy('tbl_students.year_level', 'asc')
             ->get();
 
         return response()->json([

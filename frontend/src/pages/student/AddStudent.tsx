@@ -146,9 +146,9 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
       });
   };
 
-  const handleLoadCourses = async (department_id: number) => {
+  const handleLoadCourses = async (departmentId: number) => {
     await axios
-      .get(`${baseUrl}/course/index/${department_id}`)
+      .get(`${baseUrl}/course/index/${departmentId}`)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({

@@ -4,10 +4,13 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\AcademicYear;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\Department;
+use App\Models\Employee;
 use App\Models\Position;
+use App\Models\Student;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -23,6 +26,11 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        AcademicYear::factory()->createMany([
+            ['academic_year' => '2022-2023'],
+            ['academic_year' => '2023-2024']
+        ]);
 
         Position::factory()->createMany([
             ['position' => 'STAFF'],
@@ -63,5 +71,8 @@ class DatabaseSeeder extends Seeder
             ['category' => 'STUDENT SUPPORT'],
             ['category' => 'PROFESSIONALISM']
         ]);
+
+        Employee::factory(200)->create();
+        Student::factory(500)->create();
     }
 }

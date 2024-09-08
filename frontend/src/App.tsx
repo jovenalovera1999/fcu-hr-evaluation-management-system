@@ -36,7 +36,12 @@ const App = () => {
         />
         <Route
           path="/evaluation/to/students"
-          element={<SendAnEvaluationToStudents />}
+          element={
+            <SendAnEvaluationToStudents
+              baseUrl={baseUrl}
+              csrfToken={csrfToken}
+            />
+          }
         />
       </Routes>
     </Router>

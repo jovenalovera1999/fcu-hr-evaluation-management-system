@@ -172,6 +172,10 @@ a.sidebar-link:hover {
   box-shadow: 0 0 0 0 transparent !important;
 }
 
+.spinner-theme {
+  color: #0c1e7d;
+}
+
 option {
   background-color: #0c1e7d;
   color: #fff;

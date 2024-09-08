@@ -23,6 +23,19 @@ class EmployeeController extends Controller
         ]);
     }
 
+    public function indexByDepartment($departmentId)
+    {
+        $employees = Employee::leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
+            ->where('tbl_employees.department_id', $departmentId)
+            ->where('tbl_employees.is_deleted', 0)
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'employees' => $employees
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

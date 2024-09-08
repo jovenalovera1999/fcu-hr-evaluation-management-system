@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AcademicYearController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\DepartmentController;
@@ -21,6 +22,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::controller(AcademicYearController::class)->prefix('academic_year')->group(function () {
+    Route::get('/index', 'index');
+});
+
 Route::controller(PositionController::class)->prefix('position')->group(function () {
     Route::get('/index', 'index');
 });
@@ -35,6 +40,7 @@ Route::controller(CourseController::class)->prefix('course')->group(function () 
 
 Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
     Route::get('/index', 'index');
+    Route::get('/index/by/department/{departmentId}', 'indexByDepartment');
     Route::post('/store', 'store');
 });
 
