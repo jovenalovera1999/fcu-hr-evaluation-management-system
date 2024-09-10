@@ -12,6 +12,18 @@ use Illuminate\Http\Request;
 
 class EvaluationController extends Controller
 {
+    public function index()
+    {
+        $employees = Evaluation::leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
+            ->where('tbl_evaluations.is_completed', 0)
+            ->get();
+
+        return response()->json([
+            'employees' => $employees,
+            'status' => 200
+        ]);
+    }
+
     public function storeEvaluationsForStudents(Request $request)
     {
         $validated = $request->validate([
