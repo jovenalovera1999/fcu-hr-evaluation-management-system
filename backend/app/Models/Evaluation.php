@@ -13,8 +13,10 @@ class Evaluation extends Model
     protected $primaryKey = 'evaluation_id';
     protected $fillable = [
         'student_id',
-        'employee_id',
+        'employee_to_response_id',
+        'employee_to_evaluate_id',
         'academic_year_id',
+        'is_student',
         'is_completed'
     ];
 }

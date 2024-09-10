@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Evaluation;
+use App\Models\EvaluationForStudent;
 use App\Models\Question;
 use App\Models\Response;
 use App\Models\Student;
@@ -41,7 +42,7 @@ class EvaluationController extends Controller
             foreach ($validated['selectedEmployees'] as $employee) {
                 $evaluation = Evaluation::create([
                     'student_id' => $student->student_id,
-                    'employee_id' => $employee,
+                    'employee_to_evaluate_id' => $employee,
                     'academic_year_id' => $validated['academic_year']
                 ]);
 

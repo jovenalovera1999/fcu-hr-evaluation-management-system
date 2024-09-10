@@ -74,16 +74,25 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Question::factory()->createMany([
-            ['category_id' => 1, 'question' => 'How effectively does the teacher deliver course material?'],
-            ['category_id' => 1, 'question' => 'How well does the teacher explain complex concepts?'],
-            ['category_id' => 1, 'question' => 'How organized and prepared is the teacher for each class?'],
-            ['category_id' => 1, 'question' => 'How well does the teacher engage students in the learning process?'],
-            ['category_id' => 2, 'question' => 'How clear is the teacher in communicating instructions and expectations?'],
-            ['category_id' => 2, 'question' => 'How effectively does the teacher respond to student questions and concerns?'],
-            ['category_id' => 2, 'question' => 'How well does the teacher encourage open communication and participation?'],
-            ['category_id' => 3, 'question' => 'How well does the teacher maintain a positive and respectful classroom environment?'],
-            ['category_id' => 3, 'question' => 'How effectively does the teacher manage classroom time and activities?'],
-            ['category_id' => 3, 'question' => 'How fair and consistent is the teacher in enforcing rules and discipline?']
+            ['category_id' => 1, 'question' => strtoupper('How effectively does the teacher deliver course material?')],
+            ['category_id' => 1, 'question' => strtoupper('How well does the teacher explain complex concepts?')],
+            ['category_id' => 1, 'question' => strtoupper('How organized and prepared is the teacher for each class?')],
+            ['category_id' => 1, 'question' => strtoupper('How well does the teacher engage students in the learning process?')],
+            ['category_id' => 2, 'question' => strtoupper('How clear is the teacher in communicating instructions and expectations?')],
+            ['category_id' => 2, 'question' => strtoupper('How effectively does the teacher respond to student questions and concerns?')],
+            ['category_id' => 2, 'question' => strtoupper('How well does the teacher encourage open communication and participation?')],
+            ['category_id' => 3, 'question' => strtoupper('How well does the teacher maintain a positive and respectful classroom environment?')],
+            ['category_id' => 3, 'question' => strtoupper('How effectively does the teacher manage classroom time and activities?')],
+            ['category_id' => 3, 'question' => strtoupper('How fair and consistent is the teacher in enforcing rules and discipline?')],
+            ['category_id' => 4, 'question' => strtoupper('How knowledgeable does the teacher appear about the subject matter?')],
+            ['category_id' => 4, 'question' => strtoupper('How well does the teacher incorporate current developments and examples in the subject area?')],
+            ['category_id' => 4, 'question' => strtoupper('How effectively does the teacher answer student questions related to the subject?')],
+            ['category_id' => 5, 'question' => strtoupper('How approachable is the teacher outside of class for additional help?')],
+            ['category_id' => 5, 'question' => strtoupper('How effectively does the teacher provide feedback on assignments and assessments?')],
+            ['category_id' => 5, 'question' => strtoupper('How well does the teacher support student learning and development?')],
+            ['category_id' => 6, 'question' => strtoupper('How punctual and reliable is the teacher in starting and ending classes on time?')],
+            ['category_id' => 6, 'question' => strtoupper('How respectful and fair is the teacher towards all students?')],
+            ['category_id' => 6, 'question' => strtoupper('How effectively does the teacher adhere to the course syllabus and schedule?')]
         ]);
 
         Employee::factory(200)->create();

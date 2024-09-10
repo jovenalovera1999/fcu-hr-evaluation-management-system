@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('tbl_evaluations', function (Blueprint $table) {
             $table->id('evaluation_id');
-            $table->unsignedBigInteger('student_id');
-            $table->unsignedBigInteger('employee_id');
+            $table->unsignedBigInteger('student_id')->nullable();
+            $table->unsignedBigInteger('employee_to_response_id')->nullable();
+            $table->unsignedBigInteger('employee_to_evaluate_id');
             $table->unsignedBigInteger('academic_year_id');
+            $table->tinyInteger('is_student')->default(1);
             $table->tinyInteger('is_completed')->default(0);
             $table->timestamps();
 
@@ -25,7 +27,13 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->foreign('employee_id')
+            $table->foreign('employee_to_response_id')
+                ->references('employee_id')
+                ->on('tbl_employees')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreign('employee_to_evaluate_id')
                 ->references('employee_id')
                 ->on('tbl_employees')
                 ->onUpdate('cascade')
@@ -44,6 +52,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tbl_responses');
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('tbl_evaluations');
+        Schema::enableForeignKeyConstraints();
     }
 };
