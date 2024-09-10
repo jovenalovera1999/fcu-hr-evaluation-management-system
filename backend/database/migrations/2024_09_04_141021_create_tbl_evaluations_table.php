@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tbl_responses', function (Blueprint $table) {
-            $table->id('response_id');
+        Schema::create('tbl_evaluations', function (Blueprint $table) {
+            $table->id('evaluation_id');
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('employee_id');
-            $table->unsignedBigInteger('question_id');
+            $table->unsignedBigInteger('academic_year_id');
+            $table->tinyInteger('is_completed')->default(0);
             $table->timestamps();
 
             $table->foreign('student_id')
@@ -30,9 +31,9 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->foreign('question_id')
-                ->references('question_id')
-                ->on('tbl_questions')
+            $table->foreign('academic_year_id')
+                ->references('academic_year_id')
+                ->on('tbl_academic_years')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
         });

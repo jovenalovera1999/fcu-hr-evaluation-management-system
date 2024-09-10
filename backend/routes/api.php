@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\EmployeeController;
+use App\Http\Controllers\Api\EvaluationController;
 use App\Http\Controllers\Api\PositionController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\StudentController;
@@ -56,6 +57,10 @@ Route::controller(CategoryController::class)->prefix('category')->group(function
 Route::controller(QuestionController::class)->prefix('question')->group(function () {
     Route::get('/index', 'index');
     Route::post('/store', 'store');
+});
+
+Route::controller(EvaluationController::class)->prefix('evaluation')->group(function () {
+    Route::post('/store/evaluations/for/students', 'storeEvaluationsForStudents');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

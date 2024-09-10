@@ -10,6 +10,7 @@ use App\Models\Course;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Position;
+use App\Models\Question;
 use App\Models\Student;
 use Illuminate\Database\Seeder;
 
@@ -70,6 +71,19 @@ class DatabaseSeeder extends Seeder
             ['category' => 'SUBJECT KNOWLEDGE'],
             ['category' => 'STUDENT SUPPORT'],
             ['category' => 'PROFESSIONALISM']
+        ]);
+
+        Question::factory()->createMany([
+            ['category_id' => 1, 'question' => 'How effectively does the teacher deliver course material?'],
+            ['category_id' => 1, 'question' => 'How well does the teacher explain complex concepts?'],
+            ['category_id' => 1, 'question' => 'How organized and prepared is the teacher for each class?'],
+            ['category_id' => 1, 'question' => 'How well does the teacher engage students in the learning process?'],
+            ['category_id' => 2, 'question' => 'How clear is the teacher in communicating instructions and expectations?'],
+            ['category_id' => 2, 'question' => 'How effectively does the teacher respond to student questions and concerns?'],
+            ['category_id' => 2, 'question' => 'How well does the teacher encourage open communication and participation?'],
+            ['category_id' => 3, 'question' => 'How well does the teacher maintain a positive and respectful classroom environment?'],
+            ['category_id' => 3, 'question' => 'How effectively does the teacher manage classroom time and activities?'],
+            ['category_id' => 3, 'question' => 'How fair and consistent is the teacher in enforcing rules and discipline?']
         ]);
 
         Employee::factory(200)->create();

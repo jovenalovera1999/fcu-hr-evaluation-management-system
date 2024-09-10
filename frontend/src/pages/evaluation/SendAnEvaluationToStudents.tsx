@@ -1,7 +1,8 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import axios from "axios";
 import Spinner from "../../components/Spinner";
+import ToastMessage from "../../components/ToastMessage";
 
 interface SendAnEvaluationToStudentsProps {
   baseUrl: string;
@@ -33,9 +34,10 @@ interface Employees {
 
 interface Errors {
   academic_year?: string[];
-  department?: string[];
+  students_department?: string[];
   course?: string[];
   year_level?: string[];
+  employees_department?: string[];
   selectedEmployees?: string[];
 }
 
@@ -111,6 +113,61 @@ const SendAnEvaluationToStudents = ({
         selectAll: allSelected,
       };
     });
+  };
+
+  const handleSendEvaluation = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setState((prevState) => ({
+      ...prevState,
+      loadingSubmit: true,
+    }));
+
+    await axios
+      .post(`${baseUrl}/evaluation/store/evaluations/for/students`, state, {
+        headers: { "X-CSRF-TOKEN": csrfToken },
+      })
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            academic_year: "",
+            students_department: "",
+            employees_department: "",
+            course: "",
+            year_level: "",
+            selectedEmployees: [] as number[],
+            selectAll: false,
+            errors: {} as Errors,
+            loadingSubmit: false,
+            toastMessage: "EVALUATIONS HAS BEEN SENT TO STUDENTS",
+            toastMessageSuccess: true,
+            toastMessageVisible: true,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.data.errors) {
+          setState((prevState) => ({
+            ...prevState,
+            errors: error.response.data.errors,
+            loadingSubmit: false,
+          }));
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
+      });
+  };
+
+  const handleCloseToastMessage = () => {
+    setState((prevState) => ({
+      ...prevState,
+      toastMessage: "",
+      toastMessageSuccess: false,
+      toastMessageVisible: false,
+    }));
   };
 
   const handleLoadAcademicYears = async () => {
@@ -216,7 +273,13 @@ const SendAnEvaluationToStudents = ({
 
   const content = (
     <>
-      <form>
+      <ToastMessage
+        message={state.toastMessage}
+        success={state.toastMessageSuccess}
+        visible={state.toastMessageVisible}
+        onClose={handleCloseToastMessage}
+      />
+      <form onSubmit={handleSendEvaluation}>
         <div className="card shadow mx-auto mt-3 p-3">
           <h5 className="card-title">SEND AN EVALUATION TO STUDENTS</h5>
           <div className="card-body">
@@ -226,7 +289,11 @@ const SendAnEvaluationToStudents = ({
                 <select
                   name="academic_year"
                   id="academic_year"
-                  className="form-select"
+                  className={`form-select ${
+                    state.errors.academic_year ? "is-invalid" : ""
+                  }`}
+                  value={state.academic_year}
+                  onChange={handleInput}
                 >
                   <option value="">N/A</option>
                   {state.academic_years.map((academic_year) => (
@@ -238,15 +305,22 @@ const SendAnEvaluationToStudents = ({
                     </option>
                   ))}
                 </select>
+                {state.errors.academic_year && (
+                  <p className="text-danger">{state.errors.academic_year[0]}</p>
+                )}
               </div>
             </div>
             <div className="row">
               <div className="mb-3 col-sm-3">
-                <label htmlFor="students_department">STUDENTS DEPARTMENT</label>
+                <label htmlFor="students_department">
+                  STUDENT'S DEPARTMENT
+                </label>
                 <select
                   name="students_department"
                   id="students_department"
-                  className="form-select"
+                  className={`form-select ${
+                    state.errors.students_department ? "is-invalid" : ""
+                  }`}
                   value={state.students_department}
                   onChange={handleInput}
                 >
@@ -260,13 +334,22 @@ const SendAnEvaluationToStudents = ({
                     </option>
                   ))}
                 </select>
+                {state.errors.students_department && (
+                  <p className="text-danger">
+                    {state.errors.students_department[0]}
+                  </p>
+                )}
               </div>
               <div className="mb-3 col-sm-3">
-                <label htmlFor="students_course">STUDENTS COURSE</label>
+                <label htmlFor="course">STUDENT'S COURSE</label>
                 <select
-                  name="students_course"
-                  id="students_course"
-                  className="form-select"
+                  name="course"
+                  id="course"
+                  className={`form-select ${
+                    state.errors.course ? "is-invalid" : ""
+                  }`}
+                  value={state.course}
+                  onChange={handleInput}
                 >
                   <option value="">N/A</option>
                   {state.courses.map((course) => (
@@ -275,13 +358,22 @@ const SendAnEvaluationToStudents = ({
                     </option>
                   ))}
                 </select>
+                {state.errors.course && (
+                  <p className="text-danger">{state.errors.course[0]}</p>
+                )}
               </div>
               <div className="mb-3 col-sm-2">
-                <label htmlFor="students_year_level">STUDENTS YEAR LEVEL</label>
+                <label htmlFor="students_year_level">
+                  STUDENT'S YEAR LEVEL
+                </label>
                 <select
-                  name="students_year_level"
-                  id="students_year_level"
-                  className="form-select"
+                  name="year_level"
+                  id="year_level"
+                  className={`form-select ${
+                    state.errors.year_level ? "is-invalid" : ""
+                  }`}
+                  value={state.year_level}
+                  onChange={handleInput}
                 >
                   <option value="">N/A</option>
                   <option value="1">1</option>
@@ -293,17 +385,23 @@ const SendAnEvaluationToStudents = ({
                   <option value="7">7</option>
                   <option value="8">8</option>
                 </select>
+                {state.errors.year_level && (
+                  <p className="text-danger">{state.errors.year_level}</p>
+                )}
               </div>
             </div>
-            <div className="row">
+            <hr />
+            <div className="row mt-4">
               <div className="col-sm-4">
                 <label htmlFor="employees_department">
-                  EMPLOYEES/TEACHERS/STAFFS DEPARTMENT
+                  EMPLOYEE'S/TEACHER'S/STAFF'S DEPARTMENT
                 </label>
                 <select
                   name="employees_department"
                   id="employees_department"
-                  className="form-select"
+                  className={`form-select ${
+                    state.errors.employees_department ? "is-invalid" : ""
+                  }`}
                   value={state.employees_department}
                   onChange={handleInput}
                 >
@@ -320,9 +418,14 @@ const SendAnEvaluationToStudents = ({
                 <p className="form-text">
                   CHOOSE AND SELECT TEACHER/EMPLOYEE/STAFF BY THEIR DEPARTMENT
                 </p>
+                {state.errors.employees_department && (
+                  <p className="text-danger">
+                    {state.errors.employees_department}
+                  </p>
+                )}
               </div>
             </div>
-            <div className="table-responsive">
+            <div className="table-responsive mb-3">
               <table className="table table-hover">
                 <thead>
                   <tr>
@@ -365,6 +468,16 @@ const SendAnEvaluationToStudents = ({
                   ))}
                 </tbody>
               </table>
+              {state.errors.selectedEmployees && (
+                <p className="text-danger">
+                  {state.errors.selectedEmployees[0]}
+                </p>
+              )}
+            </div>
+            <div className="d-flex justify-content-end">
+              <button type="submit" className="btn btn-theme">
+                SEND EVALUATION
+              </button>
             </div>
           </div>
         </div>
