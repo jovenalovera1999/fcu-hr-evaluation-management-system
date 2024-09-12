@@ -60,6 +60,7 @@ Route::controller(QuestionController::class)->prefix('question')->group(function
 });
 
 Route::controller(EvaluationController::class)->prefix('evaluation')->group(function () {
+    Route::get('/index', 'index');
     Route::post('/store/evaluations/for/students', 'storeEvaluationsForStudents');
 });
 

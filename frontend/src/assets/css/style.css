@@ -176,6 +176,11 @@ a.sidebar-link:hover {
   color: #0c1e7d;
 }
 
+.background-theme {
+  background-color: #0c1e7d;
+  color: #fff;
+}
+
 option {
   background-color: #0c1e7d;
   color: #fff;

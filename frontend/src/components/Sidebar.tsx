@@ -116,6 +116,11 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                 data-bs-parent="#sidebar"
               >
                 <li className="sidebar-item">
+                  <Link to={"/evaluation/list"} className="sidebar-link">
+                    LIST
+                  </Link>
+                </li>
+                <li className="sidebar-item">
                   <Link to={"/evaluation/to/students"} className="sidebar-link">
                     SEND AN EVALUATION TO STUDENTS
                   </Link>

@@ -6,6 +6,8 @@ import Students from "./pages/student/Students";
 import AddQuestion from "./pages/question/AddQuestion";
 import Questions from "./pages/question/Questions";
 import SendAnEvaluationToStudents from "./pages/evaluation/SendAnEvaluationToStudents";
+import Evaluations from "./pages/evaluation/Evaluations";
+import Login from "./pages/auth/Login";
 
 const App = () => {
   const baseUrl = "http://127.0.0.1:8000/api";
@@ -16,7 +18,11 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Employees baseUrl={baseUrl} />} />
+        <Route path="/" element={<Login baseUrl={baseUrl} />} />
+        <Route
+          path="/employee/list"
+          element={<Employees baseUrl={baseUrl} />}
+        />
         <Route
           path="/employee/add"
           element={<AddEmployee baseUrl={baseUrl} csrfToken={csrfToken} />}
@@ -42,6 +48,10 @@ const App = () => {
               csrfToken={csrfToken}
             />
           }
+        />
+        <Route
+          path="/evaluation/list"
+          element={<Evaluations baseUrl={baseUrl} />}
         />
       </Routes>
     </Router>
