@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import Spinner from "../../components/Spinner";
+import { useNavigate } from "react-router-dom";
 
 interface QuestionsProps {
   baseUrl: string;
@@ -14,6 +15,9 @@ interface Questions {
 }
 
 const Questions = ({ baseUrl }: QuestionsProps) => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
   const [state, setState] = useState({
     loadingQuestions: true,
     questions: [] as Questions[],
@@ -21,7 +25,9 @@ const Questions = ({ baseUrl }: QuestionsProps) => {
 
   const handleLoadQuestions = async () => {
     await axios
-      .get(`${baseUrl}/question/index`)
+      .get(`${baseUrl}/question/index`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -34,7 +40,11 @@ const Questions = ({ baseUrl }: QuestionsProps) => {
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 

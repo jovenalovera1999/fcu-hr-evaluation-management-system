@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import axios from "axios";
 import Spinner from "../../components/Spinner";
+import { useNavigate } from "react-router-dom";
 
 interface EvaluationsProps {
   baseUrl: string;
@@ -16,6 +17,9 @@ interface Employees {
 }
 
 const Evaluations = ({ baseUrl }: EvaluationsProps) => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
   const [state, setState] = useState({
     loadingEmployees: true,
     employees: [] as Employees[],
@@ -23,7 +27,9 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
 
   const handleLoadEmployees = async () => {
     await axios
-      .get(`${baseUrl}/evaluation/index`)
+      .get(`${baseUrl}/evaluation/index`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -36,7 +42,11 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 

@@ -1,6 +1,7 @@
 import axios from "axios";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../../components/Spinner";
 
 interface LoginProps {
   baseUrl: string;
@@ -66,7 +67,16 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
       });
   };
 
-  return (
+  useEffect(() => {
+    document.title = "USER AUTHENTICATION | FCU HR EMS";
+
+    setState((prevState) => ({
+      ...prevState,
+      loading: false,
+    }));
+  });
+
+  const content = (
     <>
       <form onSubmit={handleLogin}>
         <div
@@ -84,23 +94,33 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
                 <label htmlFor="username">USERNAME</label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${
+                    state.errors.username ? "is-invalid" : ""
+                  }`}
                   name="username"
                   id="username"
                   value={state.username}
                   onChange={handleInput}
                 />
+                {state.errors.username && (
+                  <p className="text-danger">{state.errors.username[0]}</p>
+                )}
               </div>
               <div className="mb-3">
                 <label htmlFor="password">PASSWORD</label>
                 <input
                   type="password"
-                  className="form-control"
+                  className={`form-control ${
+                    state.errors.password ? "is-invalid" : ""
+                  }`}
                   name="password"
                   id="password"
                   value={state.password}
                   onChange={handleInput}
                 />
+                {state.errors.password && (
+                  <p className="text-danger">{state.errors.password[0]}</p>
+                )}
               </div>
               <div className="d-flex justify-content-end">
                 <button type="submit" className="btn btn-theme">
@@ -113,6 +133,8 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
       </form>
     </>
   );
+
+  return state.loading || state.loadingLogin ? <Spinner /> : content;
 };
 
 export default Login;

@@ -3,6 +3,7 @@ import Layout from "../layout/Layout";
 import axios from "axios";
 import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
+import { useNavigate } from "react-router-dom";
 
 interface AddEmployeeProps {
   baseUrl: string;
@@ -32,6 +33,9 @@ interface Errors {
 }
 
 const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+
   const [state, setState] = useState({
     loadingSave: false,
     loadingPositions: true,
@@ -73,7 +77,10 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
 
     await axios
       .post(`${baseUrl}/employee/store`, state, {
-        headers: { "X-CSRF-TOKEN": csrfToken },
+        headers: {
+          "X-CSRF-TOKEN": csrfToken,
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then((res) => {
         if (res.data.status === 200) {
@@ -99,7 +106,9 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.data.errors) {
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else if (error.response && error.response.data.errors) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
@@ -122,7 +131,9 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
 
   const handleLoadPositions = async () => {
     await axios
-      .get(`${baseUrl}/position/index`)
+      .get(`${baseUrl}/position/index`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -135,13 +146,19 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 
   const handleLoadDepartments = async () => {
     await axios
-      .get(`${baseUrl}/department/index`)
+      .get(`${baseUrl}/department/index`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -154,7 +171,11 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 
@@ -382,9 +403,8 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
     <Layout
       content={
         state.loadingSave ||
-        (!state.loadingSave &&
-          state.loadingDepartments &&
-          state.loadingPositions) ? (
+        state.loadingDepartments ||
+        state.loadingPositions ? (
           <Spinner />
         ) : (
           content

@@ -3,6 +3,7 @@ import Layout from "../layout/Layout";
 import axios from "axios";
 import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
+import { useNavigate } from "react-router-dom";
 
 interface SendAnEvaluationToStudentsProps {
   baseUrl: string;
@@ -45,6 +46,9 @@ const SendAnEvaluationToStudents = ({
   baseUrl,
   csrfToken,
 }: SendAnEvaluationToStudentsProps) => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
   const [state, setState] = useState({
     loadingSubmit: false,
     loadingAcademicYears: true,
@@ -125,7 +129,10 @@ const SendAnEvaluationToStudents = ({
 
     await axios
       .post(`${baseUrl}/evaluation/store/evaluations/for/students`, state, {
-        headers: { "X-CSRF-TOKEN": csrfToken },
+        headers: {
+          "X-CSRF-TOKEN": csrfToken,
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then((res) => {
         if (res.data.status === 200) {
@@ -149,7 +156,9 @@ const SendAnEvaluationToStudents = ({
         }
       })
       .catch((error) => {
-        if (error.response && error.response.data.errors) {
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else if (error.response && error.response.data.errors) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
@@ -172,7 +181,9 @@ const SendAnEvaluationToStudents = ({
 
   const handleLoadAcademicYears = async () => {
     await axios
-      .get(`${baseUrl}/academic_year/index`)
+      .get(`${baseUrl}/academic_year/index`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -185,13 +196,19 @@ const SendAnEvaluationToStudents = ({
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 
   const handleLoadDepartments = async () => {
     await axios
-      .get(`${baseUrl}/department/index`)
+      .get(`${baseUrl}/department/index`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -204,13 +221,19 @@ const SendAnEvaluationToStudents = ({
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 
   const handleLoadCourses = async (departmentId: number) => {
     await axios
-      .get(`${baseUrl}/course/index/${departmentId}`)
+      .get(`${baseUrl}/course/index/${departmentId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -223,13 +246,19 @@ const SendAnEvaluationToStudents = ({
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 
   const handleLoadEmployees = async (departmentId: number) => {
     await axios
-      .get(`${baseUrl}/employee/index/by/department/${departmentId}`)
+      .get(`${baseUrl}/employee/index/by/department/${departmentId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -242,7 +271,11 @@ const SendAnEvaluationToStudents = ({
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 
@@ -489,11 +522,10 @@ const SendAnEvaluationToStudents = ({
     <Layout
       content={
         state.loadingSubmit ||
-        (!state.loadingSubmit &&
-          state.loadingAcademicYears &&
-          state.loadingCourses &&
-          state.loadingDepartments &&
-          state.loadingEmployees) ? (
+        state.loadingAcademicYears ||
+        state.loadingCourses ||
+        state.loadingDepartments ||
+        state.loadingEmployees ? (
           <Spinner />
         ) : (
           content

@@ -3,6 +3,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
+import { useNavigate } from "react-router-dom";
 
 interface AddQuestionProps {
   baseUrl: string;
@@ -20,6 +21,9 @@ interface Errors {
 }
 
 const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
   const [state, setState] = useState({
     loadingSave: false,
     loadingCategories: true,
@@ -52,7 +56,10 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
 
     await axios
       .post(`${baseUrl}/question/store`, state, {
-        headers: { "X-CSRF-TOKEN": csrfToken },
+        headers: {
+          "X-CSRF-TOKEN": csrfToken,
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then((res) => {
         if (res.data.status === 200) {
@@ -71,7 +78,9 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.data.errors) {
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else if (error.response && error.response.data.errors) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
@@ -94,7 +103,9 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
 
   const handleLoadCategories = async () => {
     await axios
-      .get(`${baseUrl}/category/index`)
+      .get(`${baseUrl}/category/index`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -107,7 +118,9 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.data.errors) {
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else if (error.response && error.response.data.errors) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
@@ -192,11 +205,7 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
   return (
     <Layout
       content={
-        state.loadingSave || (!state.loadingSave && state.loadingCategories) ? (
-          <Spinner />
-        ) : (
-          content
-        )
+        state.loadingSave || state.loadingCategories ? <Spinner /> : content
       }
     />
   );
