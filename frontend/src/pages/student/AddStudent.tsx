@@ -3,6 +3,7 @@ import Layout from "../layout/Layout";
 import axios from "axios";
 import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
+import { useNavigate } from "react-router-dom";
 
 interface AddStudentProps {
   baseUrl: string;
@@ -33,6 +34,9 @@ interface Errors {
 }
 
 const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
   const [state, setState] = useState({
     loadingSave: false,
     loadingDepartments: true,
@@ -79,7 +83,10 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
 
     await axios
       .post(`${baseUrl}/student/store`, state, {
-        headers: { "X-CSRF-TOKEN": csrfToken },
+        headers: {
+          "X-CSRF-TOKEN": csrfToken,
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then((res) => {
         if (res.data.status === 200) {
@@ -106,7 +113,9 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.data.errors) {
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else if (error.response && error.response.data.errors) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
@@ -129,7 +138,9 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
 
   const handleLoadDepartments = async () => {
     await axios
-      .get(`${baseUrl}/department/index`)
+      .get(`${baseUrl}/department/index`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -142,13 +153,19 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 
   const handleLoadCourses = async (departmentId: number) => {
     await axios
-      .get(`${baseUrl}/course/index/${departmentId}`)
+      .get(`${baseUrl}/course/index/${departmentId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -161,7 +178,11 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 
@@ -407,9 +428,8 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
     <Layout
       content={
         state.loadingSave ||
-        (!state.loadingSave &&
-          state.loadingCourses &&
-          state.loadingDepartments) ? (
+        state.loadingCourses ||
+        state.loadingDepartments ? (
           <Spinner />
         ) : (
           content
