@@ -7,18 +7,24 @@ import AddQuestion from "./pages/question/AddQuestion";
 import Questions from "./pages/question/Questions";
 import SendAnEvaluationToStudents from "./pages/evaluation/SendAnEvaluationToStudents";
 import Evaluations from "./pages/evaluation/Evaluations";
-import Login from "./pages/auth/Login";
+import Login from "./pages/authentication/Login";
 
 const App = () => {
   const baseUrl = "http://127.0.0.1:8000/api";
+
   const csrfToken = document
     .querySelector("meta[name='csrf-token']")
     ?.getAttribute("content");
 
+  // const token = localStorage.getItem("token");
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login baseUrl={baseUrl} />} />
+        <Route
+          path="/"
+          element={<Login baseUrl={baseUrl} csrfToken={csrfToken} />}
+        />
         <Route
           path="/employee/list"
           element={<Employees baseUrl={baseUrl} />}

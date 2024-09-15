@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\EvaluationController;
 use App\Http\Controllers\Api\PositionController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,47 +24,53 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::controller(AcademicYearController::class)->prefix('academic_year')->group(function () {
-    Route::get('/index', 'index');
+Route::controller(UserController::class)->prefix('user')->group(function () {
+    Route::post('/process/login', 'processLogin');
 });
 
-Route::controller(PositionController::class)->prefix('position')->group(function () {
-    Route::get('/index', 'index');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
+        Route::get('/index', 'index');
+        Route::get('/index/by/department/{departmentId}', 'indexByDepartment');
+        Route::post('/store', 'store');
+    });
+
+    Route::controller(AcademicYearController::class)->prefix('academic_year')->group(function () {
+        Route::get('/index', 'index');
+    });
+
+    Route::controller(PositionController::class)->prefix('position')->group(function () {
+        Route::get('/index', 'index');
+    });
+
+    Route::controller(DepartmentController::class)->prefix('department')->group(function () {
+        Route::get('/index', 'index');
+    });
+
+    Route::controller(CourseController::class)->prefix('course')->group(function () {
+        Route::get('/index/{departmentId}', 'index');
+    });
+
+    Route::controller(StudentController::class)->prefix('student')->group(function () {
+        Route::get('/index', 'index');
+        Route::post('/store', 'store');
+    });
+
+    Route::controller(CategoryController::class)->prefix('category')->group(function () {
+        Route::get('/index', 'index');
+    });
+
+    Route::controller(QuestionController::class)->prefix('question')->group(function () {
+        Route::get('/index', 'index');
+        Route::post('/store', 'store');
+    });
+
+    Route::controller(EvaluationController::class)->prefix('evaluation')->group(function () {
+        Route::get('/index', 'index');
+        Route::post('/store/evaluations/for/students', 'storeEvaluationsForStudents');
+    });
 });
 
-Route::controller(DepartmentController::class)->prefix('department')->group(function () {
-    Route::get('/index', 'index');
-});
-
-Route::controller(CourseController::class)->prefix('course')->group(function () {
-    Route::get('/index/{departmentId}', 'index');
-});
-
-Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
-    Route::get('/index', 'index');
-    Route::get('/index/by/department/{departmentId}', 'indexByDepartment');
-    Route::post('/store', 'store');
-});
-
-Route::controller(StudentController::class)->prefix('student')->group(function () {
-    Route::get('/index', 'index');
-    Route::post('/store', 'store');
-});
-
-Route::controller(CategoryController::class)->prefix('category')->group(function () {
-    Route::get('/index', 'index');
-});
-
-Route::controller(QuestionController::class)->prefix('question')->group(function () {
-    Route::get('/index', 'index');
-    Route::post('/store', 'store');
-});
-
-Route::controller(EvaluationController::class)->prefix('evaluation')->group(function () {
-    Route::get('/index', 'index');
-    Route::post('/store/evaluations/for/students', 'storeEvaluationsForStudents');
-});
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::get('/user', function (Request $request) {
     return $request->user();
 });

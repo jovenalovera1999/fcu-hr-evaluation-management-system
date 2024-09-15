@@ -59,13 +59,16 @@ class EmployeeController extends Controller
             'department_id' => $validated['department']
         ]);
 
-        User::create([
+        $user = User::create([
             'employee_id' => $employee->employee_id,
             'username' => $validated['username'],
             'password' => bcrypt($validated['password'])
         ]);
 
+        $token = $user->createToken('EmployeeToken')->plainTextToken;
+
         return response()->json([
+            'token' => $token,
             'status' => 200
         ]);
     }
