@@ -428,8 +428,8 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
     <Layout
       content={
         state.loadingSave ||
-        state.loadingCourses ||
-        state.loadingDepartments ? (
+        (!state.loadingSave && state.loadingCourses) ||
+        (!state.loadingSave && state.loadingDepartments) ? (
           <Spinner />
         ) : (
           content

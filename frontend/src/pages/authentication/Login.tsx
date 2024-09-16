@@ -134,7 +134,11 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
     </>
   );
 
-  return state.loading || state.loadingLogin ? <Spinner /> : content;
+  return state.loadingLogin || (!state.loadingLogin && state.loading) ? (
+    <Spinner />
+  ) : (
+    content
+  );
 };
 
 export default Login;

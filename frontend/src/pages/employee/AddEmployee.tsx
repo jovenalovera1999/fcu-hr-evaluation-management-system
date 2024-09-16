@@ -403,8 +403,8 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
     <Layout
       content={
         state.loadingSave ||
-        state.loadingDepartments ||
-        state.loadingPositions ? (
+        (!state.loadingSave && state.loadingDepartments) ||
+        (!state.loadingSave && state.loadingPositions) ? (
           <Spinner />
         ) : (
           content

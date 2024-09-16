@@ -50,13 +50,16 @@ class StudentController extends Controller
             'year_level' => $validated['year_level']
         ]);
 
-        User::create([
+        $user = User::create([
             'student_id' => $student->student_id,
             'username' => $validated['username'],
             'password' => bcrypt($validated['password'])
         ]);
 
+        $token = $user->createToken('StudentToken')->plainTextToken;
+
         return response()->json([
+            'token' => $token,
             'status' => 200
         ]);
     }

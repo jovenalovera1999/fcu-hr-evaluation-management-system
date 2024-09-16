@@ -15,6 +15,11 @@ class EmployeeController extends Controller
             ->leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
             ->where('tbl_employees.is_deleted', 0)
             ->orderBy('tbl_employees.last_name', 'asc')
+            ->orderBy('tbl_employees.first_name', 'asc')
+            ->orderBy('tbl_employees.middle_name', 'asc')
+            ->orderBy('tbl_employees.suffix_name', 'asc')
+            ->orderBy('tbl_positions.position', 'asc')
+            ->orderBy('tbl_departments.department', 'asc')
             ->get();
 
         return response()->json([
@@ -28,6 +33,10 @@ class EmployeeController extends Controller
         $employees = Employee::leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
             ->where('tbl_employees.department_id', $departmentId)
             ->where('tbl_employees.is_deleted', 0)
+            ->orderBy('tbl_employees.last_name', 'asc')
+            ->orderBy('tbl_employees.first_name', 'asc')
+            ->orderBy('tbl_employees.middle_name', 'asc')
+            ->orderBy('tbl_employees.suffix_name', 'asc')
             ->get();
 
         return response()->json([

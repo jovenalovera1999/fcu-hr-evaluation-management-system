@@ -205,7 +205,11 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
   return (
     <Layout
       content={
-        state.loadingSave || state.loadingCategories ? <Spinner /> : content
+        state.loadingSave || (!state.loadingSave && state.loadingCategories) ? (
+          <Spinner />
+        ) : (
+          content
+        )
       }
     />
   );

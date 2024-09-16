@@ -53,8 +53,8 @@ const SendAnEvaluationToStudents = ({
     loadingSubmit: false,
     loadingAcademicYears: true,
     loadingDepartments: true,
-    loadingCourses: true,
-    loadingEmployees: true,
+    loadingCourses: false,
+    loadingEmployees: false,
     academic_years: [] as AcademicYears[],
     departments: [] as Departments[],
     courses: [] as Courses[],
@@ -82,10 +82,20 @@ const SendAnEvaluationToStudents = ({
     }));
 
     if (name === "students_department") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingCourses: true,
+      }));
+
       handleLoadCourses(parseInt(value));
     }
 
     if (name === "employees_department") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingEmployees: true,
+      }));
+
       handleLoadEmployees(parseInt(value));
     }
   };
@@ -522,10 +532,10 @@ const SendAnEvaluationToStudents = ({
     <Layout
       content={
         state.loadingSubmit ||
-        state.loadingAcademicYears ||
-        state.loadingCourses ||
-        state.loadingDepartments ||
-        state.loadingEmployees ? (
+        (!state.loadingSubmit && state.loadingAcademicYears) ||
+        (!state.loadingSubmit && state.loadingDepartments) ||
+        (!state.loadingSubmit && state.loadingCourses) ||
+        (!state.loadingSubmit && state.loadingEmployees) ? (
           <Spinner />
         ) : (
           content
