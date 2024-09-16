@@ -37,7 +37,7 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                     data-bs-parent="#sidebar"
                   >
                     <li className="sidebar-item">
-                      <Link to={"/"} className="sidebar-link">
+                      <Link to={"/employee/list"} className="sidebar-link">
                         LIST
                       </Link>
                     </li>
@@ -168,11 +168,11 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                 </li>
               </>
             )}
-            <li className="sidebar-item">
-              <Link to={"#"} className="sidebar-link">
+            {/* <li className="sidebar-item">
+              <Link to={"/logout"} className="sidebar-link">
                 LOGOUT
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
       </aside>

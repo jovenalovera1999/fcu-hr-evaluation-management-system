@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('student_id')->nullable();
             $table->string('username', 55);
             $table->string('password', 255);
+            $table->tinyInteger('is_student')->default(0);
             $table->tinyInteger('is_deleted')->default(0);
             $table->timestamps();
 

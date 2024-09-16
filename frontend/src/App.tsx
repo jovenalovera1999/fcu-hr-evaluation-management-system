@@ -26,7 +26,10 @@ const App = () => {
           path="/"
           element={<Login baseUrl={baseUrl} csrfToken={csrfToken} />}
         />
-        <Route path="/logout" element={<Logout />} />
+        <Route
+          path="/logout"
+          element={<Logout baseUrl={baseUrl} csrfToken={csrfToken} />}
+        />
         <Route
           path="/employee/list"
           element={<Employees baseUrl={baseUrl} />}

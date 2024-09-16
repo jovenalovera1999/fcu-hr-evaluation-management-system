@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('employee_to_response_id')->nullable();
             $table->unsignedBigInteger('employee_to_evaluate_id');
             $table->unsignedBigInteger('academic_year_id');
-            $table->tinyInteger('is_student')->default(1);
+            $table->tinyInteger('is_student')->default(0);
             $table->tinyInteger('is_completed')->default(0);
             $table->timestamps();
 

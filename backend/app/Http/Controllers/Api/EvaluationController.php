@@ -12,11 +12,27 @@ use Illuminate\Http\Request;
 
 class EvaluationController extends Controller
 {
-    public function index()
+    public function index($studentId, $employeeId)
     {
-        $employees = Evaluation::leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
-            ->where('tbl_evaluations.is_completed', 0)
-            ->get();
+        $employees = '';
+
+        if ($studentId) {
+            $employees = Evaluation::select('tbl_evaluations.evaluation_id', 'tbl_employees.first_name', 'tbl_employees.middle_name', 'tbl_employees.last_name', 'tbl_employees.suffix_name')
+                ->leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
+                ->leftJoin('tbl_students', 'tbl_evaluations.student_id', '=', 'tbl_students.student_id')
+                ->where('tbl_evaluations.is_student', 1)
+                ->where('tbl_evaluations.is_completed', 0)
+                ->where('tbl_students.student_id', $studentId)
+                ->get();
+        } else if ($employeeId) {
+            $employees = Evaluation::leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
+                ->leftJoin('tbl_students', 'tbl_evaluations.student_id', '=', 'tbl_students.student_id')
+                ->where('tbl_evaluations.is_student', 1)
+                ->where('tbl_evaluations.is_completed', 0)
+                ->where('tbl_students.student_id', $employeeId)
+                ->get();
+        }
+
 
         return response()->json([
             'employees' => $employees,
@@ -55,7 +71,8 @@ class EvaluationController extends Controller
                 $evaluation = Evaluation::create([
                     'student_id' => $student->student_id,
                     'employee_to_evaluate_id' => $employee,
-                    'academic_year_id' => $validated['academic_year']
+                    'academic_year_id' => $validated['academic_year'],
+                    'is_student' => 1
                 ]);
 
                 foreach ($questions as $question) {

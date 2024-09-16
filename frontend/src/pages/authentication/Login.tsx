@@ -1,7 +1,8 @@
 import axios from "axios";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Spinner from "../../components/Spinner";
+import ToastMessage from "../../components/ToastMessage";
 
 interface LoginProps {
   baseUrl: string;
@@ -15,12 +16,17 @@ interface Errors {
 
 const Login = ({ baseUrl, csrfToken }: LoginProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [loadingLogin, setLoadingLogin] = useState(true);
 
   const [state, setState] = useState({
-    loadingLogin: false,
     username: "",
     password: "",
     errors: {} as Errors,
+    toastMessage: "",
+    toastMessageSuccess: false,
+    toastMessageVisible: false,
   });
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -34,10 +40,7 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
-    setState((prevState) => ({
-      ...prevState,
-      loadingLogin: true,
-    }));
+    setLoadingLogin(true);
 
     await axios
       .post(`${baseUrl}/user/process/login`, state, {
@@ -48,9 +51,22 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
           localStorage.setItem("user", JSON.stringify(res.data.user));
           localStorage.setItem("token", res.data.token);
 
-          navigate("/employee/list");
+          const user = localStorage.getItem("user");
+          const parsedUser = user ? JSON.parse(user) : null;
+
+          if (parsedUser.position === "ADMIN") {
+            navigate("/employee/list");
+          } else {
+            navigate("/evaluation/list");
+          }
         } else {
-          console.error("Unexpected status error: ", res.data.status);
+          setLoadingLogin(false);
+
+          setState((prevState) => ({
+            ...prevState,
+            toastMessage: "INCORRECT USERNAME OR PASSWORD, PLEASE TRY AGAIN.",
+            toastMessageVisible: true,
+          }));
         }
       })
       .catch((error) => {
@@ -66,12 +82,45 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
       });
   };
 
+  const handleToastMessageFromLogout = () => {
+    if (location.state) {
+      setState((prevState) => ({
+        ...prevState,
+        toastMessage: location.state.toastMessage,
+        toastMessageSuccess: location.state.toastMessageSuccess,
+        toastMessageVisible: location.state.toastMessageVisible,
+      }));
+    }
+  };
+
+  const handleCloseToastMessage = () => {
+    if (location.state) {
+      window.history.replaceState({}, document.title);
+    }
+
+    setState((prevState) => ({
+      ...prevState,
+      toastMessage: "",
+      toastMessageSuccess: false,
+      toastMessageVisible: false,
+    }));
+  };
+
   useEffect(() => {
     document.title = "USER AUTHENTICATION | FCU HR EMS";
-  });
+
+    setLoadingLogin(false);
+    handleToastMessageFromLogout();
+  }, [location.state]);
 
   const content = (
     <>
+      <ToastMessage
+        message={state.toastMessage}
+        success={state.toastMessageSuccess}
+        visible={state.toastMessageVisible}
+        onClose={handleCloseToastMessage}
+      />
       <form onSubmit={handleLogin}>
         <div
           className="d-flex justify-content-center align-items-center"
@@ -128,7 +177,7 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
     </>
   );
 
-  return state.loadingLogin ? <Spinner /> : content;
+  return loadingLogin ? <Spinner /> : content;
 };
 
 export default Login;

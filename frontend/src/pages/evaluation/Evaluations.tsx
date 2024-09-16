@@ -20,14 +20,38 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  const user = localStorage.getItem("user");
+  const parsedUser = user ? JSON.parse(user) : null;
+
   const [state, setState] = useState({
     loadingEmployees: true,
     employees: [] as Employees[],
+    studentId: "",
+    employeeId: "",
   });
 
-  const handleLoadEmployees = async () => {
+  // const handleTypeOfUser = () => {
+  //   if (parsedUser.is_student) {
+  //     setState((prevState) => ({
+  //       ...prevState,
+  //       studentId: parsedUser.student_id,
+  //       employeeId: "",
+  //     }));
+  //   } else {
+  //     setState((prevState) => ({
+  //       ...prevState,
+  //       studentId: "",
+  //       employeeId: parsedUser.employee_id,
+  //     }));
+  //   }
+  // };
+
+  const handleLoadEmployees = async (
+    studentId: string | number,
+    employeeId: string | number
+  ) => {
     await axios
-      .get(`${baseUrl}/evaluation/index`, {
+      .get(`${baseUrl}/evaluation/index/${studentId}/${employeeId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -70,8 +94,19 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
 
   useEffect(() => {
     document.title = "EMPLOYEES EVALUATION | FCU HR EMS";
-    handleLoadEmployees();
-  });
+
+    if (parsedUser) {
+      // handleTypeOfUser();
+
+      if (parsedUser.is_student) {
+        handleLoadEmployees(parsedUser.student_id, 0);
+      } else {
+        handleLoadEmployees(0, parsedUser.employee_id);
+      }
+    } else {
+      navigate("/");
+    }
+  }, [parsedUser, navigate]);
 
   const content = (
     <>

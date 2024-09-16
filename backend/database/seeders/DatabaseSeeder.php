@@ -111,7 +111,8 @@ class DatabaseSeeder extends Seeder
             $user = User::create([
                 'student_id' => $student->student_id,
                 'username' => $student->first_name,
-                'password' => bcrypt($student->last_name)
+                'password' => bcrypt($student->last_name),
+                'is_student' => 1
             ]);
 
             $user->createToken('StudentToken')->plainTextToken;

@@ -181,6 +181,15 @@ a.sidebar-link:hover {
   color: #fff;
 }
 
+.dropdown-item-theme {
+  color: white;
+}
+
+.dropdown-item-theme:hover {
+  background-color: #fff;
+  color: #000;
+}
+
 option {
   background-color: #0c1e7d;
   color: #fff;

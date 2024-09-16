@@ -70,7 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::controller(EvaluationController::class)->prefix('evaluation')->group(function () {
-        Route::get('/index', 'index');
+        Route::get('/index/{studentId}/{employeeId}', 'index');
         Route::post('/store/evaluations/for/students', 'storeEvaluationsForStudents');
     });
 });

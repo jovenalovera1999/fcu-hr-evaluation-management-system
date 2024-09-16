@@ -70,8 +70,8 @@ class EmployeeController extends Controller
 
         $user = User::create([
             'employee_id' => $employee->employee_id,
-            'username' => $validated['username'],
-            'password' => bcrypt($validated['password'])
+            'username' => strtoupper($validated['username']),
+            'password' => bcrypt(strtoupper($validated['password']))
         ]);
 
         $token = $user->createToken('EmployeeToken')->plainTextToken;

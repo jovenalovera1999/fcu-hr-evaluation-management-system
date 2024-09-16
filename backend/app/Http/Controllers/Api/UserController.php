@@ -24,23 +24,41 @@ class UserController extends Controller
             ->where('tbl_users.is_deleted', 0)
             ->first();
 
+        $userStudent = User::leftJoin('tbl_students', 'tbl_users.student_id', '=', 'tbl_students.student_id')
+            ->where('tbl_users.username', $validated['username'])
+            ->where('tbl_students.is_deleted', 0)
+            ->where('tbl_users.is_deleted', 0)
+            ->first();
+
+        $validated['username'] = strtoupper($validated['username']);
+        $validated['password'] = strtoupper($validated['password']);
+
         if ($userEmployee && Auth::attempt($validated)) {
             Auth::login($userEmployee);
-            $token = $userEmployee->createToken('EmployeeToken')->plainTextToken;
+            $token = Auth::user()->createToken('EmployeeToken')->plainTextToken;
 
             return response()->json([
                 'user' => $userEmployee,
                 'token' => $token,
                 'status' => 200
             ]);
+        } else if ($userStudent && Auth::attempt($validated)) {
+            Auth::login($userStudent);
+            $token = Auth::user()->createToken('StudentToken')->plainTextToken;
+
+            return response()->json([
+                'user' => $userStudent,
+                'token' => $token,
+                'status' => 200
+            ]);
         }
     }
 
-    public function processLogout()
+    public function processLogout(Request $request)
     {
-        Auth::user()->tokens()->delete();
+        $request->user()->tokens()->delete();
 
-        Auth::logout();
+        Auth::guard('web')->logout();
 
         return response()->json([
             'status' => 200

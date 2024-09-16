@@ -52,8 +52,8 @@ class StudentController extends Controller
 
         $user = User::create([
             'student_id' => $student->student_id,
-            'username' => $validated['username'],
-            'password' => bcrypt($validated['password'])
+            'username' => strtoupper($validated['username']),
+            'password' => bcrypt(strtoupper($validated['password']))
         ]);
 
         $token = $user->createToken('StudentToken')->plainTextToken;
