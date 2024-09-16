@@ -40,7 +40,7 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
   const [state, setState] = useState({
     loadingSave: false,
     loadingDepartments: true,
-    loadingCourses: true,
+    loadingCourses: false,
     departments: [] as Departments[],
     courses: [] as Courses[],
     first_name: "",
@@ -69,6 +69,11 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
     }));
 
     if (name === "department") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingCourses: true,
+      }));
+
       handleLoadCourses(parseInt(value));
     }
   };

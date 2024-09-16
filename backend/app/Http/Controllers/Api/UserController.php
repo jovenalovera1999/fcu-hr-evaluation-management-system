@@ -18,6 +18,7 @@ class UserController extends Controller
         ]);
 
         $userEmployee = User::leftJoin('tbl_employees', 'tbl_users.employee_id', '=', 'tbl_employees.employee_id')
+            ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
             ->where('tbl_users.username', $validated['username'])
             ->where('tbl_employees.is_deleted', 0)
             ->where('tbl_users.is_deleted', 0)
@@ -33,5 +34,16 @@ class UserController extends Controller
                 'status' => 200
             ]);
         }
+    }
+
+    public function processLogout()
+    {
+        Auth::user()->tokens()->delete();
+
+        Auth::logout();
+
+        return response()->json([
+            'status' => 200
+        ]);
     }
 }

@@ -8,6 +8,7 @@ import Questions from "./pages/question/Questions";
 import SendAnEvaluationToStudents from "./pages/evaluation/SendAnEvaluationToStudents";
 import Evaluations from "./pages/evaluation/Evaluations";
 import Login from "./pages/authentication/Login";
+import Logout from "./pages/authentication/Logout";
 
 const App = () => {
   const baseUrl = "http://127.0.0.1:8000/api";
@@ -25,6 +26,7 @@ const App = () => {
           path="/"
           element={<Login baseUrl={baseUrl} csrfToken={csrfToken} />}
         />
+        <Route path="/logout" element={<Logout />} />
         <Route
           path="/employee/list"
           element={<Employees baseUrl={baseUrl} />}

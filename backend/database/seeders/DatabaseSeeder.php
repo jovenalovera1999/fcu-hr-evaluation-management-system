@@ -12,6 +12,7 @@ use App\Models\Employee;
 use App\Models\Position;
 use App\Models\Question;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Position::factory()->createMany([
+            ['position' => 'ADMIN'],
             ['position' => 'STAFF'],
             ['position' => 'FULL-TIME FACULTY'],
             ['position' => 'PART-TIME FACULTY']
@@ -95,7 +97,24 @@ class DatabaseSeeder extends Seeder
             ['category_id' => 6, 'question' => strtoupper('How effectively does the teacher adhere to the course syllabus and schedule?')]
         ]);
 
-        Employee::factory(200)->create();
-        Student::factory(500)->create();
+        Employee::factory(50)->create()->each(function ($employee) {
+            $user = User::create([
+                'employee_id' => $employee->employee_id,
+                'username' => $employee->first_name,
+                'password' => bcrypt($employee->last_name)
+            ]);
+
+            $user->createToken('EmployeeToken')->plainTextToken;
+        });
+
+        Student::factory(50)->create()->each(function ($student) {
+            $user = User::create([
+                'student_id' => $student->student_id,
+                'username' => $student->first_name,
+                'password' => bcrypt($student->last_name)
+            ]);
+
+            $user->createToken('StudentToken')->plainTextToken;
+        });
     }
 }

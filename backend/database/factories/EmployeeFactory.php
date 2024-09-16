@@ -17,11 +17,11 @@ class EmployeeFactory extends Factory
     public function definition(): array
     {
         return [
-            'first_name' => fake()->firstName(),
-            'middle_name' => fake()->lastName(),
-            'last_name' => fake()->lastName(),
-            'suffix_name' => fake()->suffix(),
-            'position_id' => fake()->numberBetween(1, 3),
+            'first_name' => strtoupper(fake()->firstName()),
+            'middle_name' => strtoupper(fake()->lastName()),
+            'last_name' => strtoupper(fake()->lastName()),
+            'suffix_name' => strtoupper(fake()->suffix()),
+            'position_id' => fake()->numberBetween(1, 4),
             'department_id' => fake()->numberBetween(1, 7)
         ];
     }

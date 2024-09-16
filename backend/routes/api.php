@@ -29,6 +29,10 @@ Route::controller(UserController::class)->prefix('user')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::controller(UserController::class)->prefix('user')->group(function () {
+        Route::post('/process/logout', 'processLogout');
+    });
+
     Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
         Route::get('/index', 'index');
         Route::get('/index/by/department/{departmentId}', 'indexByDepartment');

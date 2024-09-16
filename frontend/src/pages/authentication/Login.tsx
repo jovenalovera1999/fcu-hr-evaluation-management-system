@@ -17,7 +17,6 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
   const navigate = useNavigate();
 
   const [state, setState] = useState({
-    loading: true,
     loadingLogin: false,
     username: "",
     password: "",
@@ -69,11 +68,6 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
 
   useEffect(() => {
     document.title = "USER AUTHENTICATION | FCU HR EMS";
-
-    setState((prevState) => ({
-      ...prevState,
-      loading: false,
-    }));
   });
 
   const content = (
@@ -122,8 +116,8 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
                   <p className="text-danger">{state.errors.password[0]}</p>
                 )}
               </div>
-              <div className="d-flex justify-content-end">
-                <button type="submit" className="btn btn-theme">
+              <div className="d-flex justify-content-center">
+                <button type="submit" className="btn btn-theme w-100">
                   LOGIN
                 </button>
               </div>
@@ -134,11 +128,7 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
     </>
   );
 
-  return state.loadingLogin || (!state.loadingLogin && state.loading) ? (
-    <Spinner />
-  ) : (
-    content
-  );
+  return state.loadingLogin ? <Spinner /> : content;
 };
 
 export default Login;
