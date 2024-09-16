@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import axios from "axios";
 import Spinner from "../../components/Spinner";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface EvaluationsProps {
   baseUrl: string;
@@ -14,6 +14,8 @@ interface Employees {
   middle_name: string;
   last_name: string;
   suffix_name: string;
+  department: string;
+  position: string;
 }
 
 const Evaluations = ({ baseUrl }: EvaluationsProps) => {
@@ -92,21 +94,29 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
     return fullName;
   };
 
+  const debounce = (func: Function, delay: number) => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    return (...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
+
   useEffect(() => {
     document.title = "EMPLOYEES EVALUATION | FCU HR EMS";
 
-    if (parsedUser) {
-      // handleTypeOfUser();
-
+    const loadEmployees = debounce(() => {
       if (parsedUser.is_student) {
         handleLoadEmployees(parsedUser.student_id, 0);
       } else {
         handleLoadEmployees(0, parsedUser.employee_id);
       }
-    } else {
-      navigate("/");
-    }
-  }, [parsedUser, navigate]);
+    }, 3000);
+
+    loadEmployees();
+  }, [parsedUser]);
 
   const content = (
     <>
@@ -119,13 +129,23 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
                 <tr>
                   <th>NO.</th>
                   <th>NAME OF EMPLOYEES</th>
+                  <th>DEPARTMENT</th>
+                  <th>POSITION</th>
+                  <th>ACTION</th>
                 </tr>
               </thead>
               <tbody>
                 {state.employees.map((employee, index) => (
-                  <tr>
+                  <tr key={employee.evaluation_id}>
                     <td>{index + 1}</td>
                     <td>{handleEmployeeFullName(employee)}</td>
+                    <td>{employee.department}</td>
+                    <td>{employee.position}</td>
+                    <td>
+                      <Link to={"#"} className="btn btn-theme">
+                        EVALUATE
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>
