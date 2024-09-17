@@ -11,21 +11,23 @@ class ResponseController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-
-        $categoriesWithQuestions = [];
-
-        foreach ($categories as $category) {
-            $questions = Question::leftJoin('tbl_categories', 'tbl_questions.category_id', '=', 'tbl_categories.category_id')
-                ->where('tbl_questions.category_id', $category->category_id)
-                ->where('tbl_questions.is_deleted', 0)
-                ->get();
-
-            $categoriesWithQuestions[] = ['category' => $category, 'questions' => $questions];
-        }
+        $categories = Category::where('tbl_categories.is_deleted', 0)
+            ->get();
 
         return response()->json([
-            'categoriesWithQuestions' => $categoriesWithQuestions,
+            'categories' => $categories,
+            'status' => 200
+        ]);
+    }
+
+    public function indexByCategories($categoryId)
+    {
+        $questions = Question::where('tbl_questions.category_id', $categoryId)
+            ->where('tbl_questions.is_deleted', 0)
+            ->get();
+
+        return response()->json([
+            'questions' => $questions,
             'status' => 200
         ]);
     }

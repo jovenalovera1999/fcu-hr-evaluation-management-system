@@ -77,6 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(ResponseController::class)->prefix('response')->group(function () {
         Route::get('/index', 'index');
+        Route::get('/index/{categoryId}', 'indexByCategories');
     });
 });
 

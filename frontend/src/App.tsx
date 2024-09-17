@@ -65,7 +65,10 @@ const App = () => {
           path="/evaluation/list"
           element={<Evaluations baseUrl={baseUrl} />}
         />
-        <Route path="/evaluation/response" element={<Response />} />
+        <Route
+          path="/evaluation/response"
+          element={<Response baseUrl={baseUrl} />}
+        />
       </Routes>
     </Router>
   );
