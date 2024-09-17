@@ -107,16 +107,22 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
   useEffect(() => {
     document.title = "EMPLOYEES EVALUATION | FCU HR EMS";
 
-    const loadEmployees = debounce(() => {
-      if (parsedUser.is_student) {
-        handleLoadEmployees(parsedUser.student_id, 0);
-      } else {
-        handleLoadEmployees(0, parsedUser.employee_id);
-      }
-    }, 3000);
+    // const loadEmployees = debounce(() => {
+    //   if (parsedUser.is_student) {
+    //     handleLoadEmployees(parsedUser.student_id, 0);
+    //   } else {
+    //     handleLoadEmployees(0, parsedUser.employee_id);
+    //   }
+    // }, 3000);
 
-    loadEmployees();
-  }, [parsedUser]);
+    // loadEmployees();
+
+    if (parsedUser.is_student) {
+      handleLoadEmployees(parsedUser.student_id, 0);
+    } else {
+      handleLoadEmployees(0, parsedUser.employee_id);
+    }
+  }, []);
 
   const content = (
     <>

@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('tbl_comments', function (Blueprint $table) {
             $table->id('comment_id');
-            $table->unsignedBigInteger('response_id');
+            $table->unsignedBigInteger('evaluation_id');
             $table->text('comment');
             $table->timestamps();
 
-            $table->foreign('response_id')
-                ->references('response_id')
-                ->on('tbl_responses')
+            $table->foreign('evaluation_id')
+                ->references('evaluation_id')
+                ->on('tbl_evaluations')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
         });

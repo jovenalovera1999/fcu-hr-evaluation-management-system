@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\EvaluationController;
 use App\Http\Controllers\Api\PositionController;
 use App\Http\Controllers\Api\QuestionController;
+use App\Http\Controllers\Api\ResponseController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -72,6 +73,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EvaluationController::class)->prefix('evaluation')->group(function () {
         Route::get('/index/{studentId}/{employeeId}', 'index');
         Route::post('/store/evaluations/for/students', 'storeEvaluationsForStudents');
+    });
+
+    Route::controller(ResponseController::class)->prefix('response')->group(function () {
+        Route::get('/index', 'index');
     });
 });
 

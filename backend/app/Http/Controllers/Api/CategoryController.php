@@ -10,11 +10,12 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::where('tbl_categories.is_deleted', 0)
+            ->get();
 
         return response()->json([
-            'status' => 200,
-            'categories' => $categories
+            'categories' => $categories,
+            'status' => 200
         ]);
     }
 }

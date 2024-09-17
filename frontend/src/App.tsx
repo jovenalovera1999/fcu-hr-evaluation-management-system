@@ -9,6 +9,7 @@ import SendAnEvaluationToStudents from "./pages/evaluation/SendAnEvaluationToStu
 import Evaluations from "./pages/evaluation/Evaluations";
 import Login from "./pages/authentication/Login";
 import Logout from "./pages/authentication/Logout";
+import Response from "./pages/evaluation/Response";
 
 const App = () => {
   const baseUrl = "http://127.0.0.1:8000/api";
@@ -64,6 +65,7 @@ const App = () => {
           path="/evaluation/list"
           element={<Evaluations baseUrl={baseUrl} />}
         />
+        <Route path="/evaluation/response" element={<Response />} />
       </Routes>
     </Router>
   );
