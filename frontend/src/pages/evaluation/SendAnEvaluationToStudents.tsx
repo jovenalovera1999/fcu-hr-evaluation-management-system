@@ -82,20 +82,10 @@ const SendAnEvaluationToStudents = ({
     }));
 
     if (name === "students_department") {
-      setState((prevState) => ({
-        ...prevState,
-        loadingCourses: true,
-      }));
-
       handleLoadCourses(parseInt(value));
     }
 
     if (name === "employees_department") {
-      setState((prevState) => ({
-        ...prevState,
-        loadingEmployees: true,
-      }));
-
       handleLoadEmployees(parseInt(value));
     }
   };

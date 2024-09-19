@@ -14,6 +14,11 @@ class Response extends Model
     protected $fillable = [
         'evaluation_id',
         'question_id',
+        'poor',
+        'mediocre',
+        'satisfactory',
+        'good',
+        'excellent',
         'is_deleted'
     ];
 }

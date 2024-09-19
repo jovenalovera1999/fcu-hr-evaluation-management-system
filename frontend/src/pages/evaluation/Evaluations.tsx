@@ -94,15 +94,15 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
     return fullName;
   };
 
-  const debounce = (func: Function, delay: number) => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    return (...args: any[]) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        func(...args);
-      }, delay);
-    };
-  };
+  // const debounce = (func: Function, delay: number) => {
+  //   let timeoutId: ReturnType<typeof setTimeout>;
+  //   return (...args: any[]) => {
+  //     clearTimeout(timeoutId);
+  //     timeoutId = setTimeout(() => {
+  //       func(...args);
+  //     }, delay);
+  //   };
+  // };
 
   useEffect(() => {
     document.title = "EMPLOYEES EVALUATION | FCU HR EMS";
@@ -148,7 +148,10 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
                     <td>{employee.department}</td>
                     <td>{employee.position}</td>
                     <td>
-                      <Link to={"#"} className="btn btn-theme">
+                      <Link
+                        to={`/evaluation/response/${employee.evaluation_id}`}
+                        className="btn btn-theme"
+                      >
                         EVALUATE
                       </Link>
                     </td>

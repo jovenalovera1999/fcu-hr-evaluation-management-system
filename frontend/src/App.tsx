@@ -66,8 +66,8 @@ const App = () => {
           element={<Evaluations baseUrl={baseUrl} />}
         />
         <Route
-          path="/evaluation/response"
-          element={<Response baseUrl={baseUrl} />}
+          path="/evaluation/response/:evaluation_id"
+          element={<Response baseUrl={baseUrl} csrfToken={csrfToken} />}
         />
       </Routes>
     </Router>
