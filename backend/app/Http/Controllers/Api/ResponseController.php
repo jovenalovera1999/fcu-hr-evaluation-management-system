@@ -49,16 +49,40 @@ class ResponseController extends Controller
         ]);
     }
 
-    public function update(Request $request, Evaluation $evaluationId)
+    public function update(Request $request)
     {
-        $validated = $request->validate([
-            'answers' => ['required', 'array'],
-            'answers.*.question_id' => ['required', Rule::exists('tbl_questions', 'tbl_questions.question_id')],
-            'answers.*.poor' => ['required', 'boolean'],
-            'answers.*.mediocre' => ['required', 'boolean'],
-            'answers.*.satisfactory' => ['required', 'boolean'],
-            'answers.*.good' => ['required', 'boolean'],
-            'answers.*.excellent' => ['required', 'boolean']
+        $questions = Question::leftJoin('tbl_responses', 'tbl_questions.question_id', '=', 'tbl_responses.question_id')
+            ->where('tbl_responses.evaluation_id', $request->evaluation_id)
+            ->get();
+
+        foreach ($request->answers as $question_id => $answer) {
+            $response = Response::where('tbl_responses.evaluation_id', $request->evaluation_id)
+                ->where('tbl_responses.question_id', $question_id)
+                ->first();
+
+            if ($response) {
+                $response->poor = 0;
+                $response->mediocre = 0;
+                $response->satisfactory = 0;
+                $response->good = 0;
+                $response->excellent = 0;
+
+                switch ($answer) {
+                    case 'poor':
+                        $response->poor = 1;
+                        break;
+                    case 'mediocre':
+                        $response->mediocre = 1;
+                        break;
+                    case 'satisfactory':
+                        $response->satisfactory = 1;
+                        break;
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => 200
         ]);
     }
 }

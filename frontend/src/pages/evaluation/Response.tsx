@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import axios from "axios";
 import Spinner from "../../components/Spinner";
@@ -20,11 +20,7 @@ interface Questions {
 }
 
 interface Errors {
-  poor?: string[];
-  mediocre?: string[];
-  satisfactory?: string[];
-  good?: string[];
-  excellent?: string[];
+  [key: number]: string[];
 }
 
 const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
@@ -52,7 +48,12 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
     errors: {} as Errors,
   });
 
-  const handleAnswerChange = (question_id: number, value: string) => {
+  const handleInput = (
+    e: ChangeEvent<HTMLInputElement>,
+    question_id: number
+  ) => {
+    const { value } = e.target;
+
     setState((prevState) => ({
       ...prevState,
       answers: {
@@ -60,67 +61,68 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
         [question_id]: value,
       },
     }));
+
+    console.log(state.answers);
   };
 
   const handleSubmitEvaluation = async (e: FormEvent) => {
     e.preventDefault();
 
-    console.log(state.answers);
+    setState((prevState) => ({
+      ...prevState,
+      loadingSubmitEvaluation: true,
+    }));
 
-    // setState((prevState) => ({
-    //   ...prevState,
-    //   loadingSubmitEvaluation: true,
-    // }));
+    // Validate if all questions have been answered
+    const newErrors: Errors = {};
+    state.categories.forEach((category) => {
+      state.questionsByCategory[category.category_id]?.forEach((question) => {
+        if (!state.answers[question.question_id]) {
+          if (!newErrors[question.question_id]) {
+            newErrors[question.question_id] = [];
+          }
+          newErrors[question.question_id].push(
+            "This question must be answered."
+          );
+        }
+      });
+    });
 
-    // const formattedAnswers = Object.keys(state.answers).map((questionId) => {
-    //   const answer = state.answers[parseInt(questionId)];
+    // If there are errors, set the state and prevent form submission
+    if (Object.keys(newErrors).length > 0) {
+      setState((prevState) => ({
+        ...prevState,
+        errors: newErrors,
+        loadingSubmitEvaluation: false,
+      }));
+      return;
+    }
 
-    //   return {
-    //     question_id: questionId,
-    //     poor: answer === "poor" ? 1 : 0,
-    //     mediocre: answer === "mediocre" ? 1 : 0,
-    //     satisfactory: answer === "satisfactory" ? 1 : 0,
-    //     good: answer === "good" ? 1 : 0,
-    //     excellent: answer === "excellent" ? 1 : 0,
-    //   };
-    // });
-
-    // await axios
-    //   .put(
-    //     `${baseUrl}/response/update/${evaluation_id}`,
-    //     { evaluation_id: evaluation_id, answers: formattedAnswers },
-    //     {
-    //       headers: {
-    //         "X-CSRF-TOKEN": csrfToken,
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     }
-    //   )
-    //   .then((res) => {
-    //     if (res.data.status === 200) {
-    //       console.log("Submit success!");
-
-    //       setState((prevState) => ({
-    //         ...prevState,
-    //         loadingSubmitEvaluation: false,
-    //       }));
-    //     } else {
-    //       console.error("Unexpected status error: ", res.data.status);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     if (error.response && error.response.status === 401) {
-    //       navigate("/");
-    //     } else if (error.response && error.response.data.errors) {
-    //       setState((prevState) => ({
-    //         ...prevState,
-    //         errors: error.response.data.errors,
-    //         loadingSubmitEvaluation: false,
-    //       }));
-    //     } else {
-    //       console.error("Unexpected server error: ", error);
-    //     }
-    //   });
+    await axios
+      .put(`${baseUrl}/response/update/${evaluation_id}`, state, {
+        headers: {
+          "X-CSRF-TOKEN": csrfToken,
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        if (res.data.status === 200) {
+          console.log(res.data);
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 422) {
+          setState((prevState) => ({
+            ...prevState,
+            errors: error.response.data.errors,
+            loadingSubmitEvaluation: false,
+          }));
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
+      });
   };
 
   const handleLoadCategories = async () => {
@@ -281,98 +283,67 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
                               <td className="text-center">
                                 <input
                                   type="radio"
-                                  className={`form-check-input ${state.errors.poor}`}
-                                  name={`q${question.question_id}`}
+                                  className="form-check-input"
+                                  name={`answers[${question.question_id}]`}
                                   value="poor"
-                                  onChange={() =>
-                                    handleAnswerChange(
-                                      question.question_id,
-                                      "checked"
-                                    )
+                                  onChange={(e) =>
+                                    handleInput(e, question.question_id)
                                   }
                                 />
-                                {state.errors.poor && (
-                                  <p className="text-danger">
-                                    {state.errors.poor[0]}
-                                  </p>
-                                )}
                               </td>
                               <td className="text-center">
                                 <input
                                   type="radio"
-                                  className={`form-check-input ${state.errors.mediocre}`}
-                                  name={`q${question.question_id}`}
+                                  className="form-check-input"
+                                  name={`answers[${question.question_id}]`}
                                   value="mediocre"
-                                  onChange={() =>
-                                    handleAnswerChange(
-                                      question.question_id,
-                                      "checked"
-                                    )
+                                  onChange={(e) =>
+                                    handleInput(e, question.question_id)
                                   }
                                 />
-                                {state.errors.mediocre && (
-                                  <p className="text-danger">
-                                    {state.errors.mediocre[0]}
-                                  </p>
-                                )}
                               </td>
                               <td className="text-center">
                                 <input
                                   type="radio"
-                                  className={`form-check-input ${state.errors.satisfactory}`}
-                                  name={`q${question.question_id}`}
+                                  className="form-check-input"
+                                  name={`answers[${question.question_id}]`}
                                   value="satisfactory"
-                                  onChange={() =>
-                                    handleAnswerChange(
-                                      question.question_id,
-                                      "checked"
-                                    )
+                                  onChange={(e) =>
+                                    handleInput(e, question.question_id)
                                   }
                                 />
-                                {state.errors.satisfactory && (
-                                  <p className="text-danger">
-                                    {state.errors.satisfactory[0]}
-                                  </p>
-                                )}
                               </td>
                               <td className="text-center">
                                 <input
                                   type="radio"
-                                  className={`form-check-input ${state.errors.good}`}
-                                  name={`q${question.question_id}`}
+                                  className="form-check-input"
+                                  name={`answers[${question.question_id}]`}
                                   value="good"
-                                  onChange={() =>
-                                    handleAnswerChange(
-                                      question.question_id,
-                                      "checked"
-                                    )
+                                  onChange={(e) =>
+                                    handleInput(e, question.question_id)
                                   }
                                 />
-                                {state.errors.good && (
-                                  <p className="text-danger">
-                                    {state.errors.good[0]}
-                                  </p>
-                                )}
                               </td>
                               <td className="text-center">
                                 <input
                                   type="radio"
-                                  className={`form-check-input ${state.errors.excellent}`}
-                                  name={`q${question.question_id}`}
+                                  className="form-check-input"
+                                  name={`answers[${question.question_id}]`}
                                   value="excellent"
-                                  onChange={() =>
-                                    handleAnswerChange(
-                                      question.question_id,
-                                      "checked"
-                                    )
+                                  onChange={(e) =>
+                                    handleInput(e, question.question_id)
                                   }
                                 />
-                                {state.errors.excellent && (
-                                  <p className="text-danger">
-                                    {state.errors.excellent[0]}
-                                  </p>
-                                )}
                               </td>
+                              {state.errors[question.question_id] && (
+                                <td colSpan={7} className="text-danger">
+                                  {state.errors[question.question_id].map(
+                                    (error, i) => (
+                                      <p key={i}>{error}</p>
+                                    )
+                                  )}
+                                </td>
+                              )}
                             </tr>
                           )
                         )
