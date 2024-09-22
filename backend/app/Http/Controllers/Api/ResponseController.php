@@ -51,10 +51,6 @@ class ResponseController extends Controller
 
     public function update(Request $request)
     {
-        $questions = Question::leftJoin('tbl_responses', 'tbl_questions.question_id', '=', 'tbl_responses.question_id')
-            ->where('tbl_responses.evaluation_id', $request->evaluation_id)
-            ->get();
-
         foreach ($request->answers as $question_id => $answer) {
             $response = Response::where('tbl_responses.evaluation_id', $request->evaluation_id)
                 ->where('tbl_responses.question_id', $question_id)
@@ -77,12 +73,27 @@ class ResponseController extends Controller
                     case 'satisfactory':
                         $response->satisfactory = 1;
                         break;
+                    case 'good':
+                        $response->good = 1;
+                        break;
+                    case 'excellent':
+                        $response->excellent = 1;
+                        break;
                 }
+
+                $response->save();
+
+                $evaluation = Evaluation::where('tbl_evaluations.evaluation_id', $request->evaluation_id)
+                    ->first();
+
+                $evaluation->update([
+                    'is_completed' => 1
+                ]);
+
+                return response()->json([
+                    'status' => 200
+                ]);
             }
         }
-
-        return response()->json([
-            'status' => 200
-        ]);
     }
 }
