@@ -107,7 +107,13 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
       })
       .then((res) => {
         if (res.data.status === 200) {
-          console.log(res.data);
+          navigate("/evaluation/list", {
+            state: {
+              toastMessage: "YOUR EVALUATION HAS BEEN RECORDED.",
+              toastMessageSuccess: true,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected status error: ", res.data.status);
         }

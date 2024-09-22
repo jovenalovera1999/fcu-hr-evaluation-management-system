@@ -79,7 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/index', 'index');
         Route::get('/index/{categoryId}', 'indexByCategories');
         Route::get('/show/{evaluationId}', 'show');
-        Route::put('/update/{response}', 'update');
+        Route::put('/update/{evaluationId}', 'update');
     });
 });
 

@@ -49,10 +49,10 @@ class ResponseController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $evaluationId)
     {
         foreach ($request->answers as $question_id => $answer) {
-            $response = Response::where('tbl_responses.evaluation_id', $request->evaluation_id)
+            $response = Response::where('tbl_responses.evaluation_id', $evaluationId)
                 ->where('tbl_responses.question_id', $question_id)
                 ->first();
 
@@ -82,18 +82,17 @@ class ResponseController extends Controller
                 }
 
                 $response->save();
-
-                $evaluation = Evaluation::where('tbl_evaluations.evaluation_id', $request->evaluation_id)
-                    ->first();
-
-                $evaluation->update([
-                    'is_completed' => 1
-                ]);
-
-                return response()->json([
-                    'status' => 200
-                ]);
             }
         }
+
+        $evaluation = Evaluation::find($evaluationId);
+
+        $evaluation->update([
+            'is_completed' => 1
+        ]);
+
+        return response()->json([
+            'status' => 200
+        ]);
     }
 }

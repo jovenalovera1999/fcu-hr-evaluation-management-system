@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import axios from "axios";
 import Spinner from "../../components/Spinner";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import ToastMessage from "../../components/ToastMessage";
 
 interface EvaluationsProps {
   baseUrl: string;
@@ -20,6 +21,8 @@ interface Employees {
 
 const Evaluations = ({ baseUrl }: EvaluationsProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
@@ -30,6 +33,9 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
     employees: [] as Employees[],
     studentId: "",
     employeeId: "",
+    toastMessage: "",
+    toastMessageSuccess: false,
+    toastMessageVisible: false,
   });
 
   // const handleTypeOfUser = () => {
@@ -94,6 +100,25 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
     return fullName;
   };
 
+  const handleCloseToastMessage = () => {
+    navigate(".", {
+      replace: true,
+      state: {
+        ...location.state,
+        toastMessage: "",
+        toastMessageSuccess: false,
+        toastMessageVisible: false,
+      },
+    });
+
+    setState((prevState) => ({
+      ...prevState,
+      toastMessage: "",
+      toastMessageSuccess: false,
+      toastMessageVisible: false,
+    }));
+  };
+
   // const debounce = (func: Function, delay: number) => {
   //   let timeoutId: ReturnType<typeof setTimeout>;
   //   return (...args: any[]) => {
@@ -107,25 +132,30 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
   useEffect(() => {
     document.title = "EMPLOYEES EVALUATION | FCU HR EMS";
 
-    // const loadEmployees = debounce(() => {
-    //   if (parsedUser.is_student) {
-    //     handleLoadEmployees(parsedUser.student_id, 0);
-    //   } else {
-    //     handleLoadEmployees(0, parsedUser.employee_id);
-    //   }
-    // }, 3000);
-
-    // loadEmployees();
-
     if (parsedUser.is_student) {
       handleLoadEmployees(parsedUser.student_id, 0);
     } else {
       handleLoadEmployees(0, parsedUser.employee_id);
     }
+
+    if (location.state && location.state.toastMessage) {
+      setState((prevState) => ({
+        ...prevState,
+        toastMessage: location.state.toastMessage,
+        toastMessageSuccess: location.state.toastMessageSuccess,
+        toastMessageVisible: location.state.toastMessageVisible,
+      }));
+    }
   }, []);
 
   const content = (
     <>
+      <ToastMessage
+        message={state.toastMessage}
+        success={state.toastMessageSuccess}
+        visible={state.toastMessageVisible}
+        onClose={handleCloseToastMessage}
+      />
       <div className="card shadow mx-auto mt-3 p-3">
         <h5 className="card-title">LIST OF TEACHERS</h5>
         <div className="card-body">
