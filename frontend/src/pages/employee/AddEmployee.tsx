@@ -34,6 +34,10 @@ interface Errors {
 
 const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
   const token = localStorage.getItem("token");
+
+  const user = localStorage.getItem("user");
+  const parsedUser = user ? JSON.parse(user) : null;
+
   const navigate = useNavigate();
 
   const [state, setState] = useState({
@@ -97,7 +101,7 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
             password_confirmation: "",
             errors: {} as Errors,
             loadingSave: false,
-            toastMessage: "EMPLOYEE SUCCESSFULLY SAVED.",
+            toastMessage: "EMPLOYEE SUCCESSFULLY SAVED!",
             toastMessageSuccess: true,
             toastMessageVisible: true,
           }));
@@ -107,7 +111,14 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else if (error.response && error.response.data.errors) {
           setState((prevState) => ({
             ...prevState,
@@ -147,7 +158,14 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected server error: ", error);
         }
@@ -172,7 +190,14 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected server error: ", error);
         }
@@ -182,8 +207,24 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
   useEffect(() => {
     document.title = "ADD EMPLOYEE | FCU HR EMS";
 
-    handleLoadPositions();
-    handleLoadDepartments();
+    if (
+      (!token && !user) ||
+      (!token && !parsedUser) ||
+      parsedUser.position !== "ADMIN" ||
+      !parsedUser.position
+    ) {
+      navigate("/", {
+        state: {
+          toastMessage:
+            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+          toastMessageSuccess: false,
+          toastMessageVisible: true,
+        },
+      });
+    } else {
+      handleLoadPositions();
+      handleLoadDepartments();
+    }
   }, []);
 
   const content = (

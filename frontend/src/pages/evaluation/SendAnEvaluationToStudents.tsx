@@ -46,8 +46,12 @@ const SendAnEvaluationToStudents = ({
   baseUrl,
   csrfToken,
 }: SendAnEvaluationToStudentsProps) => {
-  const navigate = useNavigate();
   const token = localStorage.getItem("token");
+
+  const user = localStorage.getItem("user");
+  const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingSubmit: false,
@@ -147,7 +151,7 @@ const SendAnEvaluationToStudents = ({
             selectAll: false,
             errors: {} as Errors,
             loadingSubmit: false,
-            toastMessage: "EVALUATIONS HAS BEEN SENT TO STUDENTS",
+            toastMessage: "EVALUATIONS HAS BEEN SENT TO STUDENTS!",
             toastMessageSuccess: true,
             toastMessageVisible: true,
           }));
@@ -157,7 +161,14 @@ const SendAnEvaluationToStudents = ({
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else if (error.response && error.response.data.errors) {
           setState((prevState) => ({
             ...prevState,
@@ -197,7 +208,14 @@ const SendAnEvaluationToStudents = ({
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected server error: ", error);
         }
@@ -222,7 +240,14 @@ const SendAnEvaluationToStudents = ({
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected server error: ", error);
         }
@@ -247,7 +272,14 @@ const SendAnEvaluationToStudents = ({
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected server error: ", error);
         }
@@ -272,7 +304,14 @@ const SendAnEvaluationToStudents = ({
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected server error: ", error);
         }
@@ -300,8 +339,24 @@ const SendAnEvaluationToStudents = ({
   useEffect(() => {
     document.title = "SEND AN EVALUATION TO STUDENTS | FCU HR EMS";
 
-    handleLoadAcademicYears();
-    handleLoadDepartments();
+    if (
+      (!token && !user) ||
+      (!token && !parsedUser) ||
+      parsedUser.position !== "ADMIN" ||
+      !parsedUser.position
+    ) {
+      navigate("/", {
+        state: {
+          toastMessage:
+            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+          toastMessageSuccess: false,
+          toastMessageVisible: true,
+        },
+      });
+    } else {
+      handleLoadAcademicYears();
+      handleLoadDepartments();
+    }
   }, []);
 
   const content = (

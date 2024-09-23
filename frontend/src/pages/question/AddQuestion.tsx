@@ -22,7 +22,11 @@ interface Errors {
 
 const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
   const navigate = useNavigate();
+
   const token = localStorage.getItem("token");
+
+  const user = localStorage.getItem("user");
+  const parsedUser = user ? JSON.parse(user) : null;
 
   const [state, setState] = useState({
     loadingSave: false,
@@ -69,7 +73,7 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
             question: "",
             errors: {} as Errors,
             loadingSave: false,
-            toastMessage: "QUESTION SUCCESSFULLY SAVED.",
+            toastMessage: "QUESTION SUCCESSFULLY SAVED!",
             toastMessageSuccess: true,
             toastMessageVisible: true,
           }));
@@ -79,7 +83,14 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else if (error.response && error.response.data.errors) {
           setState((prevState) => ({
             ...prevState,
@@ -119,7 +130,14 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else if (error.response && error.response.data.errors) {
           setState((prevState) => ({
             ...prevState,
@@ -133,7 +151,24 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
 
   useEffect(() => {
     document.title = "ADD QUESTION | FCU HR EMS";
-    handleLoadCategories();
+
+    if (
+      (!token && !user) ||
+      (!token && !parsedUser) ||
+      parsedUser.position !== "ADMIN" ||
+      !parsedUser.position
+    ) {
+      navigate("/", {
+        state: {
+          toastMessage:
+            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+          toastMessageSuccess: false,
+          toastMessageVisible: true,
+        },
+      });
+    } else {
+      handleLoadCategories();
+    }
   }, []);
 
   const content = (

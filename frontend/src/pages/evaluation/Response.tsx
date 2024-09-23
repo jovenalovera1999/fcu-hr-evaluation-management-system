@@ -26,6 +26,9 @@ interface Errors {
 const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
   const token = localStorage.getItem("token");
 
+  const user = localStorage.getItem("user");
+  const parsedUser = user ? JSON.parse(user) : null;
+
   const { evaluation_id } = useParams();
   const navigate = useNavigate();
 
@@ -82,7 +85,7 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
             newErrors[question.question_id] = [];
           }
           newErrors[question.question_id].push(
-            "This question must be answered."
+            "THIS QUESTION MUST BE ANSWERED!"
           );
         }
       });
@@ -109,7 +112,7 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
         if (res.data.status === 200) {
           navigate("/evaluation/list", {
             state: {
-              toastMessage: "YOUR EVALUATION HAS BEEN RECORDED.",
+              toastMessage: "YOUR EVALUATION HAS BEEN RECORDED!",
               toastMessageSuccess: true,
               toastMessageVisible: true,
             },
@@ -119,7 +122,16 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 422) {
+        if (error.response && error.response.status === 401) {
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
+        } else if (error.response && error.response.status === 422) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
@@ -157,7 +169,18 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 
@@ -181,7 +204,18 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 
@@ -207,7 +241,18 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
       });
   };
 
@@ -231,8 +276,20 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
 
   useEffect(() => {
     document.title = "RESPONSE | FCU HR EMS";
-    handleLoadCategories();
-    handleFetchEvaluation();
+
+    if ((!token && !user) || (!token && !parsedUser)) {
+      navigate("/", {
+        state: {
+          toastMessage:
+            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+          toastMessageSuccess: false,
+          toastMessageVisible: true,
+        },
+      });
+    } else {
+      handleLoadCategories();
+      handleFetchEvaluation();
+    }
   }, [evaluation_id]);
 
   const content = (

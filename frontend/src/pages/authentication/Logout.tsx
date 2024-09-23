@@ -35,7 +35,7 @@ const Logout = ({ baseUrl, csrfToken }: LogoutProps) => {
           localStorage.clear();
           navigate("/", {
             state: {
-              toastMessage: "YOU HAVE SUCCESSFULLY LOGGED OUT",
+              toastMessage: "YOU HAVE SUCCESSFULLY LOGGED OUT!",
               toastMessageSuccess: true,
               toastMessageVisible: true,
             },

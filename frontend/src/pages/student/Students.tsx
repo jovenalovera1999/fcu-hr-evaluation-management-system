@@ -20,8 +20,12 @@ interface Students {
 }
 
 const Students = ({ baseUrl }: StudentsProps) => {
-  const navigate = useNavigate();
   const token = localStorage.getItem("token");
+
+  const user = localStorage.getItem("user");
+  const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingStudents: true,
@@ -46,7 +50,14 @@ const Students = ({ baseUrl }: StudentsProps) => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected server error: ", error);
         }
@@ -73,7 +84,24 @@ const Students = ({ baseUrl }: StudentsProps) => {
 
   useEffect(() => {
     document.title = "LIST OF STUDENTS | FCU HR EMS";
-    handleLoadStudents();
+
+    if (
+      (!token && !user) ||
+      (!token && !parsedUser) ||
+      parsedUser.position !== "ADMIN" ||
+      !parsedUser.position
+    ) {
+      navigate("/", {
+        state: {
+          toastMessage:
+            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+          toastMessageSuccess: false,
+          toastMessageVisible: true,
+        },
+      });
+    } else {
+      handleLoadStudents();
+    }
   }, []);
 
   const content = (

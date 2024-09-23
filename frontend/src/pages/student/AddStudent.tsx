@@ -34,8 +34,12 @@ interface Errors {
 }
 
 const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
-  const navigate = useNavigate();
   const token = localStorage.getItem("token");
+
+  const user = localStorage.getItem("user");
+  const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingSave: false,
@@ -109,7 +113,7 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
             password_confirmation: "",
             errors: {} as Errors,
             loadingSave: false,
-            toastMessage: "STUDENT SUCCESSFULLY SAVED.",
+            toastMessage: "STUDENT SUCCESSFULLY SAVED!",
             toastMessageSuccess: true,
             toastMessageVisible: true,
           }));
@@ -119,7 +123,14 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else if (error.response && error.response.data.errors) {
           setState((prevState) => ({
             ...prevState,
@@ -159,7 +170,14 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected server error: ", error);
         }
@@ -184,7 +202,14 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected server error: ", error);
         }
@@ -193,7 +218,24 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
 
   useEffect(() => {
     document.title = "ADD STUDENT | FCU HR EMS";
-    handleLoadDepartments();
+
+    if (
+      (!token && !user) ||
+      (!token && !parsedUser) ||
+      parsedUser.position !== "ADMIN" ||
+      !parsedUser.position
+    ) {
+      navigate("/", {
+        state: {
+          toastMessage:
+            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+          toastMessageSuccess: false,
+          toastMessageVisible: true,
+        },
+      });
+    } else {
+      handleLoadDepartments();
+    }
   }, []);
 
   const content = (

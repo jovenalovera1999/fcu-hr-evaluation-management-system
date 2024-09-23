@@ -20,13 +20,13 @@ interface Employees {
 }
 
 const Evaluations = ({ baseUrl }: EvaluationsProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [state, setState] = useState({
     loadingEmployees: true,
@@ -37,22 +37,6 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
     toastMessageSuccess: false,
     toastMessageVisible: false,
   });
-
-  // const handleTypeOfUser = () => {
-  //   if (parsedUser.is_student) {
-  //     setState((prevState) => ({
-  //       ...prevState,
-  //       studentId: parsedUser.student_id,
-  //       employeeId: "",
-  //     }));
-  //   } else {
-  //     setState((prevState) => ({
-  //       ...prevState,
-  //       studentId: "",
-  //       employeeId: parsedUser.employee_id,
-  //     }));
-  //   }
-  // };
 
   const handleLoadEmployees = async (
     studentId: string | number,
@@ -75,7 +59,14 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected server error: ", error);
         }
@@ -119,25 +110,7 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
     }));
   };
 
-  // const debounce = (func: Function, delay: number) => {
-  //   let timeoutId: ReturnType<typeof setTimeout>;
-  //   return (...args: any[]) => {
-  //     clearTimeout(timeoutId);
-  //     timeoutId = setTimeout(() => {
-  //       func(...args);
-  //     }, delay);
-  //   };
-  // };
-
-  useEffect(() => {
-    document.title = "EMPLOYEES EVALUATION | FCU HR EMS";
-
-    if (parsedUser.is_student) {
-      handleLoadEmployees(parsedUser.student_id, 0);
-    } else {
-      handleLoadEmployees(0, parsedUser.employee_id);
-    }
-
+  const handleToastMessageFromResponse = () => {
     if (location.state && location.state.toastMessage) {
       setState((prevState) => ({
         ...prevState,
@@ -145,6 +118,29 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
         toastMessageSuccess: location.state.toastMessageSuccess,
         toastMessageVisible: location.state.toastMessageVisible,
       }));
+    }
+  };
+
+  useEffect(() => {
+    document.title = "EMPLOYEES EVALUATION | FCU HR EMS";
+
+    if ((!token && !user) || (!token && !parsedUser)) {
+      navigate("/", {
+        state: {
+          toastMessage:
+            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+          toastMessageSuccess: false,
+          toastMessageVisible: true,
+        },
+      });
+    } else {
+      if (parsedUser.is_student) {
+        handleLoadEmployees(parsedUser.student_id, 0);
+      } else {
+        handleLoadEmployees(0, parsedUser.employee_id);
+      }
+
+      handleToastMessageFromResponse();
     }
   }, []);
 

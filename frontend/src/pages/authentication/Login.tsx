@@ -73,9 +73,10 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
         if (error.response && error.response.data.errors) {
           setState((prevState) => ({
             ...prevState,
-            loadingLogin: false,
             errors: error.response.data.errors,
           }));
+
+          setLoadingLogin(false);
         } else {
           console.error("Unexpect server error: ", error);
         }
@@ -94,9 +95,15 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
   };
 
   const handleCloseToastMessage = () => {
-    if (location.state) {
-      window.history.replaceState({}, document.title);
-    }
+    navigate(".", {
+      replace: true,
+      state: {
+        ...location.state,
+        toastMessage: "",
+        toastMessageSuccess: false,
+        toastMessageVisible: false,
+      },
+    });
 
     setState((prevState) => ({
       ...prevState,

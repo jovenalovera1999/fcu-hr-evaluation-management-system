@@ -15,8 +15,12 @@ interface Questions {
 }
 
 const Questions = ({ baseUrl }: QuestionsProps) => {
-  const navigate = useNavigate();
   const token = localStorage.getItem("token");
+
+  const user = localStorage.getItem("user");
+  const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingQuestions: true,
@@ -41,7 +45,14 @@ const Questions = ({ baseUrl }: QuestionsProps) => {
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
-          navigate("/");
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
         } else {
           console.error("Unexpected server error: ", error);
         }
@@ -50,7 +61,24 @@ const Questions = ({ baseUrl }: QuestionsProps) => {
 
   useEffect(() => {
     document.title = "LIST OF QUESTIONS | FCU HR EMS";
-    handleLoadQuestions();
+
+    if (
+      (!token && !user) ||
+      (!token && !parsedUser) ||
+      parsedUser.position !== "ADMIN" ||
+      !parsedUser.position
+    ) {
+      navigate("/", {
+        state: {
+          toastMessage:
+            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+          toastMessageSuccess: false,
+          toastMessageVisible: true,
+        },
+      });
+    } else {
+      handleLoadQuestions();
+    }
   }, []);
 
   const content = (
