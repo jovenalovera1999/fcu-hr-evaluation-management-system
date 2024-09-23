@@ -152,40 +152,38 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
         visible={state.toastMessageVisible}
         onClose={handleCloseToastMessage}
       />
-      <div className="card shadow mx-auto mt-3 p-3">
-        <h5 className="card-title">LIST OF TEACHERS</h5>
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th>NO.</th>
-                  <th>NAME OF EMPLOYEES</th>
-                  <th>DEPARTMENT</th>
-                  <th>POSITION</th>
-                  <th>ACTION</th>
+      <div className="mx-auto mt-2">
+        <h4>LIST OF TEACHERS</h4>
+        <div className="table-responsive">
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th>NO.</th>
+                <th>NAME OF EMPLOYEES</th>
+                <th>DEPARTMENT</th>
+                <th>POSITION</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.employees.map((employee, index) => (
+                <tr key={employee.evaluation_id}>
+                  <td>{index + 1}</td>
+                  <td>{handleEmployeeFullName(employee)}</td>
+                  <td>{employee.department}</td>
+                  <td>{employee.position}</td>
+                  <td>
+                    <Link
+                      to={`/evaluation/response/${employee.evaluation_id}`}
+                      className="btn btn-theme"
+                    >
+                      EVALUATE
+                    </Link>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {state.employees.map((employee, index) => (
-                  <tr key={employee.evaluation_id}>
-                    <td>{index + 1}</td>
-                    <td>{handleEmployeeFullName(employee)}</td>
-                    <td>{employee.department}</td>
-                    <td>{employee.position}</td>
-                    <td>
-                      <Link
-                        to={`/evaluation/response/${employee.evaluation_id}`}
-                        className="btn btn-theme"
-                      >
-                        EVALUATE
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

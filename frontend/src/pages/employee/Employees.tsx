@@ -105,32 +105,29 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
 
   const content = (
     <>
-      <div className="card shadow mx-auto mt-3 p-3">
-        <h5 className="card-title">LIST OF EMPLOYEES</h5>
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th>NO.</th>
-                  <th>NAME OF EMPLOYEES</th>
-                  <th>POSITION</th>
-                  <th>DEPARTMENT</th>
-                  {/* <th>ACTION</th> */}
+      <div className="mx-auto mt-2">
+        <h4>LIST OF EMPLOYEES</h4>
+        <div className="table-responsive">
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th>NO.</th>
+                <th>NAME OF EMPLOYEES</th>
+                <th>POSITION</th>
+                <th>DEPARTMENT</th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.employees.map((employee, index) => (
+                <tr key={employee.employee_id}>
+                  <td>{index + 1}</td>
+                  <td>{handleEmployeeFullName(employee)}</td>
+                  <td>{employee.position}</td>
+                  <td>{employee.department}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {state.employees.map((employee, index) => (
-                  <tr key={employee.employee_id}>
-                    <td>{index + 1}</td>
-                    <td>{handleEmployeeFullName(employee)}</td>
-                    <td>{employee.position}</td>
-                    <td>{employee.department}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

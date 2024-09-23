@@ -106,33 +106,33 @@ const Students = ({ baseUrl }: StudentsProps) => {
 
   const content = (
     <>
-      <div className=" card shadow mx-auto mt-3 p-3">
-        <h5 className="card-title">LIST OF STUDENTS</h5>
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th>NO.</th>
-                  <th>NAME OF STUDENTS</th>
-                  <th>DEPARTMENT</th>
-                  <th>COURSE</th>
-                  <th>YEAR LEVEL</th>
+      <div className="mx-auto mt-2">
+        <h4>LIST OF STUDENTS</h4>
+        <div className="table-responsive">
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th>NO.</th>
+                <th>NAME OF STUDENTS</th>
+                <th>DEPARTMENT</th>
+                <th>COURSE</th>
+                <th>YEAR LEVEL</th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.students.map((student, index) => (
+                <tr key={student.student_id}>
+                  <td>{index + 1}</td>
+                  <td>{handleStudentFullName(student)}</td>
+                  <td>{student.department}</td>
+                  <td>{student.course}</td>
+                  <td>{`${student.year_level}${
+                    student.year_level === 1 ? "st" : "th"
+                  } year`}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {state.students.map((student, index) => (
-                  <tr key={student.student_id}>
-                    <td>{index + 1}</td>
-                    <td>{handleStudentFullName(student)}</td>
-                    <td>{student.department}</td>
-                    <td>{student.course}</td>
-                    <td>{student.year_level}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

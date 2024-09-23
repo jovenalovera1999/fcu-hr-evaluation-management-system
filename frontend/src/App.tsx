@@ -10,6 +10,7 @@ import Evaluations from "./pages/evaluation/Evaluations";
 import Login from "./pages/authentication/Login";
 import Logout from "./pages/authentication/Logout";
 import Response from "./pages/evaluation/Response";
+import SendAnEvaluationToEmployees from "./pages/evaluation/SendAnEvaluationToEmployees";
 
 const App = () => {
   const baseUrl = "http://127.0.0.1:8000/api";
@@ -17,8 +18,6 @@ const App = () => {
   const csrfToken = document
     .querySelector("meta[name='csrf-token']")
     ?.getAttribute("content");
-
-  // const token = localStorage.getItem("token");
 
   return (
     <Router>
@@ -60,6 +59,10 @@ const App = () => {
               csrfToken={csrfToken}
             />
           }
+        />
+        <Route
+          path="/evaluation/to/employees"
+          element={<SendAnEvaluationToEmployees />}
         />
         <Route
           path="/evaluation/list"

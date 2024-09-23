@@ -83,29 +83,27 @@ const Questions = ({ baseUrl }: QuestionsProps) => {
 
   const content = (
     <>
-      <div className="card shadow mx-auto mt-3 p-3">
-        <h5 className="card-title">LIST OF QUESTIONS</h5>
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th>NO.</th>
-                  <th>CATEGORY</th>
-                  <th>QUESTION</th>
+      <div className="mx-auto mt-2">
+        <h4>LIST OF QUESTIONS</h4>
+        <div className="table-responsive">
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th>NO.</th>
+                <th>CATEGORY</th>
+                <th>QUESTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.questions.map((question, index) => (
+                <tr key={question.question_id}>
+                  <td>{index + 1}</td>
+                  <td>{question.category}</td>
+                  <td>{question.question}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {state.questions.map((question, index) => (
-                  <tr key={question.question_id}>
-                    <td>{index + 1}</td>
-                    <td>{question.category}</td>
-                    <td>{question.question}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

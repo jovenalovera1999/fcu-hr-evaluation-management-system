@@ -180,57 +180,55 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
         onClose={handleCloseToastMessage}
       />
       <form onSubmit={handleSaveQuestion}>
-        <div className="card mx-auto shadow mt-3 p-3">
-          <h5 className="card-title">ADD QUESTION</h5>
-          <div className="card-body">
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label htmlFor="category">CATEGORY</label>
-                <select
-                  name="category"
-                  id="category"
-                  className={`form-select ${
-                    state.errors.category ? "is-invalid" : ""
-                  }`}
-                  value={state.category}
-                  onChange={handleInput}
-                >
-                  <option value="">N/A</option>
-                  {state.categories.map((category) => (
-                    <option
-                      value={category.category_id}
-                      key={category.category_id}
-                    >
-                      {category.category}
-                    </option>
-                  ))}
-                </select>
-                {state.errors.category && (
-                  <p className="text-danger">{state.errors.category[0]}</p>
-                )}
-              </div>
-              <div className="col-md-6 mb-3">
-                <label htmlFor="question">QUESTION</label>
-                <textarea
-                  className={`form-control ${
-                    state.errors.question ? "is-invalid" : ""
-                  }`}
-                  id="question"
-                  rows={5}
-                  name="question"
-                  value={state.question}
-                  onChange={handleInput}
-                ></textarea>
-                {state.errors.question && (
-                  <p className="text-danger">{state.errors.question[0]}</p>
-                )}
-              </div>
+        <div className="mx-auto mt-2">
+          <h4>ADD QUESTION</h4>
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label htmlFor="category">CATEGORY</label>
+              <select
+                name="category"
+                id="category"
+                className={`form-select ${
+                  state.errors.category ? "is-invalid" : ""
+                }`}
+                value={state.category}
+                onChange={handleInput}
+              >
+                <option value="">N/A</option>
+                {state.categories.map((category) => (
+                  <option
+                    value={category.category_id}
+                    key={category.category_id}
+                  >
+                    {category.category}
+                  </option>
+                ))}
+              </select>
+              {state.errors.category && (
+                <p className="text-danger">{state.errors.category[0]}</p>
+              )}
             </div>
-            <div className="d-flex justify-content-end">
-              <button type="submit" className="btn btn-theme">
-                SAVE QUESTION
-              </button>
+            <div className="col-md-6 mb-3">
+              <label htmlFor="question">QUESTION</label>
+              <textarea
+                className={`form-control ${
+                  state.errors.question ? "is-invalid" : ""
+                }`}
+                id="question"
+                rows={5}
+                name="question"
+                value={state.question}
+                onChange={handleInput}
+              ></textarea>
+              {state.errors.question && (
+                <p className="text-danger">{state.errors.question[0]}</p>
+              )}
             </div>
+          </div>
+          <div className="d-flex justify-content-end">
+            <button type="submit" className="btn btn-theme">
+              SAVE QUESTION
+            </button>
           </div>
         </div>
       </form>

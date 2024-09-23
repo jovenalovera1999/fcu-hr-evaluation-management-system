@@ -295,133 +295,131 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
   const content = (
     <>
       <form onSubmit={handleSubmitEvaluation}>
-        <div className="card shadow mx-auto mt-3 p-3">
-          <h5 className="card-title">EVALUATION RESPONSE</h5>
-          <div className="card-body">
-            <div className="row">
-              <div className="col-sm-4">
-                <p className="fs-6">
-                  <strong>TEACHER NAME: </strong>
-                  <u>{employeeFullName()}</u>
-                </p>
-              </div>
-              <div className="col-sm-4">
-                <p className="fs-6">
-                  <strong>DEPARTMENT: </strong>
-                  <u>{state.department}</u>
-                </p>
-              </div>
-              <div className="col-sm-4">
-                <p className="fs-6">
-                  <strong>POSITION: </strong>
-                  <u>{state.position}</u>
-                </p>
-              </div>
+        <div className="mx-auto mt-2">
+          <h4>EVALUATION RESPONSE</h4>
+          <div className="row">
+            <div className="col-sm-4">
+              <p className="fs-6">
+                <strong>TEACHER NAME: </strong>
+                <u>{employeeFullName()}</u>
+              </p>
             </div>
-            <div className="table-responsive">
-              {state.categories.map((category) => (
-                <>
-                  <h5>
-                    <strong>{category.category}</strong>
-                  </h5>
-                  <table className="table table-hover mb-3">
-                    <thead>
-                      <tr>
-                        <th className="text-center">NO.</th>
-                        <th className="text-center">QUESTION</th>
-                        <th className="text-center">POOR</th>
-                        <th className="text-center">MEDIOCRE</th>
-                        <th className="text-center">SATISFACTORY</th>
-                        <th className="text-center">GOOD</th>
-                        <th className="text-center">EXCELLENT</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {state.questionsByCategory[category.category_id] ? (
-                        state.questionsByCategory[category.category_id].map(
-                          (question, index) => (
-                            <tr key={question.question_id}>
-                              <td className="text-center">{index + 1}</td>
-                              <td>{question.question}</td>
-                              <td className="text-center">
-                                <input
-                                  type="radio"
-                                  className="form-check-input"
-                                  name={`answers[${question.question_id}]`}
-                                  value="poor"
-                                  onChange={(e) =>
-                                    handleInput(e, question.question_id)
-                                  }
-                                />
+            <div className="col-sm-4">
+              <p className="fs-6">
+                <strong>DEPARTMENT: </strong>
+                <u>{state.department}</u>
+              </p>
+            </div>
+            <div className="col-sm-4">
+              <p className="fs-6">
+                <strong>POSITION: </strong>
+                <u>{state.position}</u>
+              </p>
+            </div>
+          </div>
+          <div className="table-responsive">
+            {state.categories.map((category) => (
+              <>
+                <h5>
+                  <strong>{category.category}</strong>
+                </h5>
+                <table className="table table-hover mb-3">
+                  <thead>
+                    <tr>
+                      <th className="text-center">NO.</th>
+                      <th className="text-center">QUESTION</th>
+                      <th className="text-center">POOR</th>
+                      <th className="text-center">MEDIOCRE</th>
+                      <th className="text-center">SATISFACTORY</th>
+                      <th className="text-center">GOOD</th>
+                      <th className="text-center">EXCELLENT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {state.questionsByCategory[category.category_id] ? (
+                      state.questionsByCategory[category.category_id].map(
+                        (question, index) => (
+                          <tr key={question.question_id}>
+                            <td className="text-center">{index + 1}</td>
+                            <td>{question.question}</td>
+                            <td className="text-center">
+                              <input
+                                type="radio"
+                                className="form-check-input"
+                                name={`answers[${question.question_id}]`}
+                                value="poor"
+                                onChange={(e) =>
+                                  handleInput(e, question.question_id)
+                                }
+                              />
+                            </td>
+                            <td className="text-center">
+                              <input
+                                type="radio"
+                                className="form-check-input"
+                                name={`answers[${question.question_id}]`}
+                                value="mediocre"
+                                onChange={(e) =>
+                                  handleInput(e, question.question_id)
+                                }
+                              />
+                            </td>
+                            <td className="text-center">
+                              <input
+                                type="radio"
+                                className="form-check-input"
+                                name={`answers[${question.question_id}]`}
+                                value="satisfactory"
+                                onChange={(e) =>
+                                  handleInput(e, question.question_id)
+                                }
+                              />
+                            </td>
+                            <td className="text-center">
+                              <input
+                                type="radio"
+                                className="form-check-input"
+                                name={`answers[${question.question_id}]`}
+                                value="good"
+                                onChange={(e) =>
+                                  handleInput(e, question.question_id)
+                                }
+                              />
+                            </td>
+                            <td className="text-center">
+                              <input
+                                type="radio"
+                                className="form-check-input"
+                                name={`answers[${question.question_id}]`}
+                                value="excellent"
+                                onChange={(e) =>
+                                  handleInput(e, question.question_id)
+                                }
+                              />
+                            </td>
+                            {state.errors[question.question_id] && (
+                              <td colSpan={7} className="text-danger">
+                                {state.errors[question.question_id].map(
+                                  (error, i) => (
+                                    <p key={i}>{error}</p>
+                                  )
+                                )}
                               </td>
-                              <td className="text-center">
-                                <input
-                                  type="radio"
-                                  className="form-check-input"
-                                  name={`answers[${question.question_id}]`}
-                                  value="mediocre"
-                                  onChange={(e) =>
-                                    handleInput(e, question.question_id)
-                                  }
-                                />
-                              </td>
-                              <td className="text-center">
-                                <input
-                                  type="radio"
-                                  className="form-check-input"
-                                  name={`answers[${question.question_id}]`}
-                                  value="satisfactory"
-                                  onChange={(e) =>
-                                    handleInput(e, question.question_id)
-                                  }
-                                />
-                              </td>
-                              <td className="text-center">
-                                <input
-                                  type="radio"
-                                  className="form-check-input"
-                                  name={`answers[${question.question_id}]`}
-                                  value="good"
-                                  onChange={(e) =>
-                                    handleInput(e, question.question_id)
-                                  }
-                                />
-                              </td>
-                              <td className="text-center">
-                                <input
-                                  type="radio"
-                                  className="form-check-input"
-                                  name={`answers[${question.question_id}]`}
-                                  value="excellent"
-                                  onChange={(e) =>
-                                    handleInput(e, question.question_id)
-                                  }
-                                />
-                              </td>
-                              {state.errors[question.question_id] && (
-                                <td colSpan={7} className="text-danger">
-                                  {state.errors[question.question_id].map(
-                                    (error, i) => (
-                                      <p key={i}>{error}</p>
-                                    )
-                                  )}
-                                </td>
-                              )}
-                            </tr>
-                          )
+                            )}
+                          </tr>
                         )
-                      ) : (
-                        <tr>
-                          <td colSpan={7}>
-                            <Spinner />
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </>
-              ))}
-            </div>
+                      )
+                    ) : (
+                      <tr>
+                        <td colSpan={7}>
+                          <Spinner />
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </>
+            ))}
           </div>
           <div className="d-flex justify-content-end">
             <button type="submit" className="btn btn-theme">
