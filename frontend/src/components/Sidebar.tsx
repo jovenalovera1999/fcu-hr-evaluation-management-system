@@ -134,8 +134,13 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                       </Link>
                     </li>
                     <li className="sidebar-item">
-                      <Link to={"#"} className="sidebar-link">
-                        SEND AN EVALUATION TO TEACHERS/EMPLOYEES/STAFFS
+                      <Link
+                        to={"/evaluation/to/employees"}
+                        className="sidebar-link"
+                      >
+                        SEND AN EVALUATION TO TEACHERS/EMPLOYEES/
+                        <br />
+                        STAFFS
                       </Link>
                     </li>
                   </ul>

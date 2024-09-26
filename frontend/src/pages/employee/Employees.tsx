@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import axios from "axios";
 import Spinner from "../../components/Spinner";
@@ -6,6 +6,16 @@ import { useNavigate } from "react-router-dom";
 
 interface EmployeesProps {
   baseUrl: string;
+}
+
+interface Departments {
+  department_id: number;
+  department: string;
+}
+
+interface AcademicYears {
+  academic_year_id: number;
+  academic_year: string;
 }
 
 interface Employees {
@@ -27,13 +37,50 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
   const navigate = useNavigate();
 
   const [state, setState] = useState({
-    loadingEmployees: true,
+    loadingDepartments: true,
+    departments: [] as Departments[],
+    academicYears: [] as AcademicYears[],
     employees: [] as Employees[],
+    department: "",
   });
 
-  const handleLoadEmployees = async () => {
+  const handleInput = (e: ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+
+    if (name === "department" || name === "academic_year") {
+    }
+  };
+
+  const handleLoadDepartments = async () => {
     await axios
-      .get(`${baseUrl}/employee/index`, {
+      .get(`${baseUrl}/department/index`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            loadingDepartments: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        console.error("Unexpected server error: ", error);
+      });
+  };
+
+  const handleLoadEmployees = async (
+    departmentId: number,
+    academicYear: number
+  ) => {
+    await axios
+      .get(`${baseUrl}/employee/indexByDepartment/${departmentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -41,7 +88,6 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
           setState((prevState) => ({
             ...prevState,
             employees: res.data.employees,
-            loadingEmployees: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -99,7 +145,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
         },
       });
     } else {
-      handleLoadEmployees();
+      handleLoadDepartments();
     }
   }, []);
 
@@ -108,13 +154,28 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
       <div className="mx-auto mt-2">
         <h4>LIST OF EMPLOYEES</h4>
         <div className="table-responsive">
+          <div className="mb-3 col-12 col-sm-3">
+            <label htmlFor="department">DEPARTMENT</label>
+            <select className="form-select" name="department" id="department">
+              <option value="">N/A</option>
+            </select>
+          </div>
+          <div className="mb-3 col-12 col-sm-3">
+            <label htmlFor="academic_year">ACADEMIC YEAR</label>
+            <select
+              className="form-select"
+              name="academic_year"
+              id="academic_year"
+            >
+              <option value="">N/A</option>
+            </select>
+          </div>
           <table className="table table-hover">
             <thead>
               <tr>
                 <th>NO.</th>
                 <th>NAME OF EMPLOYEES</th>
                 <th>POSITION</th>
-                <th>DEPARTMENT</th>
               </tr>
             </thead>
             <tbody>
@@ -123,7 +184,6 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
                   <td>{index + 1}</td>
                   <td>{handleEmployeeFullName(employee)}</td>
                   <td>{employee.position}</td>
-                  <td>{employee.department}</td>
                 </tr>
               ))}
             </tbody>
@@ -133,7 +193,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
     </>
   );
 
-  return <Layout content={state.loadingEmployees ? <Spinner /> : content} />;
+  return <Layout content={state.loadingDepartments ? <Spinner /> : content} />;
 };
 
 export default Employees;

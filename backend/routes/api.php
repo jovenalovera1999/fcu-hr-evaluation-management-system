@@ -35,7 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
-        Route::get('/index', 'index');
+        Route::get('/index/by/department/and/academic_year/{departmentId}/{academicYearId}', 'indexByDepartmentAndAcademicYear');
         Route::get('/index/by/department/{departmentId}', 'indexByDepartment');
         Route::post('/store', 'store');
     });
@@ -73,6 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EvaluationController::class)->prefix('evaluation')->group(function () {
         Route::get('/index/{studentId}/{employeeId}', 'index');
         Route::post('/store/evaluations/for/students', 'storeEvaluationsForStudents');
+        Route::post('/store/evaluation/for/employees', 'storeEvaluationsForEmployees');
     });
 
     Route::controller(ResponseController::class)->prefix('response')->group(function () {

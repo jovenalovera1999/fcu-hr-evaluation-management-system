@@ -62,7 +62,12 @@ const App = () => {
         />
         <Route
           path="/evaluation/to/employees"
-          element={<SendAnEvaluationToEmployees />}
+          element={
+            <SendAnEvaluationToEmployees
+              baseUrl={baseUrl}
+              csrfToken={csrfToken}
+            />
+          }
         />
         <Route
           path="/evaluation/list"

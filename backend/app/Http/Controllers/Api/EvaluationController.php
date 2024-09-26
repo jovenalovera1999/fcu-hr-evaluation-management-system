@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use App\Models\Evaluation;
 use App\Models\EvaluationForStudent;
 use App\Models\Question;
@@ -75,6 +76,48 @@ class EvaluationController extends Controller
                     'employee_to_evaluate_id' => $employee,
                     'academic_year_id' => $validated['academic_year'],
                     'is_student' => 1
+                ]);
+
+                foreach ($questions as $question) {
+                    Response::create([
+                        'evaluation_id' => $evaluation->evaluation_id,
+                        'question_id' => $question->question_id
+                    ]);
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => 200
+        ]);
+    }
+
+    public function storeEvaluationsForEmployees(Request $request)
+    {
+        $validated = $request->validate([
+            'academic_year' => ['required'],
+            'department' => ['required'],
+            'employees_department' => ['required'],
+            'selectedEmployees' => ['array', 'min:1']
+        ], [
+            'employees_department.required' => "The employee's department field is required.",
+            'selectedEmployees.min' => 'Select an employee at least 1.'
+        ]);
+
+        $employees = Employee::leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
+            ->where('tbl_departments.department_id', $validated['department'])
+            ->where('tbl_employees.is_deleted', 0)
+            ->get();
+
+        $questions = Question::where('tbl_questions.is_deleted', 0)
+            ->get();
+
+        foreach ($employees as $employee) {
+            foreach ($validated['selectedEmployees'] as $selectedEmployee) {
+                $evaluation = Evaluation::create([
+                    'employee_to_response_id' => $employee->employee_id,
+                    'employee_to_evaluate_id' => $selectedEmployee,
+                    'academic_year_id' => $validated['academic_year']
                 ]);
 
                 foreach ($questions as $question) {
