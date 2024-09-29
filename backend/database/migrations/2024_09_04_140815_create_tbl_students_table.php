@@ -17,10 +17,17 @@ return new class extends Migration
             $table->string('middle_name', 55)->nullable();
             $table->string('last_name', 55);
             $table->string('suffix_name', 55)->nullable();
+            $table->unsignedBigInteger('department_id');
             $table->unsignedBigInteger('course_id');
             $table->integer('year_level')->default(0);
             $table->tinyInteger('is_deleted')->default(0);
             $table->timestamps();
+
+            $table->foreign('department_id')
+                ->references('department_id')
+                ->on('tbl_departments')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
 
             $table->foreign('course_id')
                 ->references('course_id')

@@ -42,6 +42,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
     academicYears: [] as AcademicYears[],
     employees: [] as Employees[],
     department: "",
+    academic_year: "",
   });
 
   const handleInput = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -51,7 +52,8 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
       [name]: value,
     }));
 
-    if (name === "department" || name === "academic_year") {
+    if (name === "department") {
+      handleLoadEmployees(parseInt(value));
     }
   };
 
@@ -64,6 +66,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
             ...prevState,
+            departments: res.data.departments,
             loadingDepartments: false,
           }));
         } else {
@@ -75,12 +78,9 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
       });
   };
 
-  const handleLoadEmployees = async (
-    departmentId: number,
-    academicYear: number
-  ) => {
+  const handleLoadEmployees = async (departmentId: number) => {
     await axios
-      .get(`${baseUrl}/employee/indexByDepartment/${departmentId}`, {
+      .get(`${baseUrl}/employee/index/by/department/${departmentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -156,18 +156,22 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
         <div className="table-responsive">
           <div className="mb-3 col-12 col-sm-3">
             <label htmlFor="department">DEPARTMENT</label>
-            <select className="form-select" name="department" id="department">
-              <option value="">N/A</option>
-            </select>
-          </div>
-          <div className="mb-3 col-12 col-sm-3">
-            <label htmlFor="academic_year">ACADEMIC YEAR</label>
             <select
               className="form-select"
-              name="academic_year"
-              id="academic_year"
+              name="department"
+              id="department"
+              value={state.department}
+              onChange={handleInput}
             >
               <option value="">N/A</option>
+              {state.departments.map((department) => (
+                <option
+                  value={department.department_id}
+                  key={department.department_id}
+                >
+                  {department.department}
+                </option>
+              ))}
             </select>
           </div>
           <table className="table table-hover">

@@ -21,6 +21,7 @@ class StudentFactory extends Factory
             'middle_name' => strtoupper(fake()->lastName()),
             'last_name' => strtoupper(fake()->lastName()),
             'suffix_name' => strtoupper(fake()->suffix()),
+            'department_id' => fake()->numberBetween(1, 7),
             'course_id' => fake()->numberBetween(1, 12),
             'year_level' => fake()->numberBetween(1, 4)
         ];

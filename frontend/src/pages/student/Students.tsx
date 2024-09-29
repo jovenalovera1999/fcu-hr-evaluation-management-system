@@ -1,11 +1,16 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
 
 interface StudentsProps {
   baseUrl: string;
+}
+
+interface Departments {
+  department_id: number;
+  department: string;
 }
 
 interface Students {
@@ -28,21 +33,78 @@ const Students = ({ baseUrl }: StudentsProps) => {
   const navigate = useNavigate();
 
   const [state, setState] = useState({
-    loadingStudents: true,
+    loadingDepartments: true,
+    departments: [] as Departments[],
     students: [] as Students[],
+    department: "",
+    year_level: "",
   });
 
-  const handleLoadStudents = async () => {
+  const handleInput = (e: ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+
+    const yearLevel =
+      name === "year_level" ? parseInt(value) : parseInt(state.year_level);
+    const departmentId =
+      name === "department" ? parseInt(value) : parseInt(state.department);
+
+    if (yearLevel && departmentId) {
+      handleLoadStudents(yearLevel, departmentId);
+    }
+  };
+
+  const handleLoadDepartments = async () => {
     await axios
-      .get(`${baseUrl}/student/index`, {
+      .get(`${baseUrl}/department/index`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
             ...prevState,
+            departments: res.data.departments,
+            loadingDepartments: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
+      });
+  };
+
+  const handleLoadStudents = async (
+    yearLevel: number,
+    departmentId: number
+  ) => {
+    await axios
+      .get(
+        `${baseUrl}/student/index/by/year_level/and/department/${yearLevel}/${departmentId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
             students: res.data.students,
-            loadingStudents: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -82,6 +144,22 @@ const Students = ({ baseUrl }: StudentsProps) => {
     return fullName;
   };
 
+  const handleYearLevelSuffix = (student: Students) => {
+    let yearLevelSuffix = "";
+
+    if (student.year_level === 1) {
+      yearLevelSuffix = `${student.year_level}st`;
+    } else if (student.year_level === 2) {
+      yearLevelSuffix = `${student.year_level}nd`;
+    } else if (student.year_level === 3) {
+      yearLevelSuffix = `${student.year_level}rd`;
+    } else {
+      yearLevelSuffix = `${student.year_level}th`;
+    }
+
+    return yearLevelSuffix;
+  };
+
   useEffect(() => {
     document.title = "LIST OF STUDENTS | FCU HR EMS";
 
@@ -100,7 +178,7 @@ const Students = ({ baseUrl }: StudentsProps) => {
         },
       });
     } else {
-      handleLoadStudents();
+      handleLoadDepartments();
     }
   }, []);
 
@@ -109,6 +187,46 @@ const Students = ({ baseUrl }: StudentsProps) => {
       <div className="mx-auto mt-2">
         <h4>LIST OF STUDENTS</h4>
         <div className="table-responsive">
+          <div className="mb-3 col-12 col-sm-3">
+            <label htmlFor="department">DEPARTMENT</label>
+            <select
+              name="department"
+              id="department"
+              className="form-select"
+              value={state.department}
+              onChange={handleInput}
+            >
+              <option value="">N/A</option>
+              {state.departments.map((department) => (
+                <option
+                  value={department.department_id}
+                  key={department.department_id}
+                >
+                  {department.department}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-3 col-12 col-sm-3">
+            <label htmlFor="year_level">YEAR LEVEL</label>
+            <select
+              name="year_level"
+              id="year_level"
+              className="form-select"
+              value={state.year_level}
+              onChange={handleInput}
+            >
+              <option value="">N/A</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+            </select>
+          </div>
           <table className="table table-hover">
             <thead>
               <tr>
@@ -126,9 +244,7 @@ const Students = ({ baseUrl }: StudentsProps) => {
                   <td>{handleStudentFullName(student)}</td>
                   <td>{student.department}</td>
                   <td>{student.course}</td>
-                  <td>{`${student.year_level}${
-                    student.year_level === 1 ? "st" : "th"
-                  } year`}</td>
+                  <td>{handleYearLevelSuffix(student)}</td>
                 </tr>
               ))}
             </tbody>
@@ -138,7 +254,7 @@ const Students = ({ baseUrl }: StudentsProps) => {
     </>
   );
 
-  return <Layout content={state.loadingStudents ? <Spinner /> : content} />;
+  return <Layout content={state.loadingDepartments ? <Spinner /> : content} />;
 };
 
 export default Students;

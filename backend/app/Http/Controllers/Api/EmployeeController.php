@@ -9,26 +9,11 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    public function indexByDepartmentAndAcademicYear($departmentId, $academicYearId)
-    {
-        $employees = Employee::leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
-            ->leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
-            ->where('tbl_employees.is_deleted', 0)
-            ->orderBy('tbl_employees.last_name', 'asc')
-            ->orderBy('tbl_employees.first_name', 'asc')
-            ->orderBy('tbl_employees.middle_name', 'asc')
-            ->orderBy('tbl_employees.suffix_name', 'asc')
-            ->get();
-
-        return response()->json([
-            'employees' => $employees,
-            'status' => 200
-        ]);
-    }
 
     public function indexByDepartment($departmentId)
     {
         $employees = Employee::leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
+            ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
             ->where('tbl_employees.department_id', $departmentId)
             ->where('tbl_employees.is_deleted', 0)
             ->orderBy('tbl_employees.last_name', 'asc')
