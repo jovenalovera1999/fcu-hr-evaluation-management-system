@@ -134,7 +134,7 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
           style={{ minHeight: "80vh" }}
         >
           <div className="card shadow col-sm-3">
-            <div className="row background-theme m-0">
+            <div className="row bg-theme m-0">
               <h5 className="card-title mt-3">
                 USER AUTHENTICATION | FCU HR EMS
               </h5>

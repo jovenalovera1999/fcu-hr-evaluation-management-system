@@ -62,7 +62,7 @@ const Logout = ({ baseUrl, csrfToken }: LogoutProps) => {
           style={{ minHeight: "80vh" }}
         >
           <div className="card shadow col-sm-5">
-            <div className="row background-theme m-0">
+            <div className="row bg-theme m-0">
               <h5 className="card-title mt-3">
                 ARE YOU SURE DO YOU WANT TO LOGOUT?
               </h5>

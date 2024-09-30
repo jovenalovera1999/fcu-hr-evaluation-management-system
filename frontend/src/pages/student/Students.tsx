@@ -148,13 +148,13 @@ const Students = ({ baseUrl }: StudentsProps) => {
     let yearLevelSuffix = "";
 
     if (student.year_level === 1) {
-      yearLevelSuffix = `${student.year_level}st`;
+      yearLevelSuffix = `${student.year_level}ST YEAR`;
     } else if (student.year_level === 2) {
-      yearLevelSuffix = `${student.year_level}nd`;
+      yearLevelSuffix = `${student.year_level}ND YEAR`;
     } else if (student.year_level === 3) {
-      yearLevelSuffix = `${student.year_level}rd`;
+      yearLevelSuffix = `${student.year_level}RD YEAR`;
     } else {
-      yearLevelSuffix = `${student.year_level}th`;
+      yearLevelSuffix = `${student.year_level}TH YEAR`;
     }
 
     return yearLevelSuffix;

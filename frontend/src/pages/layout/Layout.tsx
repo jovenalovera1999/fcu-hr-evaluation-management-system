@@ -73,8 +73,8 @@ const Layout = ({ content }: ContentProps) => {
                   >
                     {handleUserFullName()}
                   </Link>
-                  <ul className="dropdown-menu background-theme">
-                    <li className="background-theme">
+                  <ul className="dropdown-menu bg-theme">
+                    <li className="bg-theme">
                       <Link
                         className="dropdown-item dropdown-item-theme"
                         to={"/logout"}

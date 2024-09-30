@@ -11,6 +11,7 @@ import Login from "./pages/authentication/Login";
 import Logout from "./pages/authentication/Logout";
 import Response from "./pages/evaluation/Response";
 import SendAnEvaluationToEmployees from "./pages/evaluation/SendAnEvaluationToEmployees";
+import Admin from "./pages/dashboard/Admin";
 
 const App = () => {
   const baseUrl = "http://127.0.0.1:8000/api";
@@ -22,6 +23,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/dashboard/admin" element={<Admin />} />
         <Route
           path="/"
           element={<Login baseUrl={baseUrl} csrfToken={csrfToken} />}
