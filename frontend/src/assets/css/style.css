@@ -153,17 +153,24 @@ a.sidebar-link:hover {
   border-color: #0c1e7d !important;
   background-color: #fff !important;
   color: #000 !important;
-  transition: background-color 0.3s ease;
 }
 
 .btn-theme:hover {
   background-color: #0c1e7d !important;
   color: #fff !important;
+  transition: all 0.3s ease;
 }
 
 .form-control,
 .form-select {
   border-radius: 2px;
+}
+
+.form-control:hover,
+.form-select:hover {
+  border-color: #0c1e7d !important;
+  box-shadow: 0 0 0 0 transparent !important;
+  transition: all 0.3s ease;
 }
 
 .form-control:focus,
@@ -181,6 +188,10 @@ a.sidebar-link:hover {
   color: #fff;
 }
 
+.sidebar-link:hover {
+  transition: all 0.3s ease;
+}
+
 .dropdown-item-theme {
   color: white;
 }
@@ -188,6 +199,7 @@ a.sidebar-link:hover {
 .dropdown-item-theme:hover {
   background-color: #fff;
   color: #000;
+  transition: all 0.3s ease;
 }
 
 option {

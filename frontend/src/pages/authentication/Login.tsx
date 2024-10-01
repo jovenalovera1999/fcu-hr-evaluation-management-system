@@ -3,6 +3,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
+import CompanyLogo from "../../assets/img/company_logo.png";
 
 interface LoginProps {
   baseUrl: string;
@@ -134,9 +135,17 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
           style={{ minHeight: "80vh" }}
         >
           <div className="card shadow col-sm-3">
-            <div className="row bg-theme m-0">
+            <div className="row m-0">
               <h5 className="card-title mt-3">
-                USER AUTHENTICATION | FCU HR EMS
+                <div className="d-flex justify-content-center align-items-center">
+                  <img
+                    src={CompanyLogo}
+                    alt="Company Logo"
+                    className="img-fluid"
+                    width={100}
+                  />
+                  USER AUTHENTICATION | FCU HR EMS
+                </div>
               </h5>
             </div>
             <div className="card-body">

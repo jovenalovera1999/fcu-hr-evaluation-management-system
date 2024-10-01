@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import InnerCompanyLogo from "../assets/img/inner_company_logo.png";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -13,7 +14,19 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
       <aside id="sidebar" className={isCollapsed ? "collapsed" : ""}>
         <div className="h-100">
           <div className="sidebar-logo">
-            <Link to={"#"}>FCU HR EVALUATION MANAGEMENT SYSTEM</Link>
+            {/* <img src={CompanyLogo} alt="Company Logo" width={50} /> */}
+            <Link to={"#"}>
+              {/* FCU HR EVALUATION MANAGEMENT SYSTEM */}
+              <img
+                src={InnerCompanyLogo}
+                alt="Company Logo"
+                style={{
+                  width: "268px",
+                  marginLeft: "-28px",
+                  marginTop: "-20px",
+                }}
+              />
+            </Link>
           </div>
           <ul className="sidebar-nav">
             {parsedUser && parsedUser.position === "ADMIN" ? (
