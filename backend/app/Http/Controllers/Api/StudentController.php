@@ -72,6 +72,7 @@ class StudentController extends Controller
             'middle_name' => strtoupper($validated['middle_name']),
             'last_name' => strtoupper($validated['last_name']),
             'suffix_name' => strtoupper($validated['suffix_name']),
+            'department_id' => $validated['department'],
             'course_id' => $validated['course'],
             'year_level' => $validated['year_level']
         ]);

@@ -56,7 +56,7 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
           const parsedUser = user ? JSON.parse(user) : null;
 
           if (parsedUser.position === "ADMIN") {
-            navigate("/employee/list");
+            navigate("/dashboard/admin");
           } else {
             navigate("/evaluation/list");
           }

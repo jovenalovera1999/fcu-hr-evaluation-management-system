@@ -16,6 +16,7 @@ class Student extends Model
         'middle_name',
         'last_name',
         'suffix_name',
+        'department_id',
         'course_id',
         'year_level',
         'is_deleted'
