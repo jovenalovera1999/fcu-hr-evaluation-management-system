@@ -14,7 +14,7 @@ import SendAnEvaluationToEmployees from "./pages/evaluation/SendAnEvaluationToEm
 import Admin from "./pages/dashboard/Admin";
 
 const App = () => {
-  const baseUrl = "http://127.0.0.1:8000/api";
+  const baseUrl = "http://192.168.1.76:8000/api";
 
   const csrfToken = document
     .querySelector("meta[name='csrf-token']")

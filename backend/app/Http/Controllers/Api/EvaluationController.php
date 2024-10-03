@@ -28,11 +28,14 @@ class EvaluationController extends Controller
                 ->where('tbl_students.student_id', $studentId)
                 ->get();
         } else if ($employeeId) {
-            $employees = Evaluation::leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
-                ->leftJoin('tbl_students', 'tbl_evaluations.student_id', '=', 'tbl_students.student_id')
-                ->where('tbl_evaluations.is_student', 1)
+            $employees =
+                Evaluation::select('tbl_evaluations.evaluation_id', 'tbl_employees.first_name', 'tbl_employees.middle_name', 'tbl_employees.last_name', 'tbl_employees.suffix_name', 'tbl_departments.department', 'tbl_positions.position')
+                ->leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
+                ->leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
+                ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
+                ->where('tbl_evaluations.is_student', 0)
                 ->where('tbl_evaluations.is_completed', 0)
-                ->where('tbl_students.student_id', $employeeId)
+                ->where('tbl_employees.employee_id', $employeeId)
                 ->get();
         }
 
