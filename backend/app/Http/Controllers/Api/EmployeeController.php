@@ -23,8 +23,8 @@ class EmployeeController extends Controller
             ->get();
 
         return response()->json([
-            'status' => 200,
-            'employees' => $employees
+            'employees' => $employees,
+            'status' => 200
         ]);
     }
 

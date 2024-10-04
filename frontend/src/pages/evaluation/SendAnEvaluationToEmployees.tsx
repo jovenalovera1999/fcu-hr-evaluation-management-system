@@ -50,6 +50,7 @@ const SendAnEvaluationToEmployees = ({
     loadingSubmit: false,
     loadingAcademicYears: true,
     loadingDepartments: true,
+    loadingEmployees: false,
     academic_years: [] as AcademicYears[],
     departments: [] as Departments[],
     employees: [] as Employees[],
@@ -74,6 +75,11 @@ const SendAnEvaluationToEmployees = ({
     }));
 
     if (name === "employees_department") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingEmployees: true,
+      }));
+
       handleLoadEmployees(parseInt(value));
     }
   };
@@ -292,10 +298,10 @@ const SendAnEvaluationToEmployees = ({
     document.title = "SEND AN EVALUATION TO EMPLOYEES | FCU HR EMS";
 
     if (
-      (!token && !user) ||
-      (!token && !parsedUser) ||
-      parsedUser.position !== "ADMIN" ||
-      !parsedUser.position
+      !token ||
+      !parsedUser ||
+      !parsedUser.position ||
+      parsedUser.position !== "ADMIN"
     ) {
       navigate("/", {
         state: {
@@ -430,26 +436,34 @@ const SendAnEvaluationToEmployees = ({
                 </tr>
               </thead>
               <tbody>
-                {state.employees.map((employee, index) => (
-                  <tr key={employee.employee_id}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        name="select"
-                        id={`select_${employee.employee_id}`}
-                        checked={state.selectedEmployees.includes(
-                          employee.employee_id
-                        )}
-                        onChange={() =>
-                          handleSelectEmployee(employee.employee_id)
-                        }
-                      />
+                {state.loadingEmployees ? (
+                  <tr>
+                    <td colSpan={3}>
+                      <Spinner />
                     </td>
-                    <td>{index + 1}</td>
-                    <td>{handleEmployeeFullName(employee)}</td>
                   </tr>
-                ))}
+                ) : (
+                  state.employees.map((employee, index) => (
+                    <tr key={employee.employee_id}>
+                      <td>
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          name="select"
+                          id={`select_${employee.employee_id}`}
+                          checked={state.selectedEmployees.includes(
+                            employee.employee_id
+                          )}
+                          onChange={() =>
+                            handleSelectEmployee(employee.employee_id)
+                          }
+                        />
+                      </td>
+                      <td>{index + 1}</td>
+                      <td>{handleEmployeeFullName(employee)}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
             {state.errors.selectedEmployees && (

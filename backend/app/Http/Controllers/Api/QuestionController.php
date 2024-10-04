@@ -16,8 +16,8 @@ class QuestionController extends Controller
             ->get();
 
         return response()->json([
-            'status' => 200,
-            'questions' => $questions
+            'questions' => $questions,
+            'status' => 200
         ]);
     }
 

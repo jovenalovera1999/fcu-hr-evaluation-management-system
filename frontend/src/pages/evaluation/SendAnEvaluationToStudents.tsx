@@ -86,10 +86,20 @@ const SendAnEvaluationToStudents = ({
     }));
 
     if (name === "students_department") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingCourses: true,
+      }));
+
       handleLoadCourses(parseInt(value));
     }
 
     if (name === "employees_department") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingEmployees: true,
+      }));
+
       handleLoadEmployees(parseInt(value));
     }
   };
@@ -437,11 +447,17 @@ const SendAnEvaluationToStudents = ({
                 onChange={handleInput}
               >
                 <option value="">N/A</option>
-                {state.courses.map((course) => (
-                  <option value={course.course_id} key={course.course_id}>
-                    {course.course}
+                {state.loadingCourses ? (
+                  <option value="" key={1}>
+                    <Spinner />
                   </option>
-                ))}
+                ) : (
+                  state.courses.map((course) => (
+                    <option value={course.course_id} key={course.course_id}>
+                      {course.course}
+                    </option>
+                  ))
+                )}
               </select>
               {state.errors.course && (
                 <p className="text-danger">{state.errors.course[0]}</p>
@@ -529,26 +545,34 @@ const SendAnEvaluationToStudents = ({
                 </tr>
               </thead>
               <tbody>
-                {state.employees.map((employee, index) => (
-                  <tr key={employee.employee_id}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        name="select"
-                        id={`select_${employee.employee_id}`}
-                        checked={state.selectedEmployees.includes(
-                          employee.employee_id
-                        )}
-                        onChange={() =>
-                          handleSelectEmployee(employee.employee_id)
-                        }
-                      />
+                {state.loadingEmployees ? (
+                  <tr>
+                    <td colSpan={3}>
+                      <Spinner />
                     </td>
-                    <td>{index + 1}</td>
-                    <td>{handleEmployeeFullName(employee)}</td>
                   </tr>
-                ))}
+                ) : (
+                  state.employees.map((employee, index) => (
+                    <tr key={employee.employee_id}>
+                      <td>
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          name="select"
+                          id={`select_${employee.employee_id}`}
+                          checked={state.selectedEmployees.includes(
+                            employee.employee_id
+                          )}
+                          onChange={() =>
+                            handleSelectEmployee(employee.employee_id)
+                          }
+                        />
+                      </td>
+                      <td>{index + 1}</td>
+                      <td>{handleEmployeeFullName(employee)}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
             {state.errors.selectedEmployees && (
@@ -569,10 +593,8 @@ const SendAnEvaluationToStudents = ({
     <Layout
       content={
         state.loadingSubmit ||
-        (!state.loadingSubmit && state.loadingAcademicYears) ||
-        (!state.loadingSubmit && state.loadingDepartments) ||
-        (!state.loadingSubmit && state.loadingCourses) ||
-        (!state.loadingSubmit && state.loadingEmployees) ? (
+        state.loadingAcademicYears ||
+        state.loadingDepartments ? (
           <Spinner />
         ) : (
           content

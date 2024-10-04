@@ -34,6 +34,7 @@ const Students = ({ baseUrl }: StudentsProps) => {
 
   const [state, setState] = useState({
     loadingDepartments: true,
+    loadingStudents: false,
     departments: [] as Departments[],
     students: [] as Students[],
     department: "",
@@ -53,6 +54,11 @@ const Students = ({ baseUrl }: StudentsProps) => {
       name === "department" ? parseInt(value) : parseInt(state.department);
 
     if (yearLevel && departmentId) {
+      setState((prevState) => ({
+        ...prevState,
+        loadingStudents: true,
+      }));
+
       handleLoadStudents(yearLevel, departmentId);
     }
   };
@@ -105,6 +111,7 @@ const Students = ({ baseUrl }: StudentsProps) => {
           setState((prevState) => ({
             ...prevState,
             students: res.data.students,
+            loadingStudents: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -238,15 +245,23 @@ const Students = ({ baseUrl }: StudentsProps) => {
               </tr>
             </thead>
             <tbody>
-              {state.students.map((student, index) => (
-                <tr key={student.student_id}>
-                  <td>{index + 1}</td>
-                  <td>{handleStudentFullName(student)}</td>
-                  <td>{student.department}</td>
-                  <td>{student.course}</td>
-                  <td>{handleYearLevelSuffix(student)}</td>
+              {state.loadingStudents ? (
+                <tr key={1}>
+                  <td colSpan={5}>
+                    <Spinner />
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                state.students.map((student, index) => (
+                  <tr key={student.student_id}>
+                    <td>{index + 1}</td>
+                    <td>{handleStudentFullName(student)}</td>
+                    <td>{student.department}</td>
+                    <td>{student.course}</td>
+                    <td>{handleYearLevelSuffix(student)}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

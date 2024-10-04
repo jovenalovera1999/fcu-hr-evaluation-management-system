@@ -32,6 +32,11 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
             {parsedUser && parsedUser.position === "ADMIN" ? (
               <>
                 <li className="sidebar-item">
+                  <Link to={"/dashboard/admin"} className="sidebar-link">
+                    DASHBOARD
+                  </Link>
+                </li>
+                <li className="sidebar-item">
                   <Link
                     to={"#"}
                     className="sidebar-link collapsed"

@@ -14,8 +14,8 @@ class AcademicYearController extends Controller
             ->get();
 
         return response()->json([
-            'status' => 200,
-            'academicYears' => $academicYears
+            'academicYears' => $academicYears,
+            'status' => 200
         ]);
     }
 }

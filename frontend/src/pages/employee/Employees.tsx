@@ -38,6 +38,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
 
   const [state, setState] = useState({
     loadingDepartments: true,
+    loadingEmployees: false,
     departments: [] as Departments[],
     academicYears: [] as AcademicYears[],
     employees: [] as Employees[],
@@ -53,6 +54,11 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
     }));
 
     if (name === "department") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingEmployees: true,
+      }));
+
       handleLoadEmployees(parseInt(value));
     }
   };
@@ -88,6 +94,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
           setState((prevState) => ({
             ...prevState,
             employees: res.data.employees,
+            loadingEmployees: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -183,13 +190,21 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
               </tr>
             </thead>
             <tbody>
-              {state.employees.map((employee, index) => (
-                <tr key={employee.employee_id}>
-                  <td>{index + 1}</td>
-                  <td>{handleEmployeeFullName(employee)}</td>
-                  <td>{employee.position}</td>
+              {state.loadingEmployees ? (
+                <tr key={1}>
+                  <td colSpan={3}>
+                    <Spinner />
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                state.employees.map((employee, index) => (
+                  <tr key={employee.employee_id}>
+                    <td>{index + 1}</td>
+                    <td>{handleEmployeeFullName(employee)}</td>
+                    <td>{employee.position}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

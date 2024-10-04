@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AcademicYearController;
+use App\Http\Controllers\Api\AdminDashboard;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\DepartmentController;
@@ -32,6 +33,10 @@ Route::controller(UserController::class)->prefix('user')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(UserController::class)->prefix('user')->group(function () {
         Route::post('/process/logout', 'processLogout');
+    });
+
+    Route::controller(AdminDashboard::class)->prefix('dashboard/admin')->group(function () {
+        Route::get('/statistics', 'statistics');
     });
 
     Route::controller(EmployeeController::class)->prefix('employee')->group(function () {

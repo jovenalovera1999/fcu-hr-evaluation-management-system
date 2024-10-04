@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import {
   Chart as ChartJS,
@@ -13,8 +13,64 @@ import {
   ChartData,
 } from "chart.js";
 import { Bar, Pie } from "react-chartjs-2";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Spinner from "../../components/Spinner";
 
-const Admin = () => {
+interface AdminProps {
+  baseUrl: string;
+  csrfToken: string | null | undefined;
+}
+
+const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
+  const token = localStorage.getItem("token");
+
+  const user = localStorage.getItem("user");
+  const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
+
+  const [state, setState] = useState({
+    loadingStatistics: true,
+    totalEmployees: 0,
+    totalStudents: 0,
+    totalResponders: 0,
+  });
+
+  const handleLoadStatistics = async () => {
+    await axios
+      .get(`${baseUrl}/dashboard/admin/statistics`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            totalEmployees: res.data.totalEmployees,
+            totalStudents: res.data.totalStudents,
+            totalResponders: res.data.totalResponders,
+            loadingStatistics: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          navigate("/", {
+            state: {
+              toastMessage:
+                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+              toastMessageSuccess: false,
+              toastMessageVisible: true,
+            },
+          });
+        } else {
+          console.error("Unexpected server error: ", error);
+        }
+      });
+  };
+
   ChartJS.register(
     ArcElement,
     CategoryScale,
@@ -28,7 +84,7 @@ const Admin = () => {
   const optionsPieChart: ChartOptions<"pie"> = {
     responsive: true,
     plugins: {
-      legend: { display: false },
+      legend: { display: true },
       title: { display: false },
     },
   };
@@ -37,7 +93,12 @@ const Admin = () => {
     labels: ["STUDENTS", "EMPLOYEES", "NO. OF RESPONDERS", "NO. OF RESPONDED"],
     datasets: [
       {
-        data: [45, 100, 54, 79],
+        data: [
+          state.totalStudents,
+          state.totalEmployees,
+          state.totalResponders,
+          79,
+        ],
         backgroundColor: [
           "rgba(255, 111, 97, 1)",
           "rgba(107, 91, 149, 1)",
@@ -81,7 +142,20 @@ const Admin = () => {
 
   useEffect(() => {
     document.title = "ADMIN DASHBOARD | FCU HR EMS";
-  });
+
+    if (!token || !user || !parsedUser || parsedUser.position !== "ADMIN") {
+      navigate("/", {
+        state: {
+          toastMessage:
+            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
+          toastMessageSuccess: false,
+          toastMessageVisible: true,
+        },
+      });
+    } else {
+      handleLoadStatistics();
+    }
+  }, []);
 
   const content = (
     <>
@@ -105,7 +179,9 @@ const Admin = () => {
             style={{ minHeight: "100px" }}
           >
             <h5 className="card-title">TOTAL NO. OF STUDENTS</h5>
-            <p className="position-absolute bottom-0 end-0 m-2 fs-5">0</p>
+            <p className="position-absolute bottom-0 end-0 m-2 fs-5">
+              {state.totalStudents}
+            </p>
           </div>
         </div>
         <div className="col-sm-3 g-2">
@@ -114,7 +190,9 @@ const Admin = () => {
             style={{ minHeight: "100px" }}
           >
             <h5 className="card-title">TOTAL NO. OF EMPLOYEES</h5>
-            <p className="position-absolute bottom-0 end-0 m-2 fs-5">0</p>
+            <p className="position-absolute bottom-0 end-0 m-2 fs-5">
+              {state.totalEmployees}
+            </p>
           </div>
         </div>
         <div className="col-sm-3 g-2">
@@ -123,7 +201,9 @@ const Admin = () => {
             style={{ minHeight: "100px" }}
           >
             <h5 className="card-title">TOTAL RESPONDERS</h5>
-            <p className="position-absolute bottom-0 end-0 m-2 fs-5">0</p>
+            <p className="position-absolute bottom-0 end-0 m-2 fs-5">
+              {state.totalResponders}
+            </p>
           </div>
         </div>
         <div className="col-sm-3 g-2">
@@ -194,7 +274,7 @@ const Admin = () => {
     </>
   );
 
-  return <Layout content={content} />;
+  return <Layout content={state.loadingStatistics ? <Spinner /> : content} />;
 };
 
 export default Admin;

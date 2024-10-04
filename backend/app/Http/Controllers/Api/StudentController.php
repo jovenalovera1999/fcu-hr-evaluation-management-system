@@ -24,8 +24,8 @@ class StudentController extends Controller
             ->get();
 
         return response()->json([
-            'status' => 200,
-            'students' => $students
+            'students' => $students,
+            'status' => 200
         ]);
     }
 
@@ -47,8 +47,8 @@ class StudentController extends Controller
             ->get();
 
         return response()->json([
-            'status' => 200,
-            'students' => $students
+            'students' => $students,
+            'status' => 200
         ]);
     }
 
