@@ -10,8 +10,6 @@ class CourseController extends Controller
 {
     public function index($departmentId)
     {
-        // $courses = Course::leftJoin('tbl_departments', 'tbl_courses.department_id', '=', 'tbl_departments.department_id')
-        //     ->get();
 
         $courses = Course::where('tbl_courses.department_id', $departmentId)
             ->orderBy('course', 'asc')

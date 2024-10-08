@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::where('tbl_categories.is_deleted', 0)
+        $categories = Category::where('tbl_categories.is_deleted', false)
             ->get();
 
         return response()->json([

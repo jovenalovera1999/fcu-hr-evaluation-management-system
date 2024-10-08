@@ -23,8 +23,8 @@ class EvaluationController extends Controller
                 ->leftJoin('tbl_students', 'tbl_evaluations.student_id', '=', 'tbl_students.student_id')
                 ->leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
                 ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
-                ->where('tbl_evaluations.is_student', 1)
-                ->where('tbl_evaluations.is_completed', 0)
+                ->where('tbl_evaluations.is_student', true)
+                ->where('tbl_evaluations.is_completed', false)
                 ->where('tbl_students.student_id', $studentId)
                 ->get();
         } else if ($employeeId) {
@@ -33,8 +33,8 @@ class EvaluationController extends Controller
                 ->leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
                 ->leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
                 ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
-                ->where('tbl_evaluations.is_student', 0)
-                ->where('tbl_evaluations.is_completed', 0)
+                ->where('tbl_evaluations.is_student', false)
+                ->where('tbl_evaluations.is_completed', false)
                 ->where('tbl_employees.employee_id', $employeeId)
                 ->get();
         }
@@ -66,10 +66,10 @@ class EvaluationController extends Controller
             ->where('tbl_departments.department_id', $validated['students_department'])
             ->where('tbl_courses.course_id', $validated['course'])
             ->where('tbl_students.year_level', $validated['year_level'])
-            ->where('tbl_students.is_deleted', 0)
+            ->where('tbl_students.is_deleted', false)
             ->get();
 
-        $questions = Question::where('tbl_questions.is_deleted', 0)
+        $questions = Question::where('tbl_questions.is_deleted', false)
             ->get();
 
         foreach ($students as $student) {
@@ -78,7 +78,7 @@ class EvaluationController extends Controller
                     'student_id' => $student->student_id,
                     'employee_to_evaluate_id' => $employee,
                     'academic_year_id' => $validated['academic_year'],
-                    'is_student' => 1
+                    'is_student' => true
                 ]);
 
                 foreach ($questions as $question) {
@@ -109,10 +109,10 @@ class EvaluationController extends Controller
 
         $employees = Employee::leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
             ->where('tbl_departments.department_id', $validated['department'])
-            ->where('tbl_employees.is_deleted', 0)
+            ->where('tbl_employees.is_deleted', false)
             ->get();
 
-        $questions = Question::where('tbl_questions.is_deleted', 0)
+        $questions = Question::where('tbl_questions.is_deleted', false)
             ->get();
 
         foreach ($employees as $employee) {

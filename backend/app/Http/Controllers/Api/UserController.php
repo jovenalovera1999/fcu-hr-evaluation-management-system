@@ -20,14 +20,14 @@ class UserController extends Controller
         $userEmployee = User::leftJoin('tbl_employees', 'tbl_users.employee_id', '=', 'tbl_employees.employee_id')
             ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
             ->where('tbl_users.username', $validated['username'])
-            ->where('tbl_employees.is_deleted', 0)
-            ->where('tbl_users.is_deleted', 0)
+            ->where('tbl_employees.is_deleted', false)
+            ->where('tbl_users.is_deleted', false)
             ->first();
 
         $userStudent = User::leftJoin('tbl_students', 'tbl_users.student_id', '=', 'tbl_students.student_id')
             ->where('tbl_users.username', $validated['username'])
-            ->where('tbl_students.is_deleted', 0)
-            ->where('tbl_users.is_deleted', 0)
+            ->where('tbl_students.is_deleted', false)
+            ->where('tbl_users.is_deleted', false)
             ->first();
 
         $validated['username'] = strtoupper($validated['username']);

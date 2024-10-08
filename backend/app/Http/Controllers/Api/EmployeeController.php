@@ -15,7 +15,7 @@ class EmployeeController extends Controller
         $employees = Employee::leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
             ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
             ->where('tbl_employees.department_id', $departmentId)
-            ->where('tbl_employees.is_deleted', 0)
+            ->where('tbl_employees.is_deleted', false)
             ->orderBy('tbl_employees.last_name', 'asc')
             ->orderBy('tbl_employees.first_name', 'asc')
             ->orderBy('tbl_employees.middle_name', 'asc')

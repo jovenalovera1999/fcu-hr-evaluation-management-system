@@ -15,7 +15,7 @@ class ResponseController extends Controller
 {
     public function index()
     {
-        $categories = Category::where('tbl_categories.is_deleted', 0)
+        $categories = Category::where('tbl_categories.is_deleted', false)
             ->get();
 
         return response()->json([
@@ -27,7 +27,7 @@ class ResponseController extends Controller
     public function indexByCategories($categoryId)
     {
         $questions = Question::where('tbl_questions.category_id', $categoryId)
-            ->where('tbl_questions.is_deleted', 0)
+            ->where('tbl_questions.is_deleted', false)
             ->get();
 
         return response()->json([
@@ -57,27 +57,27 @@ class ResponseController extends Controller
                 ->first();
 
             if ($response) {
-                $response->poor = 0;
-                $response->mediocre = 0;
-                $response->satisfactory = 0;
-                $response->good = 0;
-                $response->excellent = 0;
+                $response->poor = false;
+                $response->mediocre = false;
+                $response->satisfactory = false;
+                $response->good = false;
+                $response->excellent = false;
 
                 switch ($answer) {
                     case 'poor':
-                        $response->poor = 1;
+                        $response->poor = true;
                         break;
                     case 'mediocre':
-                        $response->mediocre = 1;
+                        $response->mediocre = true;
                         break;
                     case 'satisfactory':
-                        $response->satisfactory = 1;
+                        $response->satisfactory = true;
                         break;
                     case 'good':
-                        $response->good = 1;
+                        $response->good = true;
                         break;
                     case 'excellent':
-                        $response->excellent = 1;
+                        $response->excellent = true;
                         break;
                 }
 
@@ -88,7 +88,7 @@ class ResponseController extends Controller
         $evaluation = Evaluation::find($evaluationId);
 
         $evaluation->update([
-            'is_completed' => 1
+            'is_completed' => true
         ]);
 
         return response()->json([

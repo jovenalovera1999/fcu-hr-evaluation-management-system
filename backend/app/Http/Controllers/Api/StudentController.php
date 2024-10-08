@@ -13,7 +13,7 @@ class StudentController extends Controller
     {
         $students = Student::leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
             ->leftJoin('tbl_departments', 'tbl_courses.department_id', '=', 'tbl_departments.department_id')
-            ->where('tbl_students.is_deleted', 0)
+            ->where('tbl_students.is_deleted', false)
             ->orderBy('tbl_students.last_name', 'asc')
             ->orderBy('tbl_students.first_name', 'asc')
             ->orderBy('tbl_students.middle_name', 'asc')
@@ -35,7 +35,7 @@ class StudentController extends Controller
             ->leftJoin('tbl_departments', 'tbl_students.department_id', '=', 'tbl_departments.department_id')
             ->where('tbl_students.year_level', $yearLevel)
             ->where('tbl_students.department_id', $departmentId)
-            ->where('tbl_students.is_deleted', 0)
+            ->where('tbl_students.is_deleted', false)
             ->orderBy('tbl_courses.course', 'asc')
             ->orderBy('tbl_students.last_name', 'asc')
             ->orderBy('tbl_students.first_name', 'asc')
@@ -81,7 +81,7 @@ class StudentController extends Controller
             'student_id' => $student->student_id,
             'username' => strtoupper($validated['username']),
             'password' => bcrypt(strtoupper($validated['password'])),
-            'is_student' => 1
+            'is_student' => true
         ]);
 
         $token = $user->createToken('StudentToken')->plainTextToken;

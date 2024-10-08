@@ -35,6 +35,12 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
     totalEmployees: 0,
     totalStudents: 0,
     totalResponders: 0,
+    totalResponded: 0,
+    totalPoor: 0,
+    totalMediocre: 0,
+    totalSatisfactory: 0,
+    totalGood: 0,
+    totalExcellent: 0,
   });
 
   const handleLoadStatistics = async () => {
@@ -49,6 +55,12 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
             totalEmployees: res.data.totalEmployees,
             totalStudents: res.data.totalStudents,
             totalResponders: res.data.totalResponders,
+            totalResponded: res.data.totalResponded,
+            totalPoor: res.data.totalPoor,
+            totalMediocre: res.data.totalMediocre,
+            totalSatisfactory: res.data.totalSatisfactory,
+            totalGood: res.data.totalGood,
+            totalExcellent: res.data.totalExcellent,
             loadingStatistics: false,
           }));
         } else {
@@ -97,7 +109,7 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
           state.totalStudents,
           state.totalEmployees,
           state.totalResponders,
-          79,
+          state.totalResponded,
         ],
         backgroundColor: [
           "rgba(255, 111, 97, 1)",
@@ -132,7 +144,13 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
     labels: ["POOR", "MEDIOCRE", "SATISFACTORY", "GOOD", "EXCELLENT"],
     datasets: [
       {
-        data: [15, 20, 55, 51, 89],
+        data: [
+          state.totalGood,
+          state.totalMediocre,
+          state.totalSatisfactory,
+          state.totalGood,
+          state.totalExcellent,
+        ],
         backgroundColor: "rgba(12, 30, 125, 0.2)",
         borderColor: "rgba(12, 30, 125, 1)",
         borderWidth: 1,
@@ -212,7 +230,9 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
             style={{ minHeight: "100px" }}
           >
             <h5 className="card-title">TOTAL RESPONDED</h5>
-            <p className="position-absolute bottom-0 end-0 m-2 fs-5">0</p>
+            <p className="position-absolute bottom-0 end-0 m-2 fs-5">
+              {state.totalResponded}
+            </p>
           </div>
         </div>
       </div>
@@ -223,7 +243,9 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
             style={{ minHeight: "100px" }}
           >
             <h5 className="card-title">NO. OF RESPONDED POOR</h5>
-            <p className="position-absolute bottom-0 end-0 m-2 fs-5">0</p>
+            <p className="position-absolute bottom-0 end-0 m-2 fs-5">
+              {state.totalPoor}
+            </p>
           </div>
         </div>
         <div className="col-sm-2 g-2 mx-auto">
@@ -232,7 +254,9 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
             style={{ minHeight: "100px" }}
           >
             <h5 className="card-title">NO. OF RESPONDED MEDIOCRE</h5>
-            <p className="position-absolute bottom-0 end-0 m-2 fs-5">0</p>
+            <p className="position-absolute bottom-0 end-0 m-2 fs-5">
+              {state.totalMediocre}
+            </p>
           </div>
         </div>
         <div className="col-sm-2 g-2 mx-auto">
@@ -241,7 +265,9 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
             style={{ minHeight: "100px" }}
           >
             <h5 className="card-title">NO. OF RESPONDED SATISFACTORY</h5>
-            <p className="position-absolute bottom-0 end-0 m-2 fs-5">0</p>
+            <p className="position-absolute bottom-0 end-0 m-2 fs-5">
+              {state.totalSatisfactory}
+            </p>
           </div>
         </div>
         <div className="col-sm-2 g-2 mx-auto">
@@ -250,7 +276,9 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
             style={{ minHeight: "100px" }}
           >
             <h5 className="card-title">NO. OF RESPONDED GOOD</h5>
-            <p className="position-absolute bottom-0 end-0 m-2 fs-5">0</p>
+            <p className="position-absolute bottom-0 end-0 m-2 fs-5">
+              {state.totalGood}
+            </p>
           </div>
         </div>
         <div className="col-sm-2 g-2 mx-auto">
@@ -259,7 +287,9 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
             style={{ minHeight: "100px" }}
           >
             <h5 className="card-title">NO. OF RESPONDED EXECELLENT</h5>
-            <p className="position-absolute bottom-0 end-0 m-2 fs-5">0</p>
+            <p className="position-absolute bottom-0 end-0 m-2 fs-5">
+              {state.totalExcellent}
+            </p>
           </div>
         </div>
       </div>
