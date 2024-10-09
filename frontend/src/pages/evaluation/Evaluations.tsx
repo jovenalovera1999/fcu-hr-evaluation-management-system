@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import axios from "axios";
 import Spinner from "../../components/Spinner";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import ToastMessage from "../../components/ToastMessage";
-
-interface EvaluationsProps {
-  baseUrl: string;
-}
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
 interface Employees {
   evaluation_id: number;
@@ -19,7 +16,7 @@ interface Employees {
   position: string;
 }
 
-const Evaluations = ({ baseUrl }: EvaluationsProps) => {
+const Evaluations = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
@@ -42,10 +39,8 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
     studentId: string | number,
     employeeId: string | number
   ) => {
-    await axios
-      .get(`${baseUrl}/evaluation/index/${studentId}/${employeeId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get(`/evaluation/index/${studentId}/${employeeId}`)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -58,18 +53,7 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
@@ -124,15 +108,8 @@ const Evaluations = ({ baseUrl }: EvaluationsProps) => {
   useEffect(() => {
     document.title = "EMPLOYEES EVALUATION | FCU HR EMS";
 
-    if ((!token && !user) || (!token && !parsedUser)) {
-      navigate("/", {
-        state: {
-          toastMessage:
-            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-          toastMessageSuccess: false,
-          toastMessageVisible: true,
-        },
-      });
+    if (!token || !user || !parsedUser) {
+      errorHandler(401);
     } else {
       if (parsedUser.is_student) {
         handleLoadEmployees(parsedUser.student_id, 0);

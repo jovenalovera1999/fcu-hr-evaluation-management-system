@@ -1,13 +1,9 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import axios from "axios";
 import Spinner from "../../components/Spinner";
 import { useNavigate, useParams } from "react-router-dom";
-
-interface ResponseProps {
-  baseUrl: string;
-  csrfToken: string | null | undefined;
-}
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
 interface Categories {
   category_id: number;
@@ -23,7 +19,7 @@ interface Errors {
   [key: number]: string[];
 }
 
-const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
+const Response = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
@@ -101,13 +97,8 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
       return;
     }
 
-    await axios
-      .put(`${baseUrl}/response/update/${evaluation_id}`, state, {
-        headers: {
-          "X-CSRF-TOKEN": csrfToken,
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    axiosInstance
+      .put(`/response/update/${evaluation_id}`, state)
       .then((res) => {
         if (res.data.status === 200) {
           navigate("/evaluation/list", {
@@ -122,32 +113,21 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else if (error.response && error.response.status === 422) {
+        if (error.response && error.response.status === 422) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
             loadingSubmitEvaluation: false,
           }));
         } else {
-          console.error("Unexpected server error: ", error);
+          errorHandler(error);
         }
       });
   };
 
   const handleLoadCategories = async () => {
-    await axios
-      .get(`${baseUrl}/response/index`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("/response/index")
       .then((res) => {
         if (res.data.status === 200) {
           res.data.categories.map((category: Categories) => {
@@ -169,26 +149,13 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
   const handleLoadQuestionsByCategories = async (categoryId: number) => {
-    await axios
-      .get(`${baseUrl}/response/index/${categoryId}}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get(`/response/index/${categoryId}}`)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -204,26 +171,13 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
   const handleFetchEvaluation = async () => {
-    axios
-      .get(`${baseUrl}/response/show/${evaluation_id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get(`/response/show/${evaluation_id}`)
       .then((res) => {
         if (res.data.status) {
           setState((prevState) => ({
@@ -241,18 +195,7 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
@@ -277,15 +220,8 @@ const Response = ({ baseUrl, csrfToken }: ResponseProps) => {
   useEffect(() => {
     document.title = "RESPONSE | FCU HR EMS";
 
-    if ((!token && !user) || (!token && !parsedUser)) {
-      navigate("/", {
-        state: {
-          toastMessage:
-            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-          toastMessageSuccess: false,
-          toastMessageVisible: true,
-        },
-      });
+    if (!token || !user || !parsedUser) {
+      errorHandler(401);
     } else {
       handleLoadCategories();
       handleFetchEvaluation();

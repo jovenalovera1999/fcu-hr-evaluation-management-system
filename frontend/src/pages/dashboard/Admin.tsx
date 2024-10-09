@@ -13,22 +13,15 @@ import {
   ChartData,
 } from "chart.js";
 import { Bar, Pie } from "react-chartjs-2";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import Spinner from "../../components/Spinner";
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
-interface AdminProps {
-  baseUrl: string;
-  csrfToken: string | null | undefined;
-}
-
-const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
+const Admin = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
-
-  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingStatistics: true,
@@ -44,10 +37,8 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
   });
 
   const handleLoadStatistics = async () => {
-    await axios
-      .get(`${baseUrl}/dashboard/admin/statistics`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("/dashboard/admin/statistics")
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -68,18 +59,7 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
@@ -161,15 +141,14 @@ const Admin = ({ baseUrl, csrfToken }: AdminProps) => {
   useEffect(() => {
     document.title = "ADMIN DASHBOARD | FCU HR EMS";
 
-    if (!token || !user || !parsedUser || parsedUser.position !== "ADMIN") {
-      navigate("/", {
-        state: {
-          toastMessage:
-            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-          toastMessageSuccess: false,
-          toastMessageVisible: true,
-        },
-      });
+    if (
+      !token ||
+      !user ||
+      !parsedUser ||
+      parsedUser.position !== "ADMIN" ||
+      !parsedUser.position
+    ) {
+      errorHandler(401);
     } else {
       handleLoadStatistics();
     }

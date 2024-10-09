@@ -14,73 +14,30 @@ import SendAnEvaluationToEmployees from "./pages/evaluation/SendAnEvaluationToEm
 import Admin from "./pages/dashboard/Admin";
 
 const App = () => {
-  const baseUrl = "http://127.0.0.1:8000/api";
-
-  const csrfToken = document
-    .querySelector("meta[name='csrf-token']")
-    ?.getAttribute("content");
-
   return (
     <Router>
       <Routes>
-        <Route
-          path="/dashboard/admin"
-          element={<Admin baseUrl={baseUrl} csrfToken={csrfToken} />}
-        />
-        <Route
-          path="/"
-          element={<Login baseUrl={baseUrl} csrfToken={csrfToken} />}
-        />
-        <Route
-          path="/logout"
-          element={<Logout baseUrl={baseUrl} csrfToken={csrfToken} />}
-        />
-        <Route
-          path="/employee/list"
-          element={<Employees baseUrl={baseUrl} />}
-        />
-        <Route
-          path="/employee/add"
-          element={<AddEmployee baseUrl={baseUrl} csrfToken={csrfToken} />}
-        />
-        <Route path="/student/list" element={<Students baseUrl={baseUrl} />} />
-        <Route
-          path="/student/add"
-          element={<AddStudent baseUrl={baseUrl} csrfToken={csrfToken} />}
-        />
-        <Route
-          path="/question/list"
-          element={<Questions baseUrl={baseUrl} />}
-        />
-        <Route
-          path="/question/add"
-          element={<AddQuestion baseUrl={baseUrl} csrfToken={csrfToken} />}
-        />
+        <Route path="/dashboard/admin" element={<Admin />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/employee/list" element={<Employees />} />
+        <Route path="/employee/add" element={<AddEmployee />} />
+        <Route path="/student/list" element={<Students />} />
+        <Route path="/student/add" element={<AddStudent />} />
+        <Route path="/question/list" element={<Questions />} />
+        <Route path="/question/add" element={<AddQuestion />} />
         <Route
           path="/evaluation/to/students"
-          element={
-            <SendAnEvaluationToStudents
-              baseUrl={baseUrl}
-              csrfToken={csrfToken}
-            />
-          }
+          element={<SendAnEvaluationToStudents />}
         />
         <Route
           path="/evaluation/to/employees"
-          element={
-            <SendAnEvaluationToEmployees
-              baseUrl={baseUrl}
-              csrfToken={csrfToken}
-            />
-          }
+          element={<SendAnEvaluationToEmployees />}
         />
-        <Route
-          path="/evaluation/list"
-          element={<Evaluations baseUrl={baseUrl} />}
-        />
+        <Route path="/evaluation/list" element={<Evaluations />} />
         <Route
           path="/evaluation/response/:evaluation_id"
-          element={<Response baseUrl={baseUrl} csrfToken={csrfToken} />}
+          element={<Response />}
         />
       </Routes>
     </Router>

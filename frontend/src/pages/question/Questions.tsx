@@ -1,12 +1,8 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import Spinner from "../../components/Spinner";
-import { useNavigate } from "react-router-dom";
-
-interface QuestionsProps {
-  baseUrl: string;
-}
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
 interface Questions {
   question_id: number;
@@ -14,13 +10,11 @@ interface Questions {
   question: string;
 }
 
-const Questions = ({ baseUrl }: QuestionsProps) => {
+const Questions = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
-
-  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingQuestions: true,
@@ -28,10 +22,8 @@ const Questions = ({ baseUrl }: QuestionsProps) => {
   });
 
   const handleLoadQuestions = async () => {
-    await axios
-      .get(`${baseUrl}/question/index`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("/question/index")
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -44,18 +36,7 @@ const Questions = ({ baseUrl }: QuestionsProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
@@ -63,19 +44,13 @@ const Questions = ({ baseUrl }: QuestionsProps) => {
     document.title = "LIST OF QUESTIONS | FCU HR EMS";
 
     if (
-      (!token && !user) ||
-      (!token && !parsedUser) ||
+      !token ||
+      !user ||
+      !parsedUser ||
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      navigate("/", {
-        state: {
-          toastMessage:
-            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-          toastMessageSuccess: false,
-          toastMessageVisible: true,
-        },
-      });
+      errorHandler(401);
     } else {
       handleLoadQuestions();
     }

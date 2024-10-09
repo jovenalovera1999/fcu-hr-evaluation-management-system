@@ -5,17 +5,12 @@ import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
 import CompanyLogo from "../../assets/img/company_logo.png";
 
-interface LoginProps {
-  baseUrl: string;
-  csrfToken: string | null | undefined;
-}
-
 interface Errors {
   username?: string[];
   password?: string[];
 }
 
-const Login = ({ baseUrl, csrfToken }: LoginProps) => {
+const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -43,9 +38,15 @@ const Login = ({ baseUrl, csrfToken }: LoginProps) => {
 
     setLoadingLogin(true);
 
+    // const csrfToken = document
+    //   .querySelector("meta[name='csrf-token']")
+    //   ?.getAttribute("content");
+
     await axios
-      .post(`${baseUrl}/user/process/login`, state, {
-        headers: { "X-CSRF-TOKEN": csrfToken },
+      .post("http://127.0.0.1:8000/api/user/process/login", state, {
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
       .then((res) => {
         if (res.data.status === 200) {

@@ -1,12 +1,8 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import axios, { isAxiosError } from "axios";
 import Spinner from "../../components/Spinner";
-import { useNavigate } from "react-router-dom";
-
-interface StudentsProps {
-  baseUrl: string;
-}
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
 interface Departments {
   department_id: number;
@@ -24,13 +20,11 @@ interface Students {
   year_level: number;
 }
 
-const Students = ({ baseUrl }: StudentsProps) => {
+const Students = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
-
-  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingDepartments: true,
@@ -64,10 +58,8 @@ const Students = ({ baseUrl }: StudentsProps) => {
   };
 
   const handleLoadDepartments = async () => {
-    await axios
-      .get(`${baseUrl}/department/index`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("/department/index")
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -80,18 +72,7 @@ const Students = ({ baseUrl }: StudentsProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
@@ -99,12 +80,9 @@ const Students = ({ baseUrl }: StudentsProps) => {
     yearLevel: number,
     departmentId: number
   ) => {
-    await axios
+    axiosInstance
       .get(
-        `${baseUrl}/student/index/by/year_level/and/department/${yearLevel}/${departmentId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        `/student/index/by/year_level/and/department/${yearLevel}/${departmentId}`
       )
       .then((res) => {
         if (res.data.status === 200) {
@@ -118,18 +96,7 @@ const Students = ({ baseUrl }: StudentsProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
@@ -171,19 +138,13 @@ const Students = ({ baseUrl }: StudentsProps) => {
     document.title = "LIST OF STUDENTS | FCU HR EMS";
 
     if (
-      (!token && !user) ||
-      (!token && !parsedUser) ||
+      !token ||
+      !user ||
+      !parsedUser ||
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      navigate("/", {
-        state: {
-          toastMessage:
-            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-          toastMessageSuccess: false,
-          toastMessageVisible: true,
-        },
-      });
+      errorHandler(401);
     } else {
       handleLoadDepartments();
     }

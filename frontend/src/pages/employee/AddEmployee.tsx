@@ -1,14 +1,9 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import axios from "axios";
 import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
-import { useNavigate } from "react-router-dom";
-
-interface AddEmployeeProps {
-  baseUrl: string;
-  csrfToken: string | null | undefined;
-}
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
 interface Positions {
   position_id: number;
@@ -32,13 +27,11 @@ interface Errors {
   password_confirmation?: string[];
 }
 
-const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
+const AddEmployee = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
-
-  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingSave: false,
@@ -79,13 +72,8 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
       loadingSave: true,
     }));
 
-    await axios
-      .post(`${baseUrl}/employee/store`, state, {
-        headers: {
-          "X-CSRF-TOKEN": csrfToken,
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    axiosInstance
+      .post("/employee/store", state)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -110,23 +98,14 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else if (error.response && error.response.data.errors) {
+        if (error.response && error.response.status === 422) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
             loadingSave: false,
           }));
         } else {
-          console.error("Unexpected server error: ", error);
+          errorHandler(error);
         }
       });
   };
@@ -141,10 +120,8 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
   };
 
   const handleLoadPositions = async () => {
-    await axios
-      .get(`${baseUrl}/position/index`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("/position/index")
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -157,26 +134,13 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
   const handleLoadDepartments = async () => {
-    await axios
-      .get(`${baseUrl}/department/index`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("/department/index")
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -189,18 +153,7 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
@@ -208,19 +161,13 @@ const AddEmployee = ({ baseUrl, csrfToken }: AddEmployeeProps) => {
     document.title = "ADD EMPLOYEE | FCU HR EMS";
 
     if (
-      (!token && !user) ||
-      (!token && !parsedUser) ||
+      !token ||
+      !user ||
+      !parsedUser ||
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      navigate("/", {
-        state: {
-          toastMessage:
-            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-          toastMessageSuccess: false,
-          toastMessageVisible: true,
-        },
-      });
+      errorHandler(401);
     } else {
       handleLoadPositions();
       handleLoadDepartments();

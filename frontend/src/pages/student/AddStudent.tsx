@@ -1,14 +1,9 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import axios from "axios";
 import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
-import { useNavigate } from "react-router-dom";
-
-interface AddStudentProps {
-  baseUrl: string;
-  csrfToken: string | null | undefined;
-}
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
 interface Departments {
   department_id: number;
@@ -33,13 +28,11 @@ interface Errors {
   password_confirmation?: string[];
 }
 
-const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
+const AddStudent = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
-
-  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingSave: false,
@@ -90,13 +83,8 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
       loadingSave: true,
     }));
 
-    await axios
-      .post(`${baseUrl}/student/store`, state, {
-        headers: {
-          "X-CSRF-TOKEN": csrfToken,
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    axiosInstance
+      .post("/student/store", state)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -122,23 +110,14 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else if (error.response && error.response.data.errors) {
+        if (error.response && error.response.status === 422) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
             loadingSave: false,
           }));
         } else {
-          console.error("Unexpected server error: ", error);
+          errorHandler(error);
         }
       });
   };
@@ -153,10 +132,8 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
   };
 
   const handleLoadDepartments = async () => {
-    await axios
-      .get(`${baseUrl}/department/index`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("/department/index")
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -169,26 +146,13 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
   const handleLoadCourses = async (departmentId: number) => {
-    await axios
-      .get(`${baseUrl}/course/index/${departmentId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get(`/course/index/${departmentId}`)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -201,18 +165,7 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
@@ -220,19 +173,13 @@ const AddStudent = ({ baseUrl, csrfToken }: AddStudentProps) => {
     document.title = "ADD STUDENT | FCU HR EMS";
 
     if (
-      (!token && !user) ||
-      (!token && !parsedUser) ||
+      !token ||
+      !user ||
+      !parsedUser ||
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      navigate("/", {
-        state: {
-          toastMessage:
-            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-          toastMessageSuccess: false,
-          toastMessageVisible: true,
-        },
-      });
+      errorHandler(401);
     } else {
       handleLoadDepartments();
     }

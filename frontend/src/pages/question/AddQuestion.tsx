@@ -1,14 +1,9 @@
-import axios from "axios";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
-import { useNavigate } from "react-router-dom";
-
-interface AddQuestionProps {
-  baseUrl: string;
-  csrfToken: string | null | undefined;
-}
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
 interface Categories {
   category_id: number;
@@ -20,9 +15,7 @@ interface Errors {
   question?: string[];
 }
 
-const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
-  const navigate = useNavigate();
-
+const AddQuestion = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
@@ -58,13 +51,8 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
       loadingSave: true,
     }));
 
-    await axios
-      .post(`${baseUrl}/question/store`, state, {
-        headers: {
-          "X-CSRF-TOKEN": csrfToken,
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    axiosInstance
+      .post("/question/store", state)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -82,23 +70,14 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else if (error.response && error.response.data.errors) {
+        if (error.response && error.response.status === 422) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
             loadingSave: false,
           }));
         } else {
-          console.error("Unexpected server error: ", error);
+          errorHandler(error);
         }
       });
   };
@@ -113,10 +92,8 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
   };
 
   const handleLoadCategories = async () => {
-    await axios
-      .get(`${baseUrl}/category/index`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("/category/index")
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -129,23 +106,7 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else if (error.response && error.response.data.errors) {
-          setState((prevState) => ({
-            ...prevState,
-            errors: error.response.data.errors,
-          }));
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
@@ -153,19 +114,13 @@ const AddQuestion = ({ baseUrl, csrfToken }: AddQuestionProps) => {
     document.title = "ADD QUESTION | FCU HR EMS";
 
     if (
-      (!token && !user) ||
-      (!token && !parsedUser) ||
+      !token ||
+      !user ||
+      !parsedUser ||
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      navigate("/", {
-        state: {
-          toastMessage:
-            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-          toastMessageSuccess: false,
-          toastMessageVisible: true,
-        },
-      });
+      errorHandler(401);
     } else {
       handleLoadCategories();
     }

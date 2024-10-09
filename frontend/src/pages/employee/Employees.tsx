@@ -1,12 +1,8 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import axios from "axios";
 import Spinner from "../../components/Spinner";
-import { useNavigate } from "react-router-dom";
-
-interface EmployeesProps {
-  baseUrl: string;
-}
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
 interface Departments {
   department_id: number;
@@ -28,13 +24,11 @@ interface Employees {
   department: string;
 }
 
-const Employees = ({ baseUrl }: EmployeesProps) => {
+const Employees = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
-
-  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingDepartments: true,
@@ -64,10 +58,8 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
   };
 
   const handleLoadDepartments = async () => {
-    await axios
-      .get(`${baseUrl}/department/index`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("/department/index")
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -80,15 +72,13 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        errorHandler(error);
       });
   };
 
   const handleLoadEmployees = async (departmentId: number) => {
-    await axios
-      .get(`${baseUrl}/employee/index/by/department/${departmentId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get(`/employee/index/by/department/${departmentId}`)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -101,18 +91,7 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
@@ -138,19 +117,13 @@ const Employees = ({ baseUrl }: EmployeesProps) => {
     document.title = "LIST OF EMPLOYEES | FCU HR EMS";
 
     if (
-      (!token && !user) ||
-      (!token && !parsedUser) ||
+      !token ||
+      !user ||
+      !parsedUser ||
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      navigate("/", {
-        state: {
-          toastMessage:
-            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-          toastMessageSuccess: false,
-          toastMessageVisible: true,
-        },
-      });
+      errorHandler(401);
     } else {
       handleLoadDepartments();
     }

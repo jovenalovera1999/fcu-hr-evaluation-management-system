@@ -1,35 +1,26 @@
 import { FormEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../components/Spinner";
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
-interface LogoutProps {
-  baseUrl: string;
-  csrfToken: string | null | undefined;
-}
-
-const Logout = ({ baseUrl, csrfToken }: LogoutProps) => {
+const Logout = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
 
-  const [loadingLogout, setLoadingLogout] = useState(true);
+  const [loadingLogout, setLoadingLogout] = useState(false);
 
   const handleLogout = async (e: FormEvent) => {
     e.preventDefault();
 
     setLoadingLogout(true);
 
-    await axios
-      .post(`${baseUrl}/user/process/logout`, parsedUser, {
-        headers: {
-          "X-CSRF-TOKEN": csrfToken,
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    axiosInstance
+      .post("/user/process/logout", parsedUser)
       .then((res) => {
         if (res.data.status === 200) {
           localStorage.clear();
@@ -45,13 +36,16 @@ const Logout = ({ baseUrl, csrfToken }: LogoutProps) => {
         }
       })
       .catch((error) => {
-        console.error("Unexpected server error: ", error);
+        errorHandler(error);
       });
   };
 
   useEffect(() => {
     document.title = "LOGOUT | FCU HR EMS";
-    setLoadingLogout(false);
+
+    if (!token || !user || !parsedUser) {
+      errorHandler(401);
+    }
   }, []);
 
   const content = (

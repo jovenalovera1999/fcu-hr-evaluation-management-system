@@ -1,14 +1,9 @@
-import axios from "axios";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import ToastMessage from "../../components/ToastMessage";
 import Layout from "../layout/Layout";
 import Spinner from "../../components/Spinner";
-
-interface SendAnEvaluationToEmployeesProps {
-  baseUrl: string;
-  csrfToken: string | null | undefined;
-}
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -35,16 +30,11 @@ interface Errors {
   selectedEmployees?: string[];
 }
 
-const SendAnEvaluationToEmployees = ({
-  baseUrl,
-  csrfToken,
-}: SendAnEvaluationToEmployeesProps) => {
+const SendAnEvaluationToEmployees = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
-
-  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingSubmit: false,
@@ -121,13 +111,8 @@ const SendAnEvaluationToEmployees = ({
       loadingSubmit: true,
     }));
 
-    await axios
-      .post(`${baseUrl}/evaluation/store/evaluation/for/employees`, state, {
-        headers: {
-          "X-CSRF-TOKEN": csrfToken,
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    axiosInstance
+      .post("/evaluation/store/evaluation/for/employees", state)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -150,23 +135,14 @@ const SendAnEvaluationToEmployees = ({
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else if (error.response && error.response.data.errors) {
+        if (error.response && error.response.status === 422) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
             loadingSubmit: false,
           }));
         } else {
-          console.error("Unexpected server error: ", error);
+          errorHandler(error);
         }
       });
   };
@@ -181,10 +157,8 @@ const SendAnEvaluationToEmployees = ({
   };
 
   const handleLoadAcademicYears = async () => {
-    await axios
-      .get(`${baseUrl}/academic_year/index`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("/academic_year/index")
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -197,26 +171,13 @@ const SendAnEvaluationToEmployees = ({
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
   const handleLoadDepartments = async () => {
-    await axios
-      .get(`${baseUrl}/department/index`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get("/department/index")
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -229,26 +190,13 @@ const SendAnEvaluationToEmployees = ({
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
   const handleLoadEmployees = async (departmentId: number) => {
-    await axios
-      .get(`${baseUrl}/employee/index/by/department/${departmentId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    axiosInstance
+      .get(`/employee/index/by/department/${departmentId}`)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -261,18 +209,7 @@ const SendAnEvaluationToEmployees = ({
         }
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          navigate("/", {
-            state: {
-              toastMessage:
-                "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-              toastMessageSuccess: false,
-              toastMessageVisible: true,
-            },
-          });
-        } else {
-          console.error("Unexpected server error: ", error);
-        }
+        errorHandler(error);
       });
   };
 
@@ -299,18 +236,12 @@ const SendAnEvaluationToEmployees = ({
 
     if (
       !token ||
+      !user ||
       !parsedUser ||
       !parsedUser.position ||
       parsedUser.position !== "ADMIN"
     ) {
-      navigate("/", {
-        state: {
-          toastMessage:
-            "UNAUTHORIZED! KINDLY LOGGED IN YOUR AUTHORIZED ACCOUNT!",
-          toastMessageSuccess: false,
-          toastMessageVisible: true,
-        },
-      });
+      errorHandler(401);
     } else {
       handleLoadAcademicYears();
       handleLoadDepartments();
