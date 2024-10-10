@@ -15,7 +15,13 @@ interface Courses {
   course: string;
 }
 
+interface Sections {
+  section_id: number;
+  section: string;
+}
+
 interface Errors {
+  student_no?: string[];
   first_name?: string[];
   middle_name?: string[];
   last_name?: string[];
@@ -23,7 +29,7 @@ interface Errors {
   department?: string[];
   course?: string[];
   year_level?: string[];
-  username?: string[];
+  section?: string[];
   password?: string[];
   password_confirmation?: string[];
 }
@@ -38,8 +44,11 @@ const AddStudent = () => {
     loadingSave: false,
     loadingDepartments: true,
     loadingCourses: false,
+    loadingSections: false,
     departments: [] as Departments[],
     courses: [] as Courses[],
+    sections: [] as Sections[],
+    student_no: "",
     first_name: "",
     middle_name: "",
     last_name: "",
@@ -47,7 +56,8 @@ const AddStudent = () => {
     department: "",
     course: "",
     year_level: "",
-    username: "",
+    section: "",
+    irregular: false,
     password: "",
     password_confirmation: "",
     errors: {} as Errors,
@@ -73,6 +83,15 @@ const AddStudent = () => {
 
       handleLoadCourses(parseInt(value));
     }
+
+    if (name === "course") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingSections: true,
+      }));
+
+      handleLoadSections(parseInt(value));
+    }
   };
 
   const handleSaveStudent = async (e: FormEvent) => {
@@ -89,6 +108,9 @@ const AddStudent = () => {
         if (res.data.status === 200) {
           setState((prevState) => ({
             ...prevState,
+            courses: [] as Courses[],
+            sections: [] as Sections[],
+            student_no: "",
             first_name: "",
             middle_name: "",
             last_name: "",
@@ -96,7 +118,7 @@ const AddStudent = () => {
             department: "",
             course: "",
             year_level: "",
-            username: "",
+            section: "",
             password: "",
             password_confirmation: "",
             errors: {} as Errors,
@@ -169,6 +191,25 @@ const AddStudent = () => {
       });
   };
 
+  const handleLoadSections = async (courseId: number) => {
+    axiosInstance
+      .get(`/section/load/sections/by/course/${courseId}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            sections: res.data.sections,
+            loadingSections: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
   useEffect(() => {
     document.title = "ADD STUDENT | FCU HR EMS";
 
@@ -196,6 +237,26 @@ const AddStudent = () => {
       <form onSubmit={handleSaveStudent}>
         <div className="mx-auto mt-2">
           <h4>ADD STUDENT</h4>
+          <div className="row">
+            <div className="col-sm-3">
+              <div className="mb-3">
+                <label htmlFor="student_no">STUDENT NO</label>
+                <input
+                  type="text"
+                  className={`form-control ${
+                    state.errors.student_no ? "is-invalid" : ""
+                  }`}
+                  name="student_no"
+                  id="student_no"
+                  value={state.student_no}
+                  onChange={handleInput}
+                />
+                {state.errors.student_no && (
+                  <p className="text-danger">{state.errors.student_no[0]}</p>
+                )}
+              </div>
+            </div>
+          </div>
           <div className="row">
             <div className="col-sm-3">
               <div className="mb-3">
@@ -271,7 +332,7 @@ const AddStudent = () => {
             </div>
           </div>
           <div className="row">
-            <div className="col-sm-4">
+            <div className="col-sm-3">
               <div className="mb-3">
                 <label htmlFor="department">DEPARTMENT</label>
                 <select
@@ -298,7 +359,7 @@ const AddStudent = () => {
                 )}
               </div>
             </div>
-            <div className="col-sm-4">
+            <div className="col-sm-3">
               <div className="mb-3">
                 <label htmlFor="course">COURSE</label>
                 <select
@@ -311,18 +372,20 @@ const AddStudent = () => {
                   onChange={handleInput}
                 >
                   <option value="">N/A</option>
-                  {state.courses.map((course) => (
-                    <option value={course.course_id} key={course.course_id}>
-                      {course.course}
-                    </option>
-                  ))}
+                  {state.loadingCourses
+                    ? "Loading..."
+                    : state.courses.map((course) => (
+                        <option value={course.course_id} key={course.course_id}>
+                          {course.course}
+                        </option>
+                      ))}
                 </select>
                 {state.errors.course && (
                   <p className="text-danger">{state.errors.course[0]}</p>
                 )}
               </div>
             </div>
-            <div className="col-sm-2">
+            <div className="col-sm-3">
               <div className="mb-3">
                 <label htmlFor="year_level">YEAR LEVEL</label>
                 <select
@@ -349,26 +412,56 @@ const AddStudent = () => {
                 )}
               </div>
             </div>
-          </div>
-          <div className="row mb-3">
             <div className="col-sm-3">
               <div className="mb-3">
-                <label htmlFor="username">USERNAME</label>
-                <input
-                  type="text"
-                  className={`form-control ${
-                    state.errors.username ? "is-invalid" : ""
-                  }`}
-                  name="username"
-                  id="username"
-                  value={state.username}
+                <label htmlFor="section">SECTION</label>
+                <select
+                  name="section"
+                  id="section"
+                  className="form-select"
+                  value={state.section}
                   onChange={handleInput}
-                />
-                {state.errors.username && (
-                  <p className="text-danger">{state.errors.username[0]}</p>
+                >
+                  <option value="">N/A</option>
+                  {state.loadingSections
+                    ? "Loading..."
+                    : state.sections.map((section) => (
+                        <option
+                          value={section.section_id}
+                          key={section.section_id}
+                        >
+                          {section.section}
+                        </option>
+                      ))}
+                </select>
+                {state.errors.section && (
+                  <p className="text-danger">{state.errors.section[0]}</p>
                 )}
               </div>
             </div>
+          </div>
+          <div className="row">
+            <hr />
+            <div className="mb-3">
+              <div className="col-sm-6">
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    name="irregular"
+                    id="irregular"
+                    value={1}
+                    onChange={handleInput}
+                  />
+                  <label className="form-check-label" htmlFor="irregular">
+                    IS STUDENT IRREGULAR? IF NOT, LEAVE IT.
+                  </label>
+                </div>
+              </div>
+            </div>
+            <hr />
+          </div>
+          <div className="row mb-3">
             <div className="col-sm-3">
               <div className="mb-3">
                 <label htmlFor="password">PASSWORD</label>
@@ -419,13 +512,7 @@ const AddStudent = () => {
   return (
     <Layout
       content={
-        state.loadingSave ||
-        (!state.loadingSave && state.loadingCourses) ||
-        (!state.loadingSave && state.loadingDepartments) ? (
-          <Spinner />
-        ) : (
-          content
-        )
+        state.loadingSave || state.loadingDepartments ? <Spinner /> : content
       }
     />
   );

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tbl_positions', function (Blueprint $table) {
             $table->id('position_id');
             $table->string('position', 55);
-            $table->tinyInteger('is_deleted')->default(0);
+            $table->tinyInteger('is_deleted')->default(false);
             $table->timestamps();
         });
     }

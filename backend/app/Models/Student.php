@@ -12,6 +12,7 @@ class Student extends Model
     protected $table = 'tbl_students';
     protected $primaryKey = 'student_id';
     protected $fillable = [
+        'student_no',
         'first_name',
         'middle_name',
         'last_name',
@@ -19,6 +20,8 @@ class Student extends Model
         'department_id',
         'course_id',
         'year_level',
+        'section_id',
+        'is_irregular',
         'is_deleted'
     ];
 }

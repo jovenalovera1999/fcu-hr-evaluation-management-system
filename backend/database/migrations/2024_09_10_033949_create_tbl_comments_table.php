@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('comment_id');
             $table->unsignedBigInteger('evaluation_id');
             $table->text('comment');
+            $table->tinyInteger('is_deleted')->default(false);
             $table->timestamps();
 
             $table->foreign('evaluation_id')

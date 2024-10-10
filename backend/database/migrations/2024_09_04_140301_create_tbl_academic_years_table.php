@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tbl_academic_years', function (Blueprint $table) {
             $table->id('academic_year_id');
             $table->string('academic_year');
-            $table->tinyInteger('is_deleted')->default(0);
+            $table->tinyInteger('is_deleted')->default(false);
             $table->timestamps();
         });
     }

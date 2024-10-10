@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('course_id');
             $table->unsignedBigInteger('department_id');
             $table->string('course');
-            $table->tinyInteger('is_deleted')->default(0);
+            $table->tinyInteger('is_deleted')->default(false);
             $table->timestamps();
 
             $table->foreign('department_id')

@@ -11,6 +11,7 @@ use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Position;
 use App\Models\Question;
+use App\Models\Section;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -66,6 +67,69 @@ class DatabaseSeeder extends Seeder
             ['department_id' => 7, 'course' => 'BSP']
         ]);
 
+        Section::factory()->createMany([
+            ['course_id' => 1, 'section' => 'A'],
+            ['course_id' => 1, 'section' => 'B'],
+            ['course_id' => 1, 'section' => 'C'],
+            ['course_id' => 1, 'section' => 'D'],
+            ['course_id' => 1, 'section' => 'E'],
+            ['course_id' => 2, 'section' => 'A'],
+            ['course_id' => 2, 'section' => 'B'],
+            ['course_id' => 2, 'section' => 'C'],
+            ['course_id' => 2, 'section' => 'D'],
+            ['course_id' => 2, 'section' => 'E'],
+            ['course_id' => 3, 'section' => 'A'],
+            ['course_id' => 3, 'section' => 'B'],
+            ['course_id' => 3, 'section' => 'C'],
+            ['course_id' => 3, 'section' => 'D'],
+            ['course_id' => 3, 'section' => 'E'],
+            ['course_id' => 4, 'section' => 'A'],
+            ['course_id' => 4, 'section' => 'B'],
+            ['course_id' => 4, 'section' => 'C'],
+            ['course_id' => 4, 'section' => 'D'],
+            ['course_id' => 4, 'section' => 'E'],
+            ['course_id' => 5, 'section' => 'A'],
+            ['course_id' => 5, 'section' => 'B'],
+            ['course_id' => 5, 'section' => 'C'],
+            ['course_id' => 5, 'section' => 'D'],
+            ['course_id' => 5, 'section' => 'E'],
+            ['course_id' => 6, 'section' => 'A'],
+            ['course_id' => 6, 'section' => 'B'],
+            ['course_id' => 6, 'section' => 'C'],
+            ['course_id' => 6, 'section' => 'D'],
+            ['course_id' => 6, 'section' => 'E'],
+            ['course_id' => 7, 'section' => 'A'],
+            ['course_id' => 7, 'section' => 'B'],
+            ['course_id' => 7, 'section' => 'C'],
+            ['course_id' => 7, 'section' => 'D'],
+            ['course_id' => 7, 'section' => 'E'],
+            ['course_id' => 8, 'section' => 'A'],
+            ['course_id' => 8, 'section' => 'B'],
+            ['course_id' => 8, 'section' => 'C'],
+            ['course_id' => 8, 'section' => 'D'],
+            ['course_id' => 8, 'section' => 'E'],
+            ['course_id' => 9, 'section' => 'A'],
+            ['course_id' => 9, 'section' => 'B'],
+            ['course_id' => 9, 'section' => 'C'],
+            ['course_id' => 9, 'section' => 'D'],
+            ['course_id' => 9, 'section' => 'E'],
+            ['course_id' => 10, 'section' => 'A'],
+            ['course_id' => 10, 'section' => 'B'],
+            ['course_id' => 10, 'section' => 'C'],
+            ['course_id' => 10, 'section' => 'D'],
+            ['course_id' => 10, 'section' => 'E'],
+            ['course_id' => 11, 'section' => 'A'],
+            ['course_id' => 11, 'section' => 'B'],
+            ['course_id' => 11, 'section' => 'C'],
+            ['course_id' => 11, 'section' => 'D'],
+            ['course_id' => 11, 'section' => 'E'],
+            ['course_id' => 12, 'section' => 'A'],
+            ['course_id' => 12, 'section' => 'B'],
+            ['course_id' => 12, 'section' => 'C'],
+            ['course_id' => 12, 'section' => 'D'],
+            ['course_id' => 12, 'section' => 'E'],
+        ]);
+
         Category::factory()->createMany([
             ['category' => 'TEACHING EFFECTIVENESS'],
             ['category' => 'COMMUNICATION SKILLS'],
@@ -97,6 +161,24 @@ class DatabaseSeeder extends Seeder
             ['category_id' => 6, 'question' => strtoupper('How effectively does the teacher adhere to the course syllabus and schedule?')]
         ]);
 
+        // Employee::factory()->create([
+        //     'first_name' => 'ADMIN',
+        //     'middle_name' => 'ADMIN',
+        //     'last_name' => 'ADMIN',
+        //     'suffix_name' => 'ADMIN',
+        //     'position_id' => 1,
+        //     'department_id' => 1
+        // ]);
+
+        // $user = User::factory()->create([
+        //     'employee_id' => 1,
+        //     'student_id' => null,
+        //     'username' => null,
+        //     'password' => bcrypt('ADMIN')
+        // ]);
+
+        // $user->createToken('AdminToken')->plainTextToken;
+
         Employee::factory(50)->create()->each(function ($employee) {
             $user = User::create([
                 'employee_id' => $employee->employee_id,
@@ -110,7 +192,7 @@ class DatabaseSeeder extends Seeder
         Student::factory(50)->create()->each(function ($student) {
             $user = User::create([
                 'student_id' => $student->student_id,
-                'username' => $student->first_name,
+                'username' => $student->student_no,
                 'password' => bcrypt($student->last_name),
                 'is_student' => 1
             ]);

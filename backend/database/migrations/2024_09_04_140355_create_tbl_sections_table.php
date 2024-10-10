@@ -11,11 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tbl_departments', function (Blueprint $table) {
-            $table->id('department_id');
-            $table->string('department', 55);
+        Schema::create('tbl_sections', function (Blueprint $table) {
+            $table->id('section_id');
+            $table->unsignedBigInteger('course_id');
+            $table->string('section');
             $table->tinyInteger('is_deleted')->default(false);
             $table->timestamps();
+
+            $table->foreign('course_id')
+                ->references('course_id')
+                ->on('tbl_courses')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 
@@ -25,7 +32,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::disableForeignKeyConstraints();
-        Schema::dropIfExists('tbl_departments');
+        Schema::dropIfExists('tbl_sections');
         Schema::enableForeignKeyConstraints();
     }
 };

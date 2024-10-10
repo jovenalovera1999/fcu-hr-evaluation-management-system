@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id('response_id');
             $table->unsignedBigInteger('evaluation_id');
             $table->unsignedBigInteger('question_id');
-            $table->tinyInteger('poor')->default(0);
-            $table->tinyInteger('mediocre')->default(0);
-            $table->tinyInteger('satisfactory')->default(0);
-            $table->tinyInteger('good')->default(0);
-            $table->tinyInteger('excellent')->default(0);
-            $table->tinyInteger('is_deleted')->default(0);
+            $table->tinyInteger('poor')->default(false);
+            $table->tinyInteger('mediocre')->default(false);
+            $table->tinyInteger('satisfactory')->default(false);
+            $table->tinyInteger('good')->default(false);
+            $table->tinyInteger('excellent')->default(false);
+            $table->tinyInteger('is_deleted')->default(false);
             $table->timestamps();
 
             $table->foreign('evaluation_id')

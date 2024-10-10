@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tbl_categories', function (Blueprint $table) {
             $table->id('category_id');
             $table->string('category', 55);
-            $table->tinyInteger('is_deleted')->default(0);
+            $table->tinyInteger('is_deleted')->default(false);
             $table->timestamps();
         });
     }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('suffix_name', 55)->nullable();
             $table->unsignedBigInteger('position_id');
             $table->unsignedBigInteger('department_id');
-            $table->tinyInteger('is_deleted')->default(0);
+            $table->tinyInteger('is_deleted')->default(false);
             $table->timestamps();
 
             $table->foreign('position_id')

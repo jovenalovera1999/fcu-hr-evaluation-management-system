@@ -55,6 +55,7 @@ class StudentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'student_no' => ['required'],
             'first_name' => ['required', 'max:55'],
             'middle_name' => ['nullable', 'max:55'],
             'last_name' => ['required', 'max:55'],
@@ -62,24 +63,28 @@ class StudentController extends Controller
             'department' => ['required'],
             'course' => ['required'],
             'year_level' => ['required', 'numeric'],
-            'username' => ['required', 'max:12'],
+            'section' => ['required'],
             'password' => ['required', 'max:15', 'confirmed'],
-            'password_confirmation' => ['required']
+            'password_confirmation' => ['required'],
+            'irregular' => ['nullable']
         ]);
 
         $student = Student::create([
+            'student_no' => strtoupper($validated['student_no']),
             'first_name' => strtoupper($validated['first_name']),
             'middle_name' => strtoupper($validated['middle_name']),
             'last_name' => strtoupper($validated['last_name']),
             'suffix_name' => strtoupper($validated['suffix_name']),
             'department_id' => $validated['department'],
             'course_id' => $validated['course'],
-            'year_level' => $validated['year_level']
+            'year_level' => $validated['year_level'],
+            'section_id' => $validated['section'],
+            'is_irregular' => ($validated['irregular']) ? true : false
         ]);
 
         $user = User::create([
             'student_id' => $student->student_id,
-            'username' => strtoupper($validated['username']),
+            'username' => strtoupper($validated['student_no']),
             'password' => bcrypt(strtoupper($validated['password'])),
             'is_student' => true
         ]);

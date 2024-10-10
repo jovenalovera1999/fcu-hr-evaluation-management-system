@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\EvaluationController;
 use App\Http\Controllers\Api\PositionController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\ResponseController;
+use App\Http\Controllers\Api\SectionController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -86,6 +87,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/index/{categoryId}', 'indexByCategories');
         Route::get('/show/{evaluationId}', 'show');
         Route::put('/update/{evaluationId}', 'update');
+    });
+
+    Route::controller(SectionController::class)->prefix('section')->group(function () {
+        Route::get('/load/sections/by/course/{courseId}', 'loadSectionsByCourse');
     });
 });
 

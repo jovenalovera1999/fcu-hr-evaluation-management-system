@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('question_id');
             $table->unsignedBigInteger('category_id');
             $table->text('question');
-            $table->tinyInteger('is_deleted')->default(0);
+            $table->tinyInteger('is_deleted')->default(false);
             $table->timestamps();
 
             $table->foreign('category_id')
