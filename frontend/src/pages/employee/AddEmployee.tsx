@@ -387,8 +387,8 @@ const AddEmployee = () => {
     <Layout
       content={
         state.loadingSave ||
-        (!state.loadingSave && state.loadingDepartments) ||
-        (!state.loadingSave && state.loadingPositions) ? (
+        state.loadingDepartments ||
+        state.loadingPositions ? (
           <Spinner />
         ) : (
           content

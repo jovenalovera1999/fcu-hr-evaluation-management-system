@@ -260,59 +260,63 @@ const SendAnEvaluationToEmployees = () => {
         <div className="mx-auto mt-2">
           <h4>SEND AN EVALUATION TO EMPLOYEES/TEACHERS/STAFFS</h4>
           <div className="row">
-            <div className="mb-3 col-sm-3">
-              <label htmlFor="academic_year">ACADEMIC YEAR</label>
-              <select
-                name="academic_year"
-                id="academic_year"
-                className={`form-select ${
-                  state.errors.academic_year ? "is-invalid" : ""
-                }`}
-                value={state.academic_year}
-                onChange={handleInput}
-              >
-                <option value="">N/A</option>
-                {state.academic_years.map((academic_year) => (
-                  <option
-                    value={academic_year.academic_year_id}
-                    key={academic_year.academic_year_id}
-                  >
-                    {academic_year.academic_year}
-                  </option>
-                ))}
-              </select>
-              {state.errors.academic_year && (
-                <p className="text-danger">{state.errors.academic_year[0]}</p>
-              )}
+            <div className="col-sm-3">
+              <div className="mb-3">
+                <label htmlFor="academic_year">ACADEMIC YEAR</label>
+                <select
+                  name="academic_year"
+                  id="academic_year"
+                  className={`form-select ${
+                    state.errors.academic_year ? "is-invalid" : ""
+                  }`}
+                  value={state.academic_year}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.academic_years.map((academic_year) => (
+                    <option
+                      value={academic_year.academic_year_id}
+                      key={academic_year.academic_year_id}
+                    >
+                      {academic_year.academic_year}
+                    </option>
+                  ))}
+                </select>
+                {state.errors.academic_year && (
+                  <p className="text-danger">{state.errors.academic_year[0]}</p>
+                )}
+              </div>
             </div>
-            <div className="mb-3 col-sm-3">
-              <label htmlFor="department">DEPARTMENT</label>
-              <select
-                name="department"
-                id="department"
-                className={`form-select ${
-                  state.errors.department ? "is-invalid" : ""
-                }`}
-                value={state.errors.department}
-                onChange={handleInput}
-              >
-                <option value="">N/A</option>
-                {state.departments.map((department) => (
-                  <option
-                    value={department.department_id}
-                    key={department.department_id}
-                  >
-                    {department.department}
-                  </option>
-                ))}
-              </select>
-              {state.errors.department && (
-                <p className="text-danger">{state.errors.department[0]}</p>
-              )}
+            <div className="col-sm-3">
+              <div className="mb-3">
+                <label htmlFor="department">DEPARTMENT</label>
+                <select
+                  name="department"
+                  id="department"
+                  className={`form-select ${
+                    state.errors.department ? "is-invalid" : ""
+                  }`}
+                  value={state.errors.department}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.departments.map((department) => (
+                    <option
+                      value={department.department_id}
+                      key={department.department_id}
+                    >
+                      {department.department}
+                    </option>
+                  ))}
+                </select>
+                {state.errors.department && (
+                  <p className="text-danger">{state.errors.department[0]}</p>
+                )}
+              </div>
             </div>
           </div>
           <hr />
-          <div className="row mt-4">
+          <div className="row mt-3">
             <div className="col-sm-4">
               <label htmlFor="employees_department">
                 EMPLOYEE'S/TEACHER'S/STAFF'S DEPARTMENT

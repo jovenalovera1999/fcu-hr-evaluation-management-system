@@ -250,6 +250,7 @@ const AddStudent = () => {
                   id="student_no"
                   value={state.student_no}
                   onChange={handleInput}
+                  autoFocus
                 />
                 {state.errors.student_no && (
                   <p className="text-danger">{state.errors.student_no[0]}</p>
@@ -372,13 +373,15 @@ const AddStudent = () => {
                   onChange={handleInput}
                 >
                   <option value="">N/A</option>
-                  {state.loadingCourses
-                    ? "Loading..."
-                    : state.courses.map((course) => (
-                        <option value={course.course_id} key={course.course_id}>
-                          {course.course}
-                        </option>
-                      ))}
+                  {state.loadingCourses ? (
+                    <option value="">Loading...</option>
+                  ) : (
+                    state.courses.map((course) => (
+                      <option value={course.course_id} key={course.course_id}>
+                        {course.course}
+                      </option>
+                    ))
+                  )}
                 </select>
                 {state.errors.course && (
                   <p className="text-danger">{state.errors.course[0]}</p>
@@ -418,21 +421,25 @@ const AddStudent = () => {
                 <select
                   name="section"
                   id="section"
-                  className="form-select"
+                  className={`form-select ${
+                    state.errors.section ? "is-invalid" : ""
+                  }`}
                   value={state.section}
                   onChange={handleInput}
                 >
                   <option value="">N/A</option>
-                  {state.loadingSections
-                    ? "Loading..."
-                    : state.sections.map((section) => (
-                        <option
-                          value={section.section_id}
-                          key={section.section_id}
-                        >
-                          {section.section}
-                        </option>
-                      ))}
+                  {state.loadingSections ? (
+                    <option value="">Loading...</option>
+                  ) : (
+                    state.sections.map((section) => (
+                      <option
+                        value={section.section_id}
+                        key={section.section_id}
+                      >
+                        {section.section}
+                      </option>
+                    ))
+                  )}
                 </select>
                 {state.errors.section && (
                   <p className="text-danger">{state.errors.section[0]}</p>
