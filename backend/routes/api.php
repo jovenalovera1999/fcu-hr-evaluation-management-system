@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\PositionController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\ResponseController;
 use App\Http\Controllers\Api\SectionController;
+use App\Http\Controllers\Api\SemesterController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -63,7 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(StudentController::class)->prefix('student')->group(function () {
         Route::get('/index', 'index');
-        Route::get('/index/by/year_level/and/department/{yearLevel}/{departmentId}', 'indexByYearLevelAndDepartment');
+        Route::get('/load/students/by/year_level/and/department/{yearLevel}/{departmentId}', 'loadStudentsByYearLevelAndDepartment');
         Route::post('/store', 'store');
     });
 
@@ -91,6 +92,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(SectionController::class)->prefix('section')->group(function () {
         Route::get('/load/sections/by/course/{courseId}', 'loadSectionsByCourse');
+    });
+
+    Route::controller(SemesterController::class)->prefix('semester')->group(function () {
+        Route::get('/load/semesters/by/academic_year/{academicYearId}', 'loadSemestersByAcademicYear');
     });
 });
 

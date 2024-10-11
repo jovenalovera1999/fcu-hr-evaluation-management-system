@@ -25,7 +25,8 @@ class StudentFactory extends Factory
             'department_id' => fake()->numberBetween(1, 7),
             'course_id' => fake()->numberBetween(1, 12),
             'section_id' => fake()->numberBetween(1, 60),
-            'year_level' => fake()->numberBetween(1, 4)
+            'year_level' => fake()->numberBetween(1, 4),
+            'is_irregular' => fake()->numberBetween(1, 2)
         ];
     }
 }

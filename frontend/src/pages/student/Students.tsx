@@ -11,12 +11,14 @@ interface Departments {
 
 interface Students {
   student_id: number;
+  student_no: string;
   first_name: string;
   middle_name: string;
   last_name: string;
   suffix_name: string;
   department: string;
   course: string;
+  section: string;
   year_level: number;
 }
 
@@ -82,7 +84,7 @@ const Students = () => {
   ) => {
     axiosInstance
       .get(
-        `/student/index/by/year_level/and/department/${yearLevel}/${departmentId}`
+        `/student/load/students/by/year_level/and/department/${yearLevel}/${departmentId}`
       )
       .then((res) => {
         if (res.data.status === 200) {
@@ -118,20 +120,12 @@ const Students = () => {
     return fullName;
   };
 
-  const handleYearLevelSuffix = (student: Students) => {
-    let yearLevelSuffix = "";
+  const handleDepartmentAndCourse = (student: Students) => {
+    return `${student.department}/${student.course}`;
+  };
 
-    if (student.year_level === 1) {
-      yearLevelSuffix = `${student.year_level}ST YEAR`;
-    } else if (student.year_level === 2) {
-      yearLevelSuffix = `${student.year_level}ND YEAR`;
-    } else if (student.year_level === 3) {
-      yearLevelSuffix = `${student.year_level}RD YEAR`;
-    } else {
-      yearLevelSuffix = `${student.year_level}TH YEAR`;
-    }
-
-    return yearLevelSuffix;
+  const handleYearLevelAndSection = (student: Students) => {
+    return `${student.year_level}${student.section}`;
   };
 
   useEffect(() => {
@@ -199,10 +193,10 @@ const Students = () => {
             <thead>
               <tr>
                 <th>NO.</th>
-                <th>NAME OF STUDENTS</th>
-                <th>DEPARTMENT</th>
-                <th>COURSE</th>
-                <th>YEAR LEVEL</th>
+                <th>STUDENT NO.</th>
+                <th>STUDENT NAME</th>
+                <th>DEPARTMENT/COURSE</th>
+                <th>SECTION</th>
               </tr>
             </thead>
             <tbody>
@@ -216,10 +210,10 @@ const Students = () => {
                 state.students.map((student, index) => (
                   <tr key={student.student_id}>
                     <td>{index + 1}</td>
+                    <td>{student.student_no}</td>
                     <td>{handleStudentFullName(student)}</td>
-                    <td>{student.department}</td>
-                    <td>{student.course}</td>
-                    <td>{handleYearLevelSuffix(student)}</td>
+                    <td>{handleDepartmentAndCourse(student)}</td>
+                    <td>{handleYearLevelAndSection(student)}</td>
                   </tr>
                 ))
               )}

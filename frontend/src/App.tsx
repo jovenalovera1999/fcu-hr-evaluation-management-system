@@ -12,6 +12,7 @@ import Logout from "./pages/authentication/Logout";
 import Response from "./pages/evaluation/Response";
 import SendAnEvaluationToEmployees from "./pages/evaluation/SendAnEvaluationToEmployees";
 import Admin from "./pages/dashboard/Admin";
+import SendAnEvaluationToIrregularStudents from "./pages/evaluation/SendAnEvaluationToIrregularStudents";
 
 const App = () => {
   return (
@@ -33,6 +34,10 @@ const App = () => {
         <Route
           path="/evaluation/to/employees"
           element={<SendAnEvaluationToEmployees />}
+        />
+        <Route
+          path="/evaluation/to/irregular/students"
+          element={<SendAnEvaluationToIrregularStudents />}
         />
         <Route path="/evaluation/list" element={<Evaluations />} />
         <Route

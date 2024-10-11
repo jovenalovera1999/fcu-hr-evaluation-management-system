@@ -12,6 +12,7 @@ use App\Models\Employee;
 use App\Models\Position;
 use App\Models\Question;
 use App\Models\Section;
+use App\Models\Semester;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -179,7 +180,26 @@ class DatabaseSeeder extends Seeder
 
         // $user->createToken('AdminToken')->plainTextToken;
 
-        Employee::factory(50)->create()->each(function ($employee) {
+        Semester::factory()->createMany([
+            ['academic_year_id' => 1, 'semester' => strtoupper('1st sem')],
+            ['academic_year_id' => 1, 'semester' => strtoupper('2nd sem')],
+            ['academic_year_id' => 1, 'semester' => strtoupper('3rd sem')],
+            ['academic_year_id' => 1, 'semester' => strtoupper('4th sem')],
+            ['academic_year_id' => 1, 'semester' => strtoupper('5th sem')],
+            ['academic_year_id' => 1, 'semester' => strtoupper('6th sem')],
+            ['academic_year_id' => 1, 'semester' => strtoupper('7th sem')],
+            ['academic_year_id' => 1, 'semester' => strtoupper('8th sem')],
+            ['academic_year_id' => 2, 'semester' => strtoupper('1st sem')],
+            ['academic_year_id' => 2, 'semester' => strtoupper('2nd sem')],
+            ['academic_year_id' => 2, 'semester' => strtoupper('3rd sem')],
+            ['academic_year_id' => 2, 'semester' => strtoupper('4th sem')],
+            ['academic_year_id' => 2, 'semester' => strtoupper('5th sem')],
+            ['academic_year_id' => 2, 'semester' => strtoupper('6th sem')],
+            ['academic_year_id' => 2, 'semester' => strtoupper('7th sem')],
+            ['academic_year_id' => 2, 'semester' => strtoupper('8th sem')]
+        ]);
+
+        Employee::factory(100)->create()->each(function ($employee) {
             $user = User::create([
                 'employee_id' => $employee->employee_id,
                 'username' => $employee->first_name,
@@ -189,7 +209,7 @@ class DatabaseSeeder extends Seeder
             $user->createToken('EmployeeToken')->plainTextToken;
         });
 
-        Student::factory(50)->create()->each(function ($student) {
+        Student::factory(300)->create()->each(function ($student) {
             $user = User::create([
                 'student_id' => $student->student_id,
                 'username' => $student->student_no,

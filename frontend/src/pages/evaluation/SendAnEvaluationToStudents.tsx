@@ -4,6 +4,7 @@ import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
+import { Link } from "react-router-dom";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -28,11 +29,17 @@ interface Employees {
   suffix_name: string;
 }
 
+interface Semesters {
+  semester_id: number;
+  semester: string;
+}
+
 interface Errors {
   academic_year?: string[];
   students_department?: string[];
   course?: string[];
   year_level?: string[];
+  section?: string[];
   employees_department?: string[];
   selectedEmployees?: string[];
 }
@@ -46,18 +53,22 @@ const SendAnEvaluationToStudents = () => {
   const [state, setState] = useState({
     loadingSubmit: false,
     loadingAcademicYears: true,
+    loadingSemesters: false,
     loadingDepartments: true,
     loadingCourses: false,
     loadingEmployees: false,
     academic_years: [] as AcademicYears[],
+    semesters: [] as Semesters[],
     departments: [] as Departments[],
     courses: [] as Courses[],
     employees: [] as Employees[],
     academic_year: "",
+    semester: "",
     students_department: "",
     employees_department: "",
     course: "",
     year_level: "",
+    section: "",
     selectedEmployees: [] as number[],
     selectAll: false,
     errors: {} as Errors,
@@ -74,6 +85,15 @@ const SendAnEvaluationToStudents = () => {
       ...prevState,
       [name]: value,
     }));
+
+    if (name === "semester") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingSemesters: true,
+      }));
+
+      handleLoadSemesters(parseInt(value));
+    }
 
     if (name === "students_department") {
       setState((prevState) => ({
@@ -138,10 +158,12 @@ const SendAnEvaluationToStudents = () => {
           setState((prevState) => ({
             ...prevState,
             academic_year: "",
+            semester: "",
             students_department: "",
             employees_department: "",
             course: "",
             year_level: "",
+            section: "",
             selectedEmployees: [] as number[],
             selectAll: false,
             errors: {} as Errors,
@@ -174,6 +196,23 @@ const SendAnEvaluationToStudents = () => {
       toastMessageSuccess: false,
       toastMessageVisible: false,
     }));
+  };
+
+  const handleLoadSemesters = async (academicYearId: number) => {
+    axiosInstance
+      .get(`/semester/load/semesters/by/academic_year/${academicYearId}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            semesters: res.data.semesters,
+            loadingSemesters: false,
+          }));
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
   };
 
   const handleLoadAcademicYears = async () => {
@@ -299,6 +338,17 @@ const SendAnEvaluationToStudents = () => {
         <div className="mx-auto mt-2">
           <h4>SEND AN EVALUATION TO STUDENTS</h4>
           <div className="row">
+            <hr />
+            <div className="col-sm-6">
+              <div className="mb-3">
+                <Link to={"#"} className="btn btn-theme">
+                  TO SEND AN EVALUATION FOR IRREGULAR STUDENTS, CLICK HERE!
+                </Link>
+              </div>
+            </div>
+            <hr />
+          </div>
+          <div className="row">
             <div className="col-sm-3">
               <div className="mb-3">
                 <label htmlFor="academic_year">ACADEMIC YEAR</label>
@@ -324,6 +374,14 @@ const SendAnEvaluationToStudents = () => {
                 {state.errors.academic_year && (
                   <p className="text-danger">{state.errors.academic_year[0]}</p>
                 )}
+              </div>
+            </div>
+            <div className="col-sm-3">
+              <div className="mb-3">
+                <label htmlFor="semester">SEMESTER</label>
+                <select name="semester" id="semester" className="form-select">
+                  <option value="">N/A</option>
+                </select>
               </div>
             </div>
           </div>
@@ -422,10 +480,17 @@ const SendAnEvaluationToStudents = () => {
                 <select
                   name="students_section"
                   id="students_section"
-                  className="form-select"
+                  className={`form-select ${
+                    state.errors.section ? "is-invalid" : ""
+                  }`}
+                  value={state.section}
+                  onChange={handleInput}
                 >
                   <option value="">N/A</option>
                 </select>
+                {state.errors.section && (
+                  <p className="text-danger">{state.errors.section[0]}</p>
+                )}
               </div>
             </div>
           </div>
@@ -450,6 +515,7 @@ const SendAnEvaluationToStudents = () => {
             </div>
             <hr />
           </div> */}
+
           <div className="row mt-3">
             <div className="col-sm-4">
               <label htmlFor="employees_department">
@@ -484,6 +550,7 @@ const SendAnEvaluationToStudents = () => {
               )}
             </div>
           </div>
+
           <div className="table-responsive mb-3">
             <table className="table table-hover">
               <thead>

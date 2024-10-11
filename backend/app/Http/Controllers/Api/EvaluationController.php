@@ -50,9 +50,11 @@ class EvaluationController extends Controller
     {
         $validated = $request->validate([
             'academic_year' => ['required'],
+            'semester' => ['required'],
             'students_department' => ['required'],
             'course' => ['required'],
             'year_level' => ['required'],
+            'section' => ['required'],
             'employees_department' => ['required'],
             'selectedEmployees' => ['array', 'min:1']
         ], [
@@ -63,9 +65,12 @@ class EvaluationController extends Controller
 
         $students = Student::leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
             ->leftJoin('tbl_departments', 'tbl_courses.department_id', '=', 'tbl_departments.department_id')
+            ->leftJoin('tbl_sections', 'tbl_students.section_id', '=', 'tbl_sections.section_id')
             ->where('tbl_departments.department_id', $validated['students_department'])
             ->where('tbl_courses.course_id', $validated['course'])
             ->where('tbl_students.year_level', $validated['year_level'])
+            ->where('tbl_sections.section_id', $validated['section'])
+            ->where('tbl_students.is_irregular', false)
             ->where('tbl_students.is_deleted', false)
             ->get();
 
@@ -77,7 +82,7 @@ class EvaluationController extends Controller
                 $evaluation = Evaluation::create([
                     'student_id' => $student->student_id,
                     'employee_to_evaluate_id' => $employee,
-                    'academic_year_id' => $validated['academic_year'],
+                    'semester_id' => $validated['semester'],
                     'is_student' => true
                 ]);
 

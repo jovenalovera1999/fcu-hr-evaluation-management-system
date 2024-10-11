@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('student_id')->nullable();
             $table->unsignedBigInteger('employee_to_response_id')->nullable();
             $table->unsignedBigInteger('employee_to_evaluate_id');
-            $table->unsignedBigInteger('academic_year_id');
+            $table->unsignedBigInteger('semester_id');
             $table->tinyInteger('is_student')->default(false);
             $table->tinyInteger('is_completed')->default(false);
             $table->timestamps();
@@ -39,9 +39,9 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->foreign('academic_year_id')
-                ->references('academic_year_id')
-                ->on('tbl_academic_years')
+            $table->foreign('semester_id')
+                ->references('semester_id')
+                ->on('tbl_semesters')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
         });

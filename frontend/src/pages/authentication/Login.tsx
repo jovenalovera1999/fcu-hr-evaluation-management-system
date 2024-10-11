@@ -161,6 +161,7 @@ const Login = () => {
                   id="username"
                   value={state.username}
                   onChange={handleInput}
+                  autoFocus
                 />
                 {state.errors.username && (
                   <p className="text-danger">{state.errors.username[0]}</p>
