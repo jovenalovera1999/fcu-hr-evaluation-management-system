@@ -63,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::controller(StudentController::class)->prefix('student')->group(function () {
-        Route::get('/index', 'index');
+        Route::get('/load/irregular/students', 'loadIrregularStudents');
         Route::get('/load/students/by/year_level/and/department/{yearLevel}/{departmentId}', 'loadStudentsByYearLevelAndDepartment');
         Route::post('/store', 'store');
     });

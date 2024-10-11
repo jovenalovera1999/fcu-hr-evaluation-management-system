@@ -1,6 +1,53 @@
+import { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
+
+interface Students {
+  student_id: number;
+  student_no: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  suffix_name: string;
+  department: string;
+  course: string;
+  year_level: string;
+  section: string;
+}
 
 const SendAnEvaluationToIrregularStudents = () => {
+  const [state, setState] = useState({
+    loadingStudents: true,
+    students: [] as Students[],
+    search: "",
+    currectPage: 1,
+  });
+
+  const handleLoadStudents = async () => {
+    axiosInstance
+      .get("/student/load/irregular/students")
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            students: res.data.students,
+            loadingStudents: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
+  useEffect(() => {
+    document.title = "SEND AN EVALUATION TO IRREGULAR STUDENTS | FCU HR EMS";
+    handleLoadStudents();
+  }, []);
+
   const content = (
     <>
       <div className="mx-auto mt-2">
@@ -12,6 +59,15 @@ const SendAnEvaluationToIrregularStudents = () => {
               <table className="table table-hover">
                 <thead>
                   <tr>
+                    <th>
+                      SELECT ALL
+                      <input
+                        type="checkbox"
+                        className="form-check-input ms-2"
+                        name="select_all"
+                        id="select_all"
+                      />
+                    </th>
                     <th>NO.</th>
                     <th>STUDENT NO.</th>
                     <th>STUDENT NAME</th>
