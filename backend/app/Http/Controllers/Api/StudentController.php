@@ -23,7 +23,39 @@ class StudentController extends Controller
             ->orderBy('tbl_courses.course', 'asc')
             ->orderBy('tbl_sections.section', 'asc')
             ->orderBy('tbl_students.student_no', 'asc')
-            ->get();
+            ->paginate(10);
+
+        return response()->json([
+            'students' => $students,
+            'status' => 200
+        ]);
+    }
+
+    public function loadIrregularStudentsBySearch(Request $request)
+    {
+        $search = $request->input('search');
+        $students =
+            Student::leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
+            ->leftJoin('tbl_departments', 'tbl_courses.department_id', '=', 'tbl_departments.department_id')
+            ->leftJoin('tbl_sections', 'tbl_students.section_id', '=', 'tbl_sections.section_id')
+            ->where('tbl_students.student_no', 'like', "%{$search}%")
+            ->orWhere('tbl_students.first_name', 'like', "%{$search}%")
+            ->orWhere('tbl_students.middle_name', 'like', "%{$search}%")
+            ->orWhere('tbl_students.last_name', 'like', "%{$search}%")
+            ->orWhere('tbl_students.suffix_name', 'like', "%{$search}%")
+            ->orWhere('tbl_departments.department', 'like', "%{$search}%")
+            ->orWhere('tbl_courses.course', 'like', "%{$search}%")
+            ->orWhere('tbl_sections.section', 'like', "%{$search}%")
+            ->where('tbl_students.is_irregular', true)
+            ->where('tbl_students.is_deleted', false)
+            ->orderBy('tbl_students.last_name', 'asc')
+            ->orderBy('tbl_students.first_name', 'asc')
+            ->orderBy('tbl_students.middle_name', 'asc')
+            ->orderBy('tbl_students.suffix_name', 'asc')
+            ->orderBy('tbl_courses.course', 'asc')
+            ->orderBy('tbl_sections.section', 'asc')
+            ->orderBy('tbl_students.student_no', 'asc')
+            ->paginate(10);
 
         return response()->json([
             'students' => $students,

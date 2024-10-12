@@ -550,7 +550,6 @@ const SendAnEvaluationToStudents = () => {
               )}
             </div>
           </div>
-
           <div className="table-responsive mb-3">
             <table className="table table-hover">
               <thead>
