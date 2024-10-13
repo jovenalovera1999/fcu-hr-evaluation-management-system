@@ -341,7 +341,10 @@ const SendAnEvaluationToStudents = () => {
             <hr />
             <div className="col-sm-6">
               <div className="mb-3">
-                <Link to={"#"} className="btn btn-theme">
+                <Link
+                  to={"/evaluation/to/irregular/students"}
+                  className="btn btn-theme"
+                >
                   TO SEND AN EVALUATION FOR IRREGULAR STUDENTS, CLICK HERE!
                 </Link>
               </div>
@@ -494,28 +497,6 @@ const SendAnEvaluationToStudents = () => {
               </div>
             </div>
           </div>
-          {/* <div className="row">
-            <hr />
-            <div className="mb-3">
-              <div className="col-sm-6">
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    name="irregular"
-                    id="irregular"
-                    value={1}
-                    onChange={handleInput}
-                  />
-                  <label className="form-check-label" htmlFor="irregular">
-                    IS STUDENT IRREGULAR? IF NOT, LEAVE IT.
-                  </label>
-                </div>
-              </div>
-            </div>
-            <hr />
-          </div> */}
-
           <div className="row mt-3">
             <div className="col-sm-4">
               <label htmlFor="employees_department">
@@ -551,15 +532,14 @@ const SendAnEvaluationToStudents = () => {
             </div>
           </div>
           <div className="table-responsive mb-3">
-            <table className="table table-hover">
+            <table className="table table-sm table-hover">
               <thead>
                 <tr>
-                  <td>
+                  <td className="text-center">
                     SELECT ALL
-                    <br />
                     <input
                       type="checkbox"
-                      className="form-check-input"
+                      className="form-check-input ms-2"
                       name="select_all"
                       id="select_all"
                       checked={state.selectAll}
@@ -580,7 +560,7 @@ const SendAnEvaluationToStudents = () => {
                 ) : (
                   state.employees.map((employee, index) => (
                     <tr key={employee.employee_id}>
-                      <td>
+                      <td className="text-center">
                         <input
                           type="checkbox"
                           className="form-check-input"
