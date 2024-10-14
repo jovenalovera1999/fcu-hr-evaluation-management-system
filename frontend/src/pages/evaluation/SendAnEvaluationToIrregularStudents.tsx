@@ -18,6 +18,10 @@ interface Students {
   section: string;
 }
 
+interface AllStudentIds {
+  student_id: number;
+}
+
 interface Departments {
   department_id: number;
   department: string;
@@ -38,19 +42,23 @@ interface Errors {
 const SendAnEvaluationToIrregularStudents = () => {
   const [state, setState] = useState({
     loadingStudents: true,
+    loadingStudentIds: true,
     loadingDepartments: true,
     loadingEmployees: false,
     loadingPage: false,
     loadingSearch: false,
     students: [] as Students[],
+    allStudentIds: [] as AllStudentIds[],
     departments: [] as Departments[],
     employees: [] as Employees[],
     search: "",
     employees_department: "",
+    selectedStudents: [] as number[],
+    selectedEmployees: [] as number[],
+    selectAllStudents: false,
+    selectAllEmployees: false,
     currentPage: 1,
     lastPage: 1,
-    selectedStudents: [] as number[],
-    selectAllStudents: false,
     errors: {} as Errors,
   });
 
@@ -74,10 +82,10 @@ const SendAnEvaluationToIrregularStudents = () => {
   };
 
   const handleLoadStudents = async (page: number = state.currentPage) => {
-    let endpoint = `/student/load/irregular/students?page=${page}`;
+    let endpoint = `/student/load/irregular/students/by/page?page=${page}`;
 
     if (state.search) {
-      endpoint = `/student/load/irregular/students/search?page=${page}&search=${state.search}`;
+      endpoint = `/student/load/irregular/students/by/page/and/search?page=${page}&search=${state.search}`;
     }
 
     axiosInstance
@@ -120,6 +128,18 @@ const SendAnEvaluationToIrregularStudents = () => {
     debouncedPageChange(page);
   };
 
+  // const debouncedSearch = useCallback(
+  //   debounce((value: string) => {
+  //     setState((prevState) => ({
+  //       ...prevState,
+  //       search: value,
+  //       currentPage: 1,
+  //       loadingSearch: true,
+  //     }));
+  //   }, 300),
+  //   []
+  // );
+
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setState((prevState) => ({
       ...prevState,
@@ -147,31 +167,45 @@ const SendAnEvaluationToIrregularStudents = () => {
     return fullName;
   };
 
+  const handleLoadStudentIds = async () => {
+    let endpoint = "/student/load/irregular/student/ids";
+
+    if (state.search) {
+      endpoint = `/student/load/irregular/student/ids/by/search?search=${state.search}`;
+    }
+
+    axiosInstance
+      .get(endpoint)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            allStudentIds: res.data.studentIds,
+            loadingStudentIds: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
   const handleSelectAllStudent = () => {
-    const allSelected = !state.selectAllStudents;
-    const currentStudentIds = state.students.map(
-      (student) => student.student_id
-    );
-
     setState((prevState) => {
-      let updatedSelectedStudents = [...prevState.selectedStudents];
+      const allStudentIds = prevState.allStudentIds.map(
+        (student) => student.student_id
+      );
 
-      if (allSelected) {
-        currentStudentIds.forEach((id) => {
-          if (!updatedSelectedStudents.includes(id)) {
-            updatedSelectedStudents.push(id);
-          }
-        });
-      } else {
-        updatedSelectedStudents = updatedSelectedStudents.filter(
-          (id) => !currentStudentIds.includes(id)
-        );
-      }
+      const selectedStudents = prevState.selectAllStudents
+        ? ([] as number[])
+        : allStudentIds;
 
       return {
         ...prevState,
-        selectAllStudents: allSelected,
-        selectedStudents: updatedSelectedStudents,
+        selectedStudents,
+        selectAllStudents: !prevState.selectAllStudents,
       };
     });
   };
@@ -265,6 +299,7 @@ const SendAnEvaluationToIrregularStudents = () => {
 
     handleLoadStudents();
     handleLoadDepartments();
+    handleLoadStudentIds();
   }, [state.currentPage, state.search]);
 
   const content = (
@@ -285,93 +320,91 @@ const SendAnEvaluationToIrregularStudents = () => {
           </div>
         </div>
         <div className="row">
-          <div className="mb-3">
-            <div className="table-responsive">
-              <div className="d-flex justify-content-end">
-                <div className="btn-group">
-                  <button
-                    className="btn btn-theme"
-                    disabled={
-                      state.loadingPage ||
-                      state.loadingSearch ||
-                      state.currentPage <= 1
-                    }
-                    onClick={() => handlePageChange(state.currentPage - 1)}
-                  >
-                    PREVIOUS
-                  </button>
-                  <button
-                    className="btn btn-theme"
-                    disabled={
-                      state.loadingPage ||
-                      state.loadingSearch ||
-                      state.currentPage >= state.lastPage
-                    }
-                    onClick={() => handlePageChange(state.currentPage + 1)}
-                  >
-                    NEXT
-                  </button>
-                </div>
+          <div className="table-responsive">
+            <div className="d-flex justify-content-end">
+              <div className="btn-group">
+                <button
+                  className="btn btn-theme"
+                  disabled={
+                    state.loadingPage ||
+                    state.loadingSearch ||
+                    state.currentPage <= 1
+                  }
+                  onClick={() => handlePageChange(state.currentPage - 1)}
+                >
+                  PREVIOUS
+                </button>
+                <button
+                  className="btn btn-theme"
+                  disabled={
+                    state.loadingPage ||
+                    state.loadingSearch ||
+                    state.currentPage >= state.lastPage
+                  }
+                  onClick={() => handlePageChange(state.currentPage + 1)}
+                >
+                  NEXT
+                </button>
               </div>
-              <table className="table table-sm table-hover">
-                <caption>LIST OF IRREGULAR STUDENTS</caption>
-                <thead>
-                  <tr>
-                    <th className="text-center">
-                      SELECT ALL
-                      <input
-                        type="checkbox"
-                        className="form-check-input ms-2"
-                        name="irregular_students_select_all"
-                        id="irregular_students_select_all"
-                        checked={state.students.every((student) =>
-                          state.selectedStudents.includes(student.student_id)
-                        )}
-                        onChange={handleSelectAllStudent}
-                      />
-                    </th>
-                    <th>NO.</th>
-                    <th>STUDENT NO.</th>
-                    <th>STUDENT NAME</th>
-                    <th>DEPARTMENT/COURSE</th>
-                    <th>SECTION</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {state.loadingPage || state.loadingSearch ? (
-                    <tr>
-                      <td colSpan={6}>
-                        <Spinner />
-                      </td>
-                    </tr>
-                  ) : (
-                    state.students.map((student, index) => (
-                      <tr key={student.student_id}>
-                        <td className="text-center">
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            name="irregular_student_select"
-                            id={`irregular_student_select_${student.student_id}`}
-                            checked={state.selectedStudents.includes(
-                              student.student_id
-                            )}
-                            onChange={() =>
-                              handleSelectStudent(student.student_id)
-                            }
-                          />
-                        </td>
-                        <td>{(state.currentPage - 1) * 10 + index + 1}</td>
-                        <td>{student.student_no}</td>
-                        <td>{handleStudentFullName(student)}</td>
-                        <td>{handleDepartmentAndCourse(student)}</td>
-                        <td>{handleYearLevelAndSection(student)}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
             </div>
+            <table className="table table-sm table-hover">
+              <caption>LIST OF IRREGULAR STUDENTS</caption>
+              <thead>
+                <tr>
+                  <th className="text-center">
+                    SELECT ALL
+                    <input
+                      type="checkbox"
+                      className="form-check-input ms-2"
+                      name="irregular_students_select_all"
+                      id="irregular_students_select_all"
+                      checked={state.students.every((student) =>
+                        state.selectedStudents.includes(student.student_id)
+                      )}
+                      onChange={handleSelectAllStudent}
+                    />
+                  </th>
+                  <th>NO.</th>
+                  <th>STUDENT NO.</th>
+                  <th>STUDENT NAME</th>
+                  <th>DEPARTMENT/COURSE</th>
+                  <th>SECTION</th>
+                </tr>
+              </thead>
+              <tbody>
+                {state.loadingPage || state.loadingSearch ? (
+                  <tr>
+                    <td colSpan={6}>
+                      <Spinner />
+                    </td>
+                  </tr>
+                ) : (
+                  state.students.map((student, index) => (
+                    <tr key={student.student_id}>
+                      <td className="text-center">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          name="irregular_student_select"
+                          id={`irregular_student_select_${student.student_id}`}
+                          checked={state.selectedStudents.includes(
+                            student.student_id
+                          )}
+                          onChange={() =>
+                            handleSelectStudent(student.student_id)
+                          }
+                        />
+                      </td>
+                      <td>{(state.currentPage - 1) * 10 + index + 1}</td>
+                      <td>{student.student_no}</td>
+                      <td>{handleStudentFullName(student)}</td>
+                      <td>{handleDepartmentAndCourse(student)}</td>
+                      <td>{handleYearLevelAndSection(student)}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
         <hr />
@@ -458,7 +491,9 @@ const SendAnEvaluationToIrregularStudents = () => {
   return (
     <Layout
       content={
-        state.loadingStudents || state.loadingDepartments ? (
+        state.loadingStudents ||
+        state.loadingDepartments ||
+        state.loadingStudentIds ? (
           <Spinner />
         ) : (
           content
