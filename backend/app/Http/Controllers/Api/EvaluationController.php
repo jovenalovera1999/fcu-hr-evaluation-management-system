@@ -100,6 +100,13 @@ class EvaluationController extends Controller
         ]);
     }
 
+    public function sendEvaluationsForIrregularStudents(Request $request)
+    {
+        $validated = $request->validate([
+            'employees_department' => ['required']
+        ]);
+    }
+
     public function storeEvaluationsForEmployees(Request $request)
     {
         $validated = $request->validate([

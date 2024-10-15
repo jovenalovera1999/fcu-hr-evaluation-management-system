@@ -1,4 +1,10 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import Layout from "../layout/Layout";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
@@ -41,6 +47,7 @@ interface Errors {
 
 const SendAnEvaluationToIrregularStudents = () => {
   const [state, setState] = useState({
+    loadingSubmit: false,
     loadingStudents: true,
     loadingStudentIds: true,
     loadingDepartments: true,
@@ -60,6 +67,9 @@ const SendAnEvaluationToIrregularStudents = () => {
     currentPage: 1,
     lastPage: 1,
     errors: {} as Errors,
+    toastMessage: "",
+    toastMessageSuccess: false,
+    toastMessageVisible: false,
   });
 
   const handleInput = (
@@ -79,6 +89,47 @@ const SendAnEvaluationToIrregularStudents = () => {
 
       handleLoadEmployees(parseInt(value));
     }
+  };
+
+  const handleSendEvaluation = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setState((prevState) => ({
+      ...prevState,
+      loadingSubmit: true,
+    }));
+
+    axiosInstance
+      .post("/evaluation/send/evaluations/for/irregular/students")
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            employees: [] as Employees[],
+            search: "",
+            employees_department: "",
+            selectedStudents: [] as number[],
+            selectedEmployees: [] as number[],
+            selectAllStudents: false,
+            selectAllEmployees: false,
+            errors: {} as Errors,
+            loadingSubmit: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 422) {
+          setState((prevState) => ({
+            ...prevState,
+            errors: error.response.data.errors,
+            loadingSubmit: false,
+          }));
+        } else {
+          errorHandler(error);
+        }
+      });
   };
 
   const handleLoadStudents = async (page: number = state.currentPage) => {
@@ -192,7 +243,7 @@ const SendAnEvaluationToIrregularStudents = () => {
       });
   };
 
-  const handleSelectAllStudent = () => {
+  const handleSelectAllStudents = () => {
     setState((prevState) => {
       const allStudentIds = prevState.allStudentIds.map(
         (student) => student.student_id
@@ -220,7 +271,7 @@ const SendAnEvaluationToIrregularStudents = () => {
       const allSelected =
         updateSelectedStudents.length === prevState.students.length;
 
-      console.log(updateSelectedStudents);
+      // console.log(updateSelectedStudents);
 
       return {
         ...prevState,
@@ -294,6 +345,37 @@ const SendAnEvaluationToIrregularStudents = () => {
     return fullName;
   };
 
+  const handleSelectAllEmployees = () => {
+    const allSelected = !state.selectAllEmployees;
+    setState((prevState) => ({
+      ...prevState,
+      selectAllEmployees: allSelected,
+      selectedEmployees: allSelected
+        ? prevState.employees.map((employee) => employee.employee_id)
+        : ([] as number[]),
+    }));
+  };
+
+  const handleSelectEmployee = (employeeId: number) => {
+    setState((prevState) => {
+      const isSelected = prevState.selectedEmployees.includes(employeeId);
+      const updateSelectedEmployees = isSelected
+        ? prevState.selectedEmployees.filter((id) => id !== employeeId)
+        : [...prevState.selectedEmployees, employeeId];
+
+      const allSelected =
+        updateSelectedEmployees.length === prevState.employees.length;
+
+      // console.log(updateSelectedEmployees);
+
+      return {
+        ...prevState,
+        selectedEmployees: updateSelectedEmployees,
+        selectAllEmployees: allSelected,
+      };
+    });
+  };
+
   useEffect(() => {
     document.title = "SEND AN EVALUATION TO IRREGULAR STUDENTS | FCU HR EMS";
 
@@ -304,193 +386,211 @@ const SendAnEvaluationToIrregularStudents = () => {
 
   const content = (
     <>
-      <div className="mx-auto mt-2">
-        <h4>SEND AN EVALUATION TO IRREGULAR STUDENTS</h4>
-        <div className="row">
-          <div className="col-sm-3">
-            <div className="mb-3">
-              <label htmlFor="search">SEARCH</label>
-              <input
-                type="text"
-                className="form-control"
-                value={state.search}
-                onChange={handleSearch}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="table-responsive">
-            <div className="d-flex justify-content-end">
-              <div className="btn-group">
-                <button
-                  className="btn btn-theme"
-                  disabled={
-                    state.loadingPage ||
-                    state.loadingSearch ||
-                    state.currentPage <= 1
-                  }
-                  onClick={() => handlePageChange(state.currentPage - 1)}
-                >
-                  PREVIOUS
-                </button>
-                <button
-                  className="btn btn-theme"
-                  disabled={
-                    state.loadingPage ||
-                    state.loadingSearch ||
-                    state.currentPage >= state.lastPage
-                  }
-                  onClick={() => handlePageChange(state.currentPage + 1)}
-                >
-                  NEXT
-                </button>
+      <form onSubmit={handleSendEvaluation}>
+        <div className="mx-auto mt-2">
+          <h4>SEND AN EVALUATION TO IRREGULAR STUDENTS</h4>
+          <div className="row">
+            <div className="col-sm-3">
+              <div className="mb-3">
+                <label htmlFor="search">SEARCH</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={state.search}
+                  onChange={handleSearch}
+                />
               </div>
             </div>
-            <table className="table table-sm table-hover">
-              <caption>LIST OF IRREGULAR STUDENTS</caption>
-              <thead>
-                <tr>
-                  <th className="text-center">
-                    SELECT ALL
-                    <input
-                      type="checkbox"
-                      className="form-check-input ms-2"
-                      name="irregular_students_select_all"
-                      id="irregular_students_select_all"
-                      checked={state.students.every((student) =>
-                        state.selectedStudents.includes(student.student_id)
-                      )}
-                      onChange={handleSelectAllStudent}
-                    />
-                  </th>
-                  <th>NO.</th>
-                  <th>STUDENT NO.</th>
-                  <th>STUDENT NAME</th>
-                  <th>DEPARTMENT/COURSE</th>
-                  <th>SECTION</th>
-                </tr>
-              </thead>
-              <tbody>
-                {state.loadingPage || state.loadingSearch ? (
-                  <tr>
-                    <td colSpan={6}>
-                      <Spinner />
-                    </td>
-                  </tr>
-                ) : (
-                  state.students.map((student, index) => (
-                    <tr key={student.student_id}>
-                      <td className="text-center">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          name="irregular_student_select"
-                          id={`irregular_student_select_${student.student_id}`}
-                          checked={state.selectedStudents.includes(
-                            student.student_id
-                          )}
-                          onChange={() =>
-                            handleSelectStudent(student.student_id)
-                          }
-                        />
-                      </td>
-                      <td>{(state.currentPage - 1) * 10 + index + 1}</td>
-                      <td>{student.student_no}</td>
-                      <td>{handleStudentFullName(student)}</td>
-                      <td>{handleDepartmentAndCourse(student)}</td>
-                      <td>{handleYearLevelAndSection(student)}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
           </div>
-        </div>
-        <hr />
-        <div className="row">
-          <div className="col-sm-4">
-            <label htmlFor="employees_department">
-              EMPLOYEE'S/TEACHER'S/STAFF'S DEPARTMENT
-            </label>
-            <select
-              name="employees_department"
-              id="employees_department"
-              className={`form-select ${
-                state.errors.employees_department ? "is-invalid" : ""
-              }`}
-              value={state.employees_department}
-              onChange={handleInput}
-            >
-              <option value="">N/A</option>
-              {state.departments.map((department) => (
-                <option
-                  value={department.department_id}
-                  key={department.department_id}
-                >
-                  {department.department}
-                </option>
-              ))}
-            </select>
-            <p className="form-text">
-              CHOOSE AND SELECT TEACHER/EMPLOYEE/STAFF BY THEIR DEPARTMENT
-            </p>
-            {state.errors.employees_department && (
-              <p className="text-danger">{state.errors.employees_department}</p>
-            )}
-          </div>
-          <div className="table-responsive">
-            <table className="table table-sm table-hover">
-              <caption>LIST OF EMPLOYEES/TEACHERS/STAFFS</caption>
-              <thead>
-                <tr>
-                  <th className="text-center">
-                    SELECT ALL
-                    <input
-                      type="checkbox"
-                      className="form-check-input ms-2"
-                      name="select_all"
-                      id="select_all"
-                    />
-                  </th>
-                  <th>NO.</th>
-                  <th>NAME OF EMPLOYEES/TEACHERS/STAFFS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {state.loadingEmployees ? (
+          <div className="row">
+            <div className="table-responsive">
+              <div className="d-flex justify-content-end">
+                <div className="btn-group">
+                  <button
+                    className="btn btn-theme"
+                    disabled={
+                      state.loadingPage ||
+                      state.loadingSearch ||
+                      state.currentPage <= 1
+                    }
+                    onClick={() => handlePageChange(state.currentPage - 1)}
+                  >
+                    PREVIOUS
+                  </button>
+                  <button
+                    className="btn btn-theme"
+                    disabled={
+                      state.loadingPage ||
+                      state.loadingSearch ||
+                      state.currentPage >= state.lastPage
+                    }
+                    onClick={() => handlePageChange(state.currentPage + 1)}
+                  >
+                    NEXT
+                  </button>
+                </div>
+              </div>
+              <table className="table table-sm table-hover">
+                <caption>LIST OF IRREGULAR STUDENTS</caption>
+                <thead>
                   <tr>
-                    <td colSpan={3}>
-                      <Spinner />
-                    </td>
+                    <th className="text-center">
+                      SELECT ALL
+                      <input
+                        type="checkbox"
+                        className="form-check-input ms-2"
+                        name="irregular_students_select_all"
+                        id="irregular_students_select_all"
+                        checked={state.students.every((student) =>
+                          state.selectedStudents.includes(student.student_id)
+                        )}
+                        onChange={handleSelectAllStudents}
+                      />
+                    </th>
+                    <th>NO.</th>
+                    <th>STUDENT NO.</th>
+                    <th>STUDENT NAME</th>
+                    <th>DEPARTMENT/COURSE</th>
+                    <th>SECTION</th>
                   </tr>
-                ) : (
-                  state.employees.map((employee, index) => (
+                </thead>
+                <tbody>
+                  {state.loadingPage || state.loadingSearch ? (
                     <tr>
-                      <td className="text-center">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          name="employee_select"
-                          id={`employee_select_${employee.employee_id}`}
-                        />
+                      <td colSpan={6}>
+                        <Spinner />
                       </td>
-                      <td>{index + 1}</td>
-                      <td>{employeesFullName(employee)}</td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    state.students.map((student, index) => (
+                      <tr key={student.student_id}>
+                        <td className="text-center">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            name="irregular_student_select"
+                            id={`irregular_student_select_${student.student_id}`}
+                            checked={state.selectedStudents.includes(
+                              student.student_id
+                            )}
+                            onChange={() =>
+                              handleSelectStudent(student.student_id)
+                            }
+                          />
+                        </td>
+                        <td>{(state.currentPage - 1) * 10 + index + 1}</td>
+                        <td>{student.student_no}</td>
+                        <td>{handleStudentFullName(student)}</td>
+                        <td>{handleDepartmentAndCourse(student)}</td>
+                        <td>{handleYearLevelAndSection(student)}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <hr />
+          <div className="row">
+            <div className="col-sm-4">
+              <label htmlFor="employees_department">
+                EMPLOYEE'S/TEACHER'S/STAFF'S DEPARTMENT
+              </label>
+              <select
+                name="employees_department"
+                id="employees_department"
+                className={`form-select ${
+                  state.errors.employees_department ? "is-invalid" : ""
+                }`}
+                value={state.employees_department}
+                onChange={handleInput}
+              >
+                <option value="">N/A</option>
+                {state.departments.map((department) => (
+                  <option
+                    value={department.department_id}
+                    key={department.department_id}
+                  >
+                    {department.department}
+                  </option>
+                ))}
+              </select>
+              <p className="form-text">
+                CHOOSE AND SELECT TEACHER/EMPLOYEE/STAFF BY THEIR DEPARTMENT
+              </p>
+              {state.errors.employees_department && (
+                <p className="text-danger">
+                  {state.errors.employees_department}
+                </p>
+              )}
+            </div>
+            <div className="table-responsive">
+              <table className="table table-sm table-hover">
+                <caption>LIST OF EMPLOYEES/TEACHERS/STAFFS</caption>
+                <thead>
+                  <tr>
+                    <th className="text-center">
+                      SELECT ALL
+                      <input
+                        type="checkbox"
+                        className="form-check-input ms-2"
+                        name="employees_select_all"
+                        id="employees_select_all"
+                        checked={state.selectAllEmployees}
+                        onChange={handleSelectAllEmployees}
+                      />
+                    </th>
+                    <th>NO.</th>
+                    <th>NAME OF EMPLOYEES/TEACHERS/STAFFS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {state.loadingEmployees ? (
+                    <tr>
+                      <td colSpan={3}>
+                        <Spinner />
+                      </td>
+                    </tr>
+                  ) : (
+                    state.employees.map((employee, index) => (
+                      <tr>
+                        <td className="text-center">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            name="employee_select"
+                            id={`employee_select_${employee.employee_id}`}
+                            checked={state.selectedEmployees.includes(
+                              employee.employee_id
+                            )}
+                            onChange={() =>
+                              handleSelectEmployee(employee.employee_id)
+                            }
+                          />
+                        </td>
+                        <td>{index + 1}</td>
+                        <td>{employeesFullName(employee)}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="d-flex justify-content-end">
+            <button type="submit" className="btn btn-theme">
+              SEND EVALUATION
+            </button>
           </div>
         </div>
-      </div>
+      </form>
     </>
   );
 
   return (
     <Layout
       content={
+        state.loadingSubmit ||
         state.loadingStudents ||
         state.loadingDepartments ||
         state.loadingStudentIds ? (

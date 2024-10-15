@@ -83,6 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EvaluationController::class)->prefix('evaluation')->group(function () {
         Route::get('/index/{studentId}/{employeeId}', 'index');
         Route::post('/store/evaluations/for/students', 'storeEvaluationsForStudents');
+        Route::post('/send/evaluations/for/irregular/students', 'sendEvaluationsForIrregularStudents');
         Route::post('/store/evaluation/for/employees', 'storeEvaluationsForEmployees');
     });
 
