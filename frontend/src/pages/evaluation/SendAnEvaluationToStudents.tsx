@@ -133,13 +133,17 @@ const SendAnEvaluationToStudents = () => {
 
   const handleSelectAll = () => {
     const allSelected = !state.selectAll;
+    const updateSelectedEmployees = allSelected
+      ? state.employees.map((employee) => employee.employee_id)
+      : [];
+
     setState((prevState) => ({
       ...prevState,
       selectAll: allSelected,
-      selectedEmployees: allSelected
-        ? prevState.employees.map((employee) => employee.employee_id)
-        : ([] as number[]),
+      selectedEmployees: updateSelectedEmployees,
     }));
+
+    console.log(updateSelectedEmployees);
   };
 
   const handleSelectEmployee = (employeeId: number) => {
@@ -151,6 +155,8 @@ const SendAnEvaluationToStudents = () => {
 
       const allSelected =
         updateSelectedEmployees.length === prevState.employees.length;
+
+      console.log(updateSelectedEmployees);
 
       return {
         ...prevState,
@@ -172,25 +178,26 @@ const SendAnEvaluationToStudents = () => {
       .post("/evaluation/store/evaluations/for/students", state)
       .then((res) => {
         if (res.data.status === 200) {
-          // setState((prevState) => ({
-          //   ...prevState,
-          //   academic_year: "",
-          //   semester: "",
-          //   students_department: "",
-          //   employees_department: "",
-          //   course: "",
-          //   year_level: "",
-          //   students_section: "",
-          //   selectedEmployees: [] as number[],
-          //   selectAll: false,
-          //   errors: {} as Errors,
-          //   loadingSubmit: false,
-          //   toastMessage: "EVALUATIONS HAS BEEN SENT TO STUDENTS!",
-          //   toastMessageSuccess: true,
-          //   toastMessageVisible: true,
-          // }));
+          setState((prevState) => ({
+            ...prevState,
+            employees: [] as Employees[],
+            academic_year: "",
+            semester: "",
+            students_department: "",
+            employees_department: "",
+            course: "",
+            year_level: "",
+            students_section: "",
+            selectedEmployees: [] as number[],
+            selectAll: false,
+            errors: {} as Errors,
+            loadingSubmit: false,
+            toastMessage: "EVALUATIONS HAS BEEN SENT TO STUDENTS!",
+            toastMessageSuccess: true,
+            toastMessageVisible: true,
+          }));
 
-          console.log(res.data);
+          // console.log(res.data);
         } else {
           console.error("Unexpected status error: ", res.data.status);
         }

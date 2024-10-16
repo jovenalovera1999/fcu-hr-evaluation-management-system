@@ -54,7 +54,7 @@ class EvaluationController extends Controller
             'students_department' => ['required'],
             'course' => ['required'],
             'year_level' => ['required'],
-            'section' => ['required'],
+            'students_section' => ['required'],
             'employees_department' => ['required'],
             'selectedEmployees' => ['array', 'min:1']
         ], [
@@ -63,13 +63,13 @@ class EvaluationController extends Controller
             'selectedEmployees.min' => 'Select an employee at least 1.'
         ]);
 
-        $students = Student::leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
-            ->leftJoin('tbl_departments', 'tbl_courses.department_id', '=', 'tbl_departments.department_id')
+        $students = Student::leftJoin('tbl_departments', 'tbl_students.department_id', '=', 'tbl_departments.department_id')
+            ->leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
             ->leftJoin('tbl_sections', 'tbl_students.section_id', '=', 'tbl_sections.section_id')
             ->where('tbl_departments.department_id', $validated['students_department'])
             ->where('tbl_courses.course_id', $validated['course'])
             ->where('tbl_students.year_level', $validated['year_level'])
-            ->where('tbl_sections.section_id', $validated['section'])
+            ->where('tbl_sections.section_id', $validated['students_section'])
             ->where('tbl_students.is_irregular', false)
             ->where('tbl_students.is_deleted', false)
             ->get();
