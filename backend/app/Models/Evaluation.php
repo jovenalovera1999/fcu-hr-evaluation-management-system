@@ -15,7 +15,7 @@ class Evaluation extends Model
         'student_id',
         'employee_to_response_id',
         'employee_to_evaluate_id',
-        'academic_year_id',
+        'semester_id',
         'is_student',
         'is_completed'
     ];

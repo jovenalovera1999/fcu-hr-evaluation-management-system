@@ -10,7 +10,8 @@ class SectionController extends Controller
 {
     public function loadSectionsByCourse($courseId)
     {
-        $sections = Section::where('tbl_sections.course_id', $courseId)
+        $sections = Section::leftJoin('tbl_courses', 'tbl_sections.course_id', '=', 'tbl_courses.course_id')
+            ->where('tbl_courses.course_id', $courseId)
             ->where('tbl_sections.is_deleted', false)
             ->get();
 

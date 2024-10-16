@@ -34,12 +34,18 @@ interface Semesters {
   semester: string;
 }
 
+interface Sections {
+  section_id: number;
+  section: string;
+}
+
 interface Errors {
   academic_year?: string[];
+  semester?: string[];
   students_department?: string[];
   course?: string[];
   year_level?: string[];
-  section?: string[];
+  students_section?: string[];
   employees_department?: string[];
   selectedEmployees?: string[];
 }
@@ -56,11 +62,13 @@ const SendAnEvaluationToStudents = () => {
     loadingSemesters: false,
     loadingDepartments: true,
     loadingCourses: false,
+    loadingSections: false,
     loadingEmployees: false,
     academic_years: [] as AcademicYears[],
     semesters: [] as Semesters[],
     departments: [] as Departments[],
     courses: [] as Courses[],
+    sections: [] as Sections[],
     employees: [] as Employees[],
     academic_year: "",
     semester: "",
@@ -68,7 +76,7 @@ const SendAnEvaluationToStudents = () => {
     employees_department: "",
     course: "",
     year_level: "",
-    section: "",
+    students_section: "",
     selectedEmployees: [] as number[],
     selectAll: false,
     errors: {} as Errors,
@@ -86,7 +94,7 @@ const SendAnEvaluationToStudents = () => {
       [name]: value,
     }));
 
-    if (name === "semester") {
+    if (name === "academic_year") {
       setState((prevState) => ({
         ...prevState,
         loadingSemesters: true,
@@ -102,6 +110,15 @@ const SendAnEvaluationToStudents = () => {
       }));
 
       handleLoadCourses(parseInt(value));
+    }
+
+    if (name === "course") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingSections: true,
+      }));
+
+      handleLoadSections(parseInt(value));
     }
 
     if (name === "employees_department") {
@@ -155,23 +172,25 @@ const SendAnEvaluationToStudents = () => {
       .post("/evaluation/store/evaluations/for/students", state)
       .then((res) => {
         if (res.data.status === 200) {
-          setState((prevState) => ({
-            ...prevState,
-            academic_year: "",
-            semester: "",
-            students_department: "",
-            employees_department: "",
-            course: "",
-            year_level: "",
-            section: "",
-            selectedEmployees: [] as number[],
-            selectAll: false,
-            errors: {} as Errors,
-            loadingSubmit: false,
-            toastMessage: "EVALUATIONS HAS BEEN SENT TO STUDENTS!",
-            toastMessageSuccess: true,
-            toastMessageVisible: true,
-          }));
+          // setState((prevState) => ({
+          //   ...prevState,
+          //   academic_year: "",
+          //   semester: "",
+          //   students_department: "",
+          //   employees_department: "",
+          //   course: "",
+          //   year_level: "",
+          //   students_section: "",
+          //   selectedEmployees: [] as number[],
+          //   selectAll: false,
+          //   errors: {} as Errors,
+          //   loadingSubmit: false,
+          //   toastMessage: "EVALUATIONS HAS BEEN SENT TO STUDENTS!",
+          //   toastMessageSuccess: true,
+          //   toastMessageVisible: true,
+          // }));
+
+          console.log(res.data);
         } else {
           console.error("Unexpected status error: ", res.data.status);
         }
@@ -262,6 +281,25 @@ const SendAnEvaluationToStudents = () => {
             ...prevState,
             courses: res.data.courses,
             loadingCourses: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
+  const handleLoadSections = async (courseId: number) => {
+    axiosInstance
+      .get(`/section/load/sections/by/course/${courseId}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            sections: res.data.sections,
+            loadingSections: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -382,9 +420,32 @@ const SendAnEvaluationToStudents = () => {
             <div className="col-sm-3">
               <div className="mb-3">
                 <label htmlFor="semester">SEMESTER</label>
-                <select name="semester" id="semester" className="form-select">
+                <select
+                  name="semester"
+                  id="semester"
+                  className={`form-select ${
+                    state.errors.semester ? "is-invalid" : ""
+                  }`}
+                  value={state.semester}
+                  onChange={handleInput}
+                >
                   <option value="">N/A</option>
+                  {state.loadingSemesters ? (
+                    <option value="">Loading...</option>
+                  ) : (
+                    state.semesters.map((semester) => (
+                      <option
+                        value={semester.semester_id}
+                        key={semester.semester_id}
+                      >
+                        {semester.semester}
+                      </option>
+                    ))
+                  )}
                 </select>
+                {state.errors.semester && (
+                  <p className="text-danger">{state.errors.semester[0]}</p>
+                )}
               </div>
             </div>
           </div>
@@ -484,15 +545,29 @@ const SendAnEvaluationToStudents = () => {
                   name="students_section"
                   id="students_section"
                   className={`form-select ${
-                    state.errors.section ? "is-invalid" : ""
+                    state.errors.students_section ? "is-invalid" : ""
                   }`}
-                  value={state.section}
+                  value={state.students_section}
                   onChange={handleInput}
                 >
                   <option value="">N/A</option>
+                  {state.loadingSections ? (
+                    <option value="">Loading...</option>
+                  ) : (
+                    state.sections.map((section) => (
+                      <option
+                        value={section.section_id}
+                        key={section.section_id}
+                      >
+                        {section.section}
+                      </option>
+                    ))
+                  )}
                 </select>
-                {state.errors.section && (
-                  <p className="text-danger">{state.errors.section[0]}</p>
+                {state.errors.students_section && (
+                  <p className="text-danger">
+                    {state.errors.students_section[0]}
+                  </p>
                 )}
               </div>
             </div>
