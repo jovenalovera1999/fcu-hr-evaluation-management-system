@@ -11,6 +11,16 @@ import errorHandler from "../../handler/errorHandler";
 import Spinner from "../../components/Spinner";
 import { debounce } from "chart.js/helpers";
 
+interface AcademicYears {
+  academic_year_id: number;
+  academic_year: string;
+}
+
+interface Semesters {
+  semester_id: number;
+  semester: string;
+}
+
 interface Students {
   student_id: number;
   student_no: string;
@@ -43,6 +53,8 @@ interface Employees {
 
 interface Errors {
   employees_department: string[];
+  selectedStudents: string[];
+  selectedEmployees: string[];
 }
 
 const SendAnEvaluationToIrregularStudents = () => {
@@ -54,6 +66,8 @@ const SendAnEvaluationToIrregularStudents = () => {
     loadingEmployees: false,
     loadingPage: false,
     loadingSearch: false,
+    academicYears: [] as AcademicYears[],
+    semesters: [] as Semesters[],
     students: [] as Students[],
     allStudentIds: [] as AllStudentIds[],
     departments: [] as Departments[],
@@ -129,6 +143,23 @@ const SendAnEvaluationToIrregularStudents = () => {
         } else {
           errorHandler(error);
         }
+      });
+  };
+
+  const handleLoadAcademicYears = async () => {
+    axiosInstance
+      .get("/academic_year/index")
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
       });
   };
 
@@ -244,21 +275,18 @@ const SendAnEvaluationToIrregularStudents = () => {
   };
 
   const handleSelectAllStudents = () => {
-    setState((prevState) => {
-      const allStudentIds = prevState.allStudentIds.map(
-        (student) => student.student_id
-      );
+    const allSelected = !state.selectAllStudents;
+    const updateSelectedStudents = allSelected
+      ? state.allStudentIds.map((student) => student.student_id)
+      : [];
 
-      const selectedStudents = prevState.selectAllStudents
-        ? ([] as number[])
-        : allStudentIds;
+    setState((prevState) => ({
+      ...prevState,
+      selectAllStudents: allSelected,
+      selectedStudents: updateSelectedStudents,
+    }));
 
-      return {
-        ...prevState,
-        selectedStudents,
-        selectAllStudents: !prevState.selectAllStudents,
-      };
-    });
+    // console.log(updateSelectedStudents);
   };
 
   const handleSelectStudent = (studentId: number) => {
@@ -347,13 +375,17 @@ const SendAnEvaluationToIrregularStudents = () => {
 
   const handleSelectAllEmployees = () => {
     const allSelected = !state.selectAllEmployees;
+    const updateSelectedEmployees = allSelected
+      ? state.employees.map((employee) => employee.employee_id)
+      : [];
+
     setState((prevState) => ({
       ...prevState,
       selectAllEmployees: allSelected,
-      selectedEmployees: allSelected
-        ? prevState.employees.map((employee) => employee.employee_id)
-        : ([] as number[]),
+      selectedEmployees: updateSelectedEmployees,
     }));
+
+    console.log(updateSelectedEmployees);
   };
 
   const handleSelectEmployee = (employeeId: number) => {
@@ -366,7 +398,7 @@ const SendAnEvaluationToIrregularStudents = () => {
       const allSelected =
         updateSelectedEmployees.length === prevState.employees.length;
 
-      // console.log(updateSelectedEmployees);
+      console.log(updateSelectedEmployees);
 
       return {
         ...prevState,
@@ -379,6 +411,7 @@ const SendAnEvaluationToIrregularStudents = () => {
   useEffect(() => {
     document.title = "SEND AN EVALUATION TO IRREGULAR STUDENTS | FCU HR EMS";
 
+    handleLoadAcademicYears();
     handleLoadStudents();
     handleLoadDepartments();
     handleLoadStudentIds();
@@ -389,6 +422,66 @@ const SendAnEvaluationToIrregularStudents = () => {
       <form onSubmit={handleSendEvaluation}>
         <div className="mx-auto mt-2">
           <h4>SEND AN EVALUATION TO IRREGULAR STUDENTS</h4>
+          {/* <div className="row">
+            <div className="col-sm-3">
+              <div className="mb-3">
+                <label htmlFor="academic_year">ACADEMIC YEAR</label>
+                <select
+                  name="academic_year"
+                  id="academic_year"
+                  className={`form-select ${
+                    state.errors.academic_year ? "is-invalid" : ""
+                  }`}
+                  value={state.academic_year}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.academic_years.map((academic_year) => (
+                    <option
+                      value={academic_year.academic_year_id}
+                      key={academic_year.academic_year_id}
+                    >
+                      {academic_year.academic_year}
+                    </option>
+                  ))}
+                </select>
+                {state.errors.academic_year && (
+                  <p className="text-danger">{state.errors.academic_year[0]}</p>
+                )}
+              </div>
+            </div>
+            <div className="col-sm-3">
+              <div className="mb-3">
+                <label htmlFor="semester">SEMESTER</label>
+                <select
+                  name="semester"
+                  id="semester"
+                  className={`form-select ${
+                    state.errors.semester ? "is-invalid" : ""
+                  }`}
+                  value={state.semester}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.loadingSemesters ? (
+                    <option value="">Loading...</option>
+                  ) : (
+                    state.semesters.map((semester) => (
+                      <option
+                        value={semester.semester_id}
+                        key={semester.semester_id}
+                      >
+                        {semester.semester}
+                      </option>
+                    ))
+                  )}
+                </select>
+                {state.errors.semester && (
+                  <p className="text-danger">{state.errors.semester[0]}</p>
+                )}
+              </div>
+            </div>
+          </div> */}
           <div className="row">
             <div className="col-sm-3">
               <div className="mb-3">
@@ -407,6 +500,7 @@ const SendAnEvaluationToIrregularStudents = () => {
               <div className="d-flex justify-content-end">
                 <div className="btn-group">
                   <button
+                    type="button"
                     className="btn btn-theme"
                     disabled={
                       state.loadingPage ||
@@ -418,6 +512,7 @@ const SendAnEvaluationToIrregularStudents = () => {
                     PREVIOUS
                   </button>
                   <button
+                    type="button"
                     className="btn btn-theme"
                     disabled={
                       state.loadingPage ||
@@ -488,6 +583,11 @@ const SendAnEvaluationToIrregularStudents = () => {
                   )}
                 </tbody>
               </table>
+              {state.errors.selectedStudents && (
+                <p className="text-danger">
+                  {state.errors.selectedStudents[0]}
+                </p>
+              )}
             </div>
           </div>
           <hr />
@@ -553,7 +653,7 @@ const SendAnEvaluationToIrregularStudents = () => {
                     </tr>
                   ) : (
                     state.employees.map((employee, index) => (
-                      <tr>
+                      <tr key={employee.employee_id}>
                         <td className="text-center">
                           <input
                             type="checkbox"
@@ -575,6 +675,11 @@ const SendAnEvaluationToIrregularStudents = () => {
                   )}
                 </tbody>
               </table>
+              {state.errors.selectedEmployees && (
+                <p className="text-danger">
+                  {state.errors.selectedEmployees[0]}
+                </p>
+              )}
             </div>
           </div>
           <div className="d-flex justify-content-end">

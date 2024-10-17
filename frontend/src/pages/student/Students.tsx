@@ -189,7 +189,7 @@ const Students = () => {
               <option value="8">8</option>
             </select>
           </div>
-          <table className="table table-hover">
+          <table className="table table-sm table-hover">
             <thead>
               <tr>
                 <th>NO.</th>

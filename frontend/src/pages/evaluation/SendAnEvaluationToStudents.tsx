@@ -143,7 +143,7 @@ const SendAnEvaluationToStudents = () => {
       selectedEmployees: updateSelectedEmployees,
     }));
 
-    console.log(updateSelectedEmployees);
+    // console.log(updateSelectedEmployees);
   };
 
   const handleSelectEmployee = (employeeId: number) => {
@@ -355,7 +355,7 @@ const SendAnEvaluationToStudents = () => {
   };
 
   useEffect(() => {
-    document.title = "SEND AN EVALUATION TO STUDENTS | FCU HR EMS";
+    document.title = "SEND AN EVALUATION TO REGULAR STUDENTS | FCU HR EMS";
 
     if (
       !token ||
@@ -381,7 +381,7 @@ const SendAnEvaluationToStudents = () => {
       />
       <form onSubmit={handleSendEvaluation}>
         <div className="mx-auto mt-2">
-          <h4>SEND AN EVALUATION TO STUDENTS</h4>
+          <h4>SEND AN EVALUATION TO REGULAR STUDENTS</h4>
           <div className="row">
             <hr />
             <div className="col-sm-6">

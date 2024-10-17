@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import {
   Chart as ChartJS,
@@ -17,6 +17,16 @@ import Spinner from "../../components/Spinner";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 
+interface AcademicYears {
+  academic_year_id: number;
+  academic_year: string;
+}
+
+interface Semesters {
+  semester_id: number;
+  semester: string;
+}
+
 const Admin = () => {
   const token = localStorage.getItem("token");
 
@@ -24,7 +34,13 @@ const Admin = () => {
   const parsedUser = user ? JSON.parse(user) : null;
 
   const [state, setState] = useState({
-    loadingStatistics: true,
+    loadingAcademicYears: true,
+    loadingSemesters: false,
+    loadingStatistics: false,
+    academicYears: [] as AcademicYears[],
+    semesters: [] as Semesters[],
+    academic_year: "",
+    semester: "",
     totalEmployees: 0,
     totalStudents: 0,
     totalResponders: 0,
@@ -36,9 +52,85 @@ const Admin = () => {
     totalExcellent: 0,
   });
 
-  const handleLoadStatistics = async () => {
+  const handleInput = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+
+    if (name === "academic_year") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingSemesters: true,
+      }));
+
+      handleLoadSemesters(parseInt(value));
+    }
+
+    const academicYearId =
+      name === "academic_year"
+        ? parseInt(value)
+        : parseInt(state.academic_year);
+    const semesterId =
+      name === "semester" ? parseInt(value) : parseInt(state.semester);
+
+    if (academicYearId && semesterId) {
+      setState((prevState) => ({
+        ...prevState,
+        loadingStatistics: true,
+      }));
+
+      handleLoadStatistics(academicYearId, semesterId);
+    }
+  };
+
+  const handleLoadAcademicYears = async () => {
     axiosInstance
-      .get("/dashboard/admin/statistics")
+      .get("/academic_year/index")
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            academicYears: res.data.academicYears,
+            loadingAcademicYears: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
+  const handleLoadSemesters = async (academicYearId: number) => {
+    axiosInstance
+      .get(`/semester/load/semesters/by/academic_year/${academicYearId}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            semesters: res.data.semesters,
+            loadingSemesters: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch();
+  };
+
+  const handleLoadStatistics = async (
+    academicYearId: number,
+    semesterId: number
+  ) => {
+    axiosInstance
+      .get(
+        `/dashboard/admin/load/statistics/by/academic_year/and/semester/${academicYearId}/${semesterId}`
+      )
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -150,25 +242,12 @@ const Admin = () => {
     ) {
       errorHandler(401);
     } else {
-      handleLoadStatistics();
+      handleLoadAcademicYears();
     }
   }, []);
 
-  const content = (
+  const statisticsComponents = (
     <>
-      <div className="row mb-2">
-        <div className="col-sm-3">
-          <label htmlFor="semester">SEMESTER</label>
-          <select name="semester" id="semester" className="form-select">
-            <option value="">N/A</option>
-            <option value="">1ST</option>
-            <option value="">2ND</option>
-            <option value="">3RD</option>
-            <option value="">4TH</option>
-            <option value="">5TH</option>
-          </select>
-        </div>
-      </div>
       <div className="row">
         <div className="col-sm-3 g-2">
           <div
@@ -283,7 +362,58 @@ const Admin = () => {
     </>
   );
 
-  return <Layout content={state.loadingStatistics ? <Spinner /> : content} />;
+  const content = (
+    <>
+      <div className="row mb-2">
+        <div className="col-sm-3">
+          <label htmlFor="academic_year">ACADEMIC YEAR</label>
+          <select
+            name="academic_year"
+            id="academic_year"
+            className="form-select"
+            value={state.academic_year}
+            onChange={handleInput}
+          >
+            <option value="">N/A</option>
+            {state.academicYears.map((academicYear) => (
+              <option
+                value={academicYear.academic_year_id}
+                key={academicYear.academic_year_id}
+              >
+                {academicYear.academic_year}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="col-sm-3">
+          <label htmlFor="semester">SEMESTER</label>
+          <select
+            name="semester"
+            id="semester"
+            className="form-select"
+            value={state.semester}
+            onChange={handleInput}
+          >
+            <option value="">N/A</option>
+            {state.loadingSemesters ? (
+              <option value="">Loading...</option>
+            ) : (
+              state.semesters.map((semester) => (
+                <option value={semester.semester_id}>
+                  {semester.semester}
+                </option>
+              ))
+            )}
+          </select>
+        </div>
+      </div>
+      {state.loadingStatistics ? <Spinner /> : statisticsComponents}
+    </>
+  );
+
+  return (
+    <Layout content={state.loadingAcademicYears ? <Spinner /> : content} />
+  );
 };
 
 export default Admin;
