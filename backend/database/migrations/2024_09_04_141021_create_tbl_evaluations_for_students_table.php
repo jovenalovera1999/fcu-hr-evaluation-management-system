@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('employee_to_evaluate_id');
             $table->unsignedBigInteger('semester_id');
             $table->tinyInteger('is_student')->default(false);
+            $table->tinyInteger('is_cancelled')->default(false);
             $table->tinyInteger('is_completed')->default(false);
             $table->timestamps();
 

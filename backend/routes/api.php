@@ -38,7 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::controller(AdminDashboard::class)->prefix('dashboard/admin')->group(function () {
-        Route::get('/statistics', 'statistics');
+        Route::get('/load/statistics/by/academic_year/and/semester/{academicYearId}/{semesterId}', 'statistics');
     });
 
     Route::controller(EmployeeController::class)->prefix('employee')->group(function () {

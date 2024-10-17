@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class AdminDashboard extends Controller
 {
-    public function statistics()
+    public function statistics($academicYearId, $semesterId)
     {
         $totalEmployees = Employee::where('tbl_employees.is_deleted', false)
             ->count();
@@ -20,26 +20,59 @@ class AdminDashboard extends Controller
             ->count();
 
         $totalResponders = Evaluation::distinct('tbl_evaluations.student_id')
+            ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
+            ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+            ->where('tbl_academic_years.academic_year_id', $academicYearId)
+            ->where('tbl_semesters.semester_id', $semesterId)
             ->where('tbl_evaluations.is_completed', false)
             ->count();
 
         $totalResponded = Evaluation::distinct('tbl_evaluations.student_id')
+            ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
+            ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+            ->where('tbl_academic_years.academic_year_id', $academicYearId)
+            ->where('tbl_semesters.semester_id', $semesterId)
             ->where('tbl_evaluations.is_completed', true)
             ->count();
 
-        $totalPoor = Response::where('tbl_responses.poor', true)
+        $totalPoor = Response::leftJoin('tbl_evaluations', 'tbl_responses.evaluation_id', '=', 'tbl_evaluations.evaluation_id')
+            ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
+            ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+            ->where('tbl_academic_years.academic_year_id', $academicYearId)
+            ->where('tbl_semesters.semester_id', $semesterId)
+            ->where('tbl_responses.poor', true)
             ->count();
 
-        $totalMediocre = Response::where('tbl_responses.mediocre', true)
+        $totalMediocre = Response::leftJoin('tbl_evaluations', 'tbl_responses.evaluation_id', '=', 'tbl_evaluations.evaluation_id')
+            ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
+            ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+            ->where('tbl_academic_years.academic_year_id', $academicYearId)
+            ->where('tbl_semesters.semester_id', $semesterId)
+            ->where('tbl_responses.mediocre', true)
             ->count();
 
-        $totalSatisfactory = Response::where('tbl_responses.satisfactory', true)
+        $totalSatisfactory = Response::leftJoin('tbl_evaluations', 'tbl_responses.evaluation_id', '=', 'tbl_evaluations.evaluation_id')
+            ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
+            ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+            ->where('tbl_academic_years.academic_year_id', $academicYearId)
+            ->where('tbl_semesters.semester_id', $semesterId)
+            ->where('tbl_responses.satisfactory', true)
             ->count();
 
-        $totalGood = Response::where('tbl_responses.good', true)
+        $totalGood = Response::leftJoin('tbl_evaluations', 'tbl_responses.evaluation_id', '=', 'tbl_evaluations.evaluation_id')
+            ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
+            ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+            ->where('tbl_academic_years.academic_year_id', $academicYearId)
+            ->where('tbl_semesters.semester_id', $semesterId)
+            ->where('tbl_responses.good', true)
             ->count();
 
-        $totalExcellent = Response::where('tbl_responses.excellent', true)
+        $totalExcellent = Response::leftJoin('tbl_evaluations', 'tbl_responses.evaluation_id', '=', 'tbl_evaluations.evaluation_id')
+            ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
+            ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+            ->where('tbl_academic_years.academic_year_id', $academicYearId)
+            ->where('tbl_semesters.semester_id', $semesterId)
+            ->where('tbl_responses.excellent', true)
             ->count();
 
         return response()->json([

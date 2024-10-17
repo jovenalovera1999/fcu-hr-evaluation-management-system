@@ -209,7 +209,7 @@ class DatabaseSeeder extends Seeder
             $user->createToken('EmployeeToken')->plainTextToken;
         });
 
-        Student::factory(300)->create()->each(function ($student) {
+        Student::factory(200)->create()->each(function ($student) {
             $user = User::create([
                 'student_id' => $student->student_id,
                 'username' => $student->student_no,

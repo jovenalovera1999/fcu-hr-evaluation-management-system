@@ -24,6 +24,7 @@ class EvaluationController extends Controller
                 ->leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
                 ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
                 ->where('tbl_evaluations.is_student', true)
+                ->where('tbl_evaluations.is_cancelled', false)
                 ->where('tbl_evaluations.is_completed', false)
                 ->where('tbl_students.student_id', $studentId)
                 ->get();
@@ -34,6 +35,7 @@ class EvaluationController extends Controller
                 ->leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
                 ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
                 ->where('tbl_evaluations.is_student', false)
+                ->where('tbl_evaluations.is_cancelled', false)
                 ->where('tbl_evaluations.is_completed', false)
                 ->where('tbl_employees.employee_id', $employeeId)
                 ->get();
@@ -103,7 +105,37 @@ class EvaluationController extends Controller
     public function sendEvaluationsForIrregularStudents(Request $request)
     {
         $validated = $request->validate([
-            'employees_department' => ['required']
+            'employees_department' => ['required'],
+            'selectedStudents' => ['array', 'min:1'],
+            'selectedEmployees' => ['array', 'min:1']
+        ], [
+            'selectedStudents.min' => 'Select a student at least 1.',
+            'selectedEmployees.min' => 'Select an employee at least 1.'
+        ]);
+
+        $questions = Question::where('tbl_questions.is_deleted', false)
+            ->get();
+
+        foreach ($validated['selectedStudents'] as $studentId) {
+            foreach ($validated['selectedEmployees'] as $employeeId) {
+                $evaluation = Evaluation::create([
+                    'student_id' => $studentId,
+                    'employee_to_evaluate_id' => $employeeId,
+                    'semester_id' => $validated['semester'],
+                    'is_student' => true
+                ]);
+
+                foreach ($questions as $question) {
+                    Response::create([
+                        'evaluation_id' => $evaluation->evaluation_id,
+                        'question_id' => $question->question_id
+                    ]);
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => 200
         ]);
     }
 

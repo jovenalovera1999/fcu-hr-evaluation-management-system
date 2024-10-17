@@ -30,7 +30,7 @@ class QuestionController extends Controller
 
         Question::create([
             'category_id' => $validated['category'],
-            'question' => $validated['question']
+            'question' => strtoupper($validated['question'])
         ]);
 
         return response()->json([
