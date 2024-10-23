@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { FormEvent, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import Layout from "../layout/Layout";
@@ -12,8 +12,10 @@ const DeleteEmployee = () => {
   const parsedUser = user ? JSON.parse(user) : null;
 
   const { employee_id } = useParams();
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
+    loadingSubmit: false,
     loadingEmployee: true,
     first_name: "",
     middle_name: "",
@@ -24,8 +26,32 @@ const DeleteEmployee = () => {
     username: "",
   });
 
-  const handleDeleteEmployee = async () => {
-    // axiosInstance.put().then().catch();
+  const handleDeleteEmployee = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setState((prevState) => ({
+      ...prevState,
+      loadingSubmit: true,
+    }));
+
+    axiosInstance
+      .put(`/employee/delete/employee/${employee_id}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          navigate("/employee/list", {
+            state: {
+              toastMessage: "EMPLOYEE SUCCESSFULLY DELETED!",
+              toastMessageSuccess: true,
+              toastMessageVisible: true,
+            },
+          });
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
   };
 
   const handleGetEmployee = async () => {
@@ -71,7 +97,7 @@ const DeleteEmployee = () => {
 
   const content = (
     <>
-      <form>
+      <form onSubmit={handleDeleteEmployee}>
         <div className="mx-auto mt-2">
           <h4>DELETE EMPLOYEE</h4>
           <div className="row">

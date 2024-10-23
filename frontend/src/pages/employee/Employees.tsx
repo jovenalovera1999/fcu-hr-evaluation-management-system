@@ -3,7 +3,8 @@ import Layout from "../layout/Layout";
 import Spinner from "../../components/Spinner";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import ToastMessage from "../../components/ToastMessage";
 
 interface Departments {
   department_id: number;
@@ -31,6 +32,9 @@ const Employees = () => {
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [state, setState] = useState({
     loadingDepartments: true,
     loadingEmployees: false,
@@ -39,6 +43,9 @@ const Employees = () => {
     employees: [] as Employees[],
     department: "",
     academic_year: "",
+    toastMessage: "",
+    toastMessageSuccess: false,
+    toastMessageVisible: false,
   });
 
   const handleInput = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -114,6 +121,34 @@ const Employees = () => {
     return fullName;
   };
 
+  const handleToastMessageFromDeleteEmployee = () => {
+    if (location.state && location.state.toastMessage) {
+      setState((prevState) => ({
+        ...prevState,
+        toastMessage: location.state.toastMessage,
+        toastMessageSuccess: location.state.toastMessageSuccess,
+        toastMessageVisible: location.state.toastMessageVisible,
+      }));
+    }
+  };
+
+  const handleCloseToastMessage = () => {
+    navigate(".", {
+      state: {
+        toastMessage: "",
+        toastMessageSuccess: false,
+        toastMessageVisible: false,
+      },
+    });
+
+    setState((prevState) => ({
+      ...prevState,
+      toastMessage: "",
+      toastMessageSuccess: false,
+      toastMessageVisible: false,
+    }));
+  };
+
   useEffect(() => {
     document.title = "LIST OF EMPLOYEES | FCU HR EMS";
 
@@ -132,6 +167,12 @@ const Employees = () => {
 
   const content = (
     <>
+      <ToastMessage
+        message={state.toastMessage}
+        success={state.toastMessageSuccess}
+        visible={state.toastMessageVisible}
+        onClose={handleCloseToastMessage}
+      />
       <div className="mx-auto mt-2">
         <div className="row">
           <div className="col-sm-3">
