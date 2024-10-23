@@ -3,6 +3,7 @@ import Layout from "../layout/Layout";
 import Spinner from "../../components/Spinner";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
+import { Link } from "react-router-dom";
 
 interface Departments {
   department_id: number;
@@ -132,49 +133,64 @@ const Employees = () => {
   const content = (
     <>
       <div className="mx-auto mt-2">
-        <h4>LIST OF EMPLOYEES</h4>
-        <div className="table-responsive">
-          <div className="mb-3 col-12 col-sm-3">
-            <label htmlFor="department">DEPARTMENT</label>
-            <select
-              className="form-select"
-              name="department"
-              id="department"
-              value={state.department}
-              onChange={handleInput}
-            >
-              <option value="">N/A</option>
-              {state.departments.map((department) => (
-                <option
-                  value={department.department_id}
-                  key={department.department_id}
-                >
-                  {department.department}
-                </option>
-              ))}
-            </select>
+        <div className="row">
+          <div className="col-sm-3">
+            <div className="mb-3">
+              <label htmlFor="department">DEPARTMENT</label>
+              <select
+                className="form-select"
+                name="department"
+                id="department"
+                value={state.department}
+                onChange={handleInput}
+              >
+                <option value="">N/A</option>
+                {state.departments.map((department) => (
+                  <option
+                    value={department.department_id}
+                    key={department.department_id}
+                  >
+                    {department.department}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <table className="table table-hover">
+        </div>
+        <div className="table-responsive">
+          <table className="table table-sm table-hover">
+            <caption>LIST OF EMPLOYEES</caption>
             <thead>
               <tr>
                 <th>NO.</th>
                 <th>NAME OF EMPLOYEES</th>
                 <th>POSITION</th>
+                <th>ACTION</th>
               </tr>
             </thead>
             <tbody>
               {state.loadingEmployees ? (
                 <tr key={1}>
-                  <td colSpan={3}>
+                  <td colSpan={4}>
                     <Spinner />
                   </td>
                 </tr>
               ) : (
                 state.employees.map((employee, index) => (
-                  <tr key={employee.employee_id}>
+                  <tr key={employee.employee_id} className="align-middle">
                     <td>{index + 1}</td>
                     <td>{handleEmployeeFullName(employee)}</td>
                     <td>{employee.position}</td>
+                    <td>
+                      <div className="btn-group">
+                        <Link to={"/"} className="btn btn-sm btn-theme">
+                          EDIT
+                        </Link>
+                        <Link to={"/"} className="btn btn-sm btn-theme">
+                          DELETE
+                        </Link>
+                      </div>
+                    </td>
                   </tr>
                 ))
               )}

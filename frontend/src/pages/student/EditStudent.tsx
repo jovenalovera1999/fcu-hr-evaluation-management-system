@@ -1,9 +1,10 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
+import { Link, useParams } from "react-router-dom";
 import Layout from "../layout/Layout";
 import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
-import axiosInstance from "../../axios/axiosInstance";
-import errorHandler from "../../handler/errorHandler";
 
 interface Departments {
   department_id: number;
@@ -34,17 +35,22 @@ interface Errors {
   password_confirmation?: string[];
 }
 
-const AddStudent = () => {
+const EditStudent = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
 
+  const { student_id } = useParams();
+
   const [state, setState] = useState({
-    loadingSave: false,
+    loadingSubmit: false,
     loadingDepartments: true,
     loadingCourses: false,
     loadingSections: false,
+    loadingStudent: true,
+    loadingStudentCourse: true,
+    loadingStudentSection: true,
     departments: [] as Departments[],
     courses: [] as Courses[],
     sections: [] as Sections[],
@@ -55,11 +61,9 @@ const AddStudent = () => {
     suffix_name: "",
     department: "",
     course: "",
-    year_level: "",
     section: "",
+    year_level: "",
     irregular: false,
-    password: "",
-    password_confirmation: "",
     errors: {} as Errors,
     toastMessage: "",
     toastMessageSuccess: false,
@@ -69,15 +73,23 @@ const AddStudent = () => {
   const handleInput = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, type, value } = e.target;
+
+    const checked =
+      type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
+
     setState((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
 
     if (name === "department") {
       setState((prevState) => ({
         ...prevState,
+        course: "",
+        section: "",
+        courses: [] as Courses[],
+        sections: [] as Sections[],
         loadingCourses: true,
       }));
 
@@ -85,6 +97,8 @@ const AddStudent = () => {
     } else if (name === "course") {
       setState((prevState) => ({
         ...prevState,
+        section: "",
+        sections: [] as Sections[],
         loadingSections: true,
       }));
 
@@ -92,39 +106,27 @@ const AddStudent = () => {
     }
   };
 
-  const handleSaveStudent = async (e: FormEvent) => {
+  const handleUpdateStudent = async (e: FormEvent) => {
     e.preventDefault();
 
     setState((prevState) => ({
       ...prevState,
-      loadingSave: true,
+      loadingSubmit: true,
     }));
 
     axiosInstance
-      .post("/student/store", state)
+      .put(`/student/update/student/${student_id}`, state)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
             ...prevState,
-            loadingSave: false,
-            courses: [] as Courses[],
-            sections: [] as Sections[],
-            student_no: "",
-            first_name: "",
-            middle_name: "",
-            last_name: "",
-            suffix_name: "",
-            department: "",
-            course: "",
-            year_level: "",
-            section: "",
-            password: "",
-            password_confirmation: "",
             errors: {} as Errors,
-            toastMessage: "STUDENT SUCCESSFULLY SAVED!",
+            toastMessage: "STUDENT SUCCESSFULLY UPDATED!",
             toastMessageSuccess: true,
             toastMessageVisible: true,
+            loadingSubmit: false,
           }));
+          // console.log(res.data.student);
         } else {
           console.error("Unexpected status error: ", res.data.status);
         }
@@ -134,10 +136,8 @@ const AddStudent = () => {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
-            loadingSave: false,
+            loadingSubmit: false,
           }));
-        } else {
-          errorHandler(error);
         }
       });
   };
@@ -149,6 +149,35 @@ const AddStudent = () => {
       toastMessageSuccess: false,
       toastMessageVisible: false,
     }));
+  };
+
+  const handleGetStudent = async () => {
+    axiosInstance
+      .get(`/student/get/student/${student_id}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            student_no: res.data.student.student_no,
+            first_name: res.data.student.first_name,
+            middle_name: res.data.student.middle_name,
+            last_name: res.data.student.last_name,
+            suffix_name: res.data.student.suffix_name,
+            department: res.data.student.department_id,
+            course: res.data.student.course_id,
+            section: res.data.student.section_id,
+            year_level: res.data.student.year_level,
+            irregular: res.data.student.is_irregular ? true : false,
+            loadingStudent: false,
+          }));
+          // console.log(res.data.student);
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
   };
 
   const handleLoadDepartments = async () => {
@@ -179,6 +208,7 @@ const AddStudent = () => {
             ...prevState,
             courses: res.data.courses,
             loadingCourses: false,
+            loadingStudentCourse: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -198,6 +228,7 @@ const AddStudent = () => {
             ...prevState,
             sections: res.data.sections,
             loadingSections: false,
+            loadingStudentSection: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -221,8 +252,39 @@ const AddStudent = () => {
       errorHandler(401);
     } else {
       handleLoadDepartments();
+      handleGetStudent();
     }
   }, []);
+
+  useEffect(() => {
+    const loadCourses = async () => {
+      if (state.department) {
+        setState((prevState) => ({
+          ...prevState,
+          loadingCourses: true,
+        }));
+
+        await handleLoadCourses(parseInt(state.department));
+      }
+    };
+
+    loadCourses();
+  }, [state.department]);
+
+  useEffect(() => {
+    const loadSections = async () => {
+      if (state.course) {
+        setState((prevState) => ({
+          ...prevState,
+          loadingSections: true,
+        }));
+
+        await handleLoadSections(parseInt(state.course));
+      }
+    };
+
+    loadSections();
+  }, [state.course]);
 
   const content = (
     <>
@@ -232,9 +294,9 @@ const AddStudent = () => {
         visible={state.toastMessageVisible}
         onClose={handleCloseToastMessage}
       />
-      <form onSubmit={handleSaveStudent}>
+      <form onSubmit={handleUpdateStudent}>
         <div className="mx-auto mt-2">
-          <h4>ADD STUDENT</h4>
+          <h4>EDIT STUDENT</h4>
           <div className="row">
             <div className="col-sm-3">
               <div className="mb-3">
@@ -457,54 +519,19 @@ const AddStudent = () => {
                     id="irregular"
                     value={1}
                     onChange={handleInput}
+                    checked={state.irregular}
                   />
                   <label className="form-check-label" htmlFor="irregular">
-                    IS STUDENT IRREGULAR? IF NOT, LEAVE IT.
+                    IS STUDENT IRREGULAR? IF NOT, UNCHECKED. OTHERWISE, CHECKED.
                   </label>
                 </div>
               </div>
             </div>
-            <hr />
-          </div>
-          <div className="row mb-3">
-            <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="password">PASSWORD</label>
-                <input
-                  type="password"
-                  className={`form-control ${
-                    state.errors.password ? "is-invalid" : ""
-                  }`}
-                  name="password"
-                  id="password"
-                  value={state.password}
-                  onChange={handleInput}
-                />
-                {state.errors.password && (
-                  <p className="text-danger">{state.errors.password[0]}</p>
-                )}
-              </div>
-            </div>
-            <div className="col-sm-3">
-              <label htmlFor="password_confirmation">CONFIRM PASSWORD</label>
-              <input
-                type="password"
-                className={`form-control ${
-                  state.errors.password_confirmation ? "is-invalid" : ""
-                }`}
-                name="password_confirmation"
-                id="password_confirmation"
-                value={state.password_confirmation}
-                onChange={handleInput}
-              />
-              {state.errors.password_confirmation && (
-                <p className="text-danger">
-                  {state.errors.password_confirmation}
-                </p>
-              )}
-            </div>
           </div>
           <div className="d-flex justify-content-end">
+            <Link to={"/student/list"} className="btn btn-theme me-1">
+              BACK
+            </Link>
             <button type="submit" className="btn btn-theme">
               SAVE STUDENT
             </button>
@@ -517,10 +544,18 @@ const AddStudent = () => {
   return (
     <Layout
       content={
-        state.loadingSave || state.loadingDepartments ? <Spinner /> : content
+        state.loadingSubmit ||
+        state.loadingDepartments ||
+        state.loadingStudent ||
+        state.loadingStudentCourse ||
+        state.loadingStudentSection ? (
+          <Spinner />
+        ) : (
+          content
+        )
       }
     />
   );
 };
 
-export default AddStudent;
+export default EditStudent;

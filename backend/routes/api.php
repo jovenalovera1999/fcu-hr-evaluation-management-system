@@ -68,7 +68,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/load/irregular/students/by/page/and/search', 'loadIrregularStudentsByPageAndSearch');
         Route::get('/load/irregular/student/ids', 'loadIrregularStudentIds');
         Route::get('/load/irregular/student/ids/by/search', 'loadIrregularStudentIdsBySearch');
+        Route::get('/get/student/{studentId}', 'getStudent');
         Route::post('/store', 'store');
+        Route::put('/update/student/{studentId}', 'updateStudent');
+        Route::put('/delete/student/{studentId}', 'deleteStudent');
     });
 
     Route::controller(CategoryController::class)->prefix('category')->group(function () {

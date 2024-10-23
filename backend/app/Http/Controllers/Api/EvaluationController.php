@@ -105,6 +105,8 @@ class EvaluationController extends Controller
     public function sendEvaluationsForIrregularStudents(Request $request)
     {
         $validated = $request->validate([
+            'academic_year' => ['required'],
+            'semester' => ['required'],
             'employees_department' => ['required'],
             'selectedStudents' => ['array', 'min:1'],
             'selectedEmployees' => ['array', 'min:1']

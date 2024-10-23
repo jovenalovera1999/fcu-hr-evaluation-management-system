@@ -52,6 +52,8 @@ interface Employees {
 }
 
 interface Errors {
+  academic_year: string[];
+  semester: string[];
   employees_department: string[];
   selectedStudents: string[];
   selectedEmployees: string[];
@@ -60,6 +62,8 @@ interface Errors {
 const SendAnEvaluationToIrregularStudents = () => {
   const [state, setState] = useState({
     loadingSubmit: false,
+    loadingAcademicYears: true,
+    loadingSemesters: false,
     loadingStudents: true,
     loadingStudentIds: true,
     loadingDepartments: true,
@@ -72,6 +76,8 @@ const SendAnEvaluationToIrregularStudents = () => {
     allStudentIds: [] as AllStudentIds[],
     departments: [] as Departments[],
     employees: [] as Employees[],
+    academic_year: "",
+    semester: "",
     search: "",
     employees_department: "",
     selectedStudents: [] as number[],
@@ -95,7 +101,14 @@ const SendAnEvaluationToIrregularStudents = () => {
       [name]: value,
     }));
 
-    if (name === "employees_department") {
+    if (name === "academic_year") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingSemesters: true,
+      }));
+
+      handleLoadSemesters(parseInt(value));
+    } else if (name === "employees_department") {
       setState((prevState) => ({
         ...prevState,
         loadingEmployees: true,
@@ -114,7 +127,7 @@ const SendAnEvaluationToIrregularStudents = () => {
     }));
 
     axiosInstance
-      .post("/evaluation/send/evaluations/for/irregular/students")
+      .post("/evaluation/send/evaluations/for/irregular/students", state)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -153,6 +166,8 @@ const SendAnEvaluationToIrregularStudents = () => {
         if (res.data.status === 200) {
           setState((prevState) => ({
             ...prevState,
+            academicYears: res.data.academicYears,
+            loadingAcademicYears: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -161,6 +176,23 @@ const SendAnEvaluationToIrregularStudents = () => {
       .catch((error) => {
         errorHandler(error);
       });
+  };
+
+  const handleLoadSemesters = async (academicYearId: number) => {
+    axiosInstance
+      .get(`/semester/load/semesters/by/academic_year/${academicYearId}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            semesters: res.data.semesters,
+            loadingSemesters: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch();
   };
 
   const handleLoadStudents = async (page: number = state.currentPage) => {
@@ -422,7 +454,7 @@ const SendAnEvaluationToIrregularStudents = () => {
       <form onSubmit={handleSendEvaluation}>
         <div className="mx-auto mt-2">
           <h4>SEND AN EVALUATION TO IRREGULAR STUDENTS</h4>
-          {/* <div className="row">
+          <div className="row">
             <div className="col-sm-3">
               <div className="mb-3">
                 <label htmlFor="academic_year">ACADEMIC YEAR</label>
@@ -436,7 +468,7 @@ const SendAnEvaluationToIrregularStudents = () => {
                   onChange={handleInput}
                 >
                   <option value="">N/A</option>
-                  {state.academic_years.map((academic_year) => (
+                  {state.academicYears.map((academic_year) => (
                     <option
                       value={academic_year.academic_year_id}
                       key={academic_year.academic_year_id}
@@ -481,7 +513,7 @@ const SendAnEvaluationToIrregularStudents = () => {
                 )}
               </div>
             </div>
-          </div> */}
+          </div>
           <div className="row">
             <div className="col-sm-3">
               <div className="mb-3">
@@ -497,7 +529,7 @@ const SendAnEvaluationToIrregularStudents = () => {
           </div>
           <div className="row">
             <div className="table-responsive">
-              <div className="d-flex justify-content-end">
+              <div className="d-flex justify-content-end mb-2">
                 <div className="btn-group">
                   <button
                     type="button"
@@ -696,6 +728,7 @@ const SendAnEvaluationToIrregularStudents = () => {
     <Layout
       content={
         state.loadingSubmit ||
+        state.loadingAcademicYears ||
         state.loadingStudents ||
         state.loadingDepartments ||
         state.loadingStudentIds ? (

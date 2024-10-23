@@ -169,6 +169,19 @@ class StudentController extends Controller
         ]);
     }
 
+    public function getStudent($studentId)
+    {
+        $student = Student::leftJoin('tbl_departments', 'tbl_students.department_id', '=', 'tbl_departments.department_id')
+            ->leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
+            ->leftJoin('tbl_sections', 'tbl_students.section_id', '=', 'tbl_sections.section_id')
+            ->find($studentId);
+
+        return response()->json([
+            'status' => 200,
+            'student' => $student
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -210,6 +223,55 @@ class StudentController extends Controller
 
         return response()->json([
             'token' => $token,
+            'status' => 200
+        ]);
+    }
+
+    public function updateStudent(Request $request, $studentId)
+    {
+        $validated = $request->validate([
+            'student_no' => ['required'],
+            'first_name' => ['required', 'max:55'],
+            'middle_name' => ['nullable', 'max:55'],
+            'last_name' => ['required', 'max:55'],
+            'suffix_name' => ['nullable', 'max:55'],
+            'department' => ['required'],
+            'course' => ['required'],
+            'year_level' => ['required', 'numeric'],
+            'section' => ['required'],
+            'irregular' => ['nullable']
+        ]);
+
+        $student = Student::find($studentId);
+
+        $student->update([
+            'student_no' => strtoupper($validated['student_no']),
+            'first_name' => strtoupper($validated['first_name']),
+            'middle_name' => strtoupper($validated['middle_name']),
+            'last_name' => strtoupper($validated['last_name']),
+            'suffix_name' => strtoupper($validated['suffix_name']),
+            'department_id' => $validated['department'],
+            'course_id' => $validated['course'],
+            'year_level' => $validated['year_level'],
+            'section_id' => $validated['section'],
+            'is_irregular' => ($validated['irregular']) ? true : false
+        ]);
+
+        return response()->json([
+            'student' => $student,
+            'status' => 200
+        ]);
+    }
+
+    public function deleteStudent($studentId)
+    {
+        $student = Student::find($studentId);
+
+        $student->update([
+            'is_deleted' => true
+        ]);
+
+        return response()->json([
             'status' => 200
         ]);
     }
