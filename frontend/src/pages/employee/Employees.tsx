@@ -183,10 +183,13 @@ const Employees = () => {
                     <td>{employee.position}</td>
                     <td>
                       <div className="btn-group">
-                        <Link to={"/"} className="btn btn-sm btn-theme">
+                        <Link
+                          to={`/employee/edit/${employee.employee_id}`}
+                          className="btn btn-sm btn-theme"
+                        >
                           EDIT
                         </Link>
-                        <Link to={"/"} className="btn btn-sm btn-theme">
+                        <Link to={"#"} className="btn btn-sm btn-theme">
                           DELETE
                         </Link>
                       </div>

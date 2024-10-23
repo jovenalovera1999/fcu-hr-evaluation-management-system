@@ -28,6 +28,18 @@ class EmployeeController extends Controller
         ]);
     }
 
+    public function getEmployee($employeeId)
+    {
+        $employee = Employee::leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
+            ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
+            ->find($employeeId);
+
+        return response()->json([
+            'employee' => $employee,
+            'status' => 200
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

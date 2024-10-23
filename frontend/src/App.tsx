@@ -15,6 +15,7 @@ import Admin from "./pages/dashboard/Admin";
 import SendAnEvaluationToIrregularStudents from "./pages/evaluation/SendAnEvaluationToIrregularStudents";
 import EditStudent from "./pages/student/EditStudent";
 import DeleteStudent from "./pages/student/DeleteStudent";
+import EditEmployee from "./pages/employee/EditEmployee";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/logout" element={<Logout />} />
         <Route path="/employee/list" element={<Employees />} />
         <Route path="/employee/add" element={<AddEmployee />} />
+        <Route path="/employee/edit/:employee_id" element={<EditEmployee />} />
         <Route path="/student/list" element={<Students />} />
         <Route path="/student/add" element={<AddStudent />} />
         <Route path="/student/edit/:student_id" element={<EditStudent />} />

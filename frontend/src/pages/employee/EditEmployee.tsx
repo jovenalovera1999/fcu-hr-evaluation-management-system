@@ -1,9 +1,10 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import errorHandler from "../../handler/errorHandler";
+import axiosInstance from "../../axios/axiosInstance";
 import Layout from "../layout/Layout";
 import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
-import axiosInstance from "../../axios/axiosInstance";
-import errorHandler from "../../handler/errorHandler";
+import { Link, useParams } from "react-router-dom";
 
 interface Positions {
   position_id: number;
@@ -23,18 +24,19 @@ interface Errors {
   position?: string[];
   department?: string[];
   username?: string[];
-  password?: string[];
-  password_confirmation?: string[];
 }
 
-const AddEmployee = () => {
+const EditEmployee = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
 
+  const { employee_id } = useParams();
+
   const [state, setState] = useState({
-    loadingSave: false,
+    loadingSubmit: false,
+    loadingEmployee: true,
     loadingPositions: true,
     loadingDepartments: true,
     positions: [] as Positions[],
@@ -46,8 +48,6 @@ const AddEmployee = () => {
     position: "",
     department: "",
     username: "",
-    password: "",
-    password_confirmation: "",
     errors: {} as Errors,
     toastMessage: "",
     toastMessageSuccess: false,
@@ -64,45 +64,22 @@ const AddEmployee = () => {
     }));
   };
 
-  const handleSaveEmployee = async (e: FormEvent) => {
+  const handleUpdateEmployee = async (e: FormEvent) => {
     e.preventDefault();
 
     setState((prevState) => ({
       ...prevState,
-      loadingSave: true,
+      loadingSubmit: true,
     }));
 
     axiosInstance
-      .post("/employee/store", state)
-      .then((res) => {
-        if (res.data.status === 200) {
-          setState((prevState) => ({
-            ...prevState,
-            first_name: "",
-            middle_name: "",
-            last_name: "",
-            suffix_name: "",
-            position: "",
-            department: "",
-            username: "",
-            password: "",
-            password_confirmation: "",
-            errors: {} as Errors,
-            loadingSave: false,
-            toastMessage: "EMPLOYEE SUCCESSFULLY SAVED!",
-            toastMessageSuccess: true,
-            toastMessageVisible: true,
-          }));
-        } else {
-          console.error("Unexpected status error: ", res.data.status);
-        }
-      })
+      .put("")
+      .then()
       .catch((error) => {
         if (error.response && error.response.status === 422) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
-            loadingSave: false,
           }));
         } else {
           errorHandler(error);
@@ -117,6 +94,31 @@ const AddEmployee = () => {
       toastMessageSuccess: false,
       toastMessageVisible: false,
     }));
+  };
+
+  const handleGetEmployee = async () => {
+    axiosInstance
+      .get(`/employee/get/employee/${employee_id}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            first_name: res.data.employee.first_name,
+            middle_name: res.data.employee.middle_name,
+            last_name: res.data.employee.last_name,
+            suffix_name: res.data.employee.suffix_name,
+            position: res.data.employee.position_id,
+            department: res.data.employee.department_id,
+            username: res.data.employee.username,
+            loadingEmployee: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
   };
 
   const handleLoadPositions = async () => {
@@ -171,6 +173,7 @@ const AddEmployee = () => {
     } else {
       handleLoadPositions();
       handleLoadDepartments();
+      handleGetEmployee();
     }
   }, []);
 
@@ -182,7 +185,7 @@ const AddEmployee = () => {
         visible={state.toastMessageVisible}
         onClose={handleCloseToastMessage}
       />
-      <form onSubmit={handleSaveEmployee}>
+      <form>
         <div className="mx-auto mt-2">
           <h4>ADD EMPLOYEE</h4>
           <div className="row">
@@ -315,8 +318,6 @@ const AddEmployee = () => {
                 )}
               </div>
             </div>
-          </div>
-          <div className="row">
             <div className="col-sm-4">
               <div className="mb-3">
                 <label htmlFor="username">USERNAME</label>
@@ -335,48 +336,13 @@ const AddEmployee = () => {
                 )}
               </div>
             </div>
-            <div className="col-sm-4">
-              <div className="mb-3">
-                <label htmlFor="password">PASSWORD</label>
-                <input
-                  type="password"
-                  className={`form-control ${
-                    state.errors.password ? "is-invalid" : ""
-                  }`}
-                  name="password"
-                  id="password"
-                  value={state.password}
-                  onChange={handleInput}
-                />
-                {state.errors.password && (
-                  <p className="text-danger">{state.errors.password[0]}</p>
-                )}
-              </div>
-            </div>
-            <div className="col-sm-4">
-              <div className="mb-3">
-                <label htmlFor="password_confirmation">CONFIRM PASSWORD</label>
-                <input
-                  type="password"
-                  className={`form-control ${
-                    state.errors.password_confirmation ? "is-invalid" : ""
-                  }`}
-                  name="password_confirmation"
-                  id="password_confirmation"
-                  value={state.password_confirmation}
-                  onChange={handleInput}
-                />
-                {state.errors.password_confirmation && (
-                  <p className="text-danger">
-                    {state.errors.password_confirmation[0]}
-                  </p>
-                )}
-              </div>
-            </div>
           </div>
           <div className="d-flex justify-content-end">
+            <Link to={"/employee/list"} className="btn btn-theme me-1">
+              BACK
+            </Link>
             <button type="submit" className="btn btn-theme">
-              SAVE EMPLOYEE
+              UPDATE EMPLOYEE
             </button>
           </div>
         </div>
@@ -387,7 +353,8 @@ const AddEmployee = () => {
   return (
     <Layout
       content={
-        state.loadingSave ||
+        state.loadingSubmit ||
+        state.loadingEmployee ||
         state.loadingDepartments ||
         state.loadingPositions ? (
           <Spinner />
@@ -399,4 +366,4 @@ const AddEmployee = () => {
   );
 };
 
-export default AddEmployee;
+export default EditEmployee;

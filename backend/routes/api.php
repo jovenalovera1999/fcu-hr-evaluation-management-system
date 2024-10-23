@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
         Route::get('/index/by/department/{departmentId}', 'indexByDepartment');
+        Route::get('/get/employee/{employeeId}', 'getEmployee');
         Route::post('/store', 'store');
     });
 
