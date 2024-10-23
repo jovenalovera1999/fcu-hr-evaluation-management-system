@@ -244,6 +244,9 @@ class StudentController extends Controller
 
         $student = Student::find($studentId);
 
+        $user = User::where('tbl_users.student_id', $studentId)
+            ->first();
+
         $student->update([
             'student_no' => strtoupper($validated['student_no']),
             'first_name' => strtoupper($validated['first_name']),
@@ -257,6 +260,10 @@ class StudentController extends Controller
             'is_irregular' => ($validated['irregular']) ? true : false
         ]);
 
+        $user->update([
+            'username' => strtoupper($validated['student_no'])
+        ]);
+
         return response()->json([
             'student' => $student,
             'status' => 200
@@ -266,8 +273,14 @@ class StudentController extends Controller
     public function deleteStudent($studentId)
     {
         $student = Student::find($studentId);
+        $user = User::where('tbl_users.student_id', $studentId)
+            ->first();
 
         $student->update([
+            'is_deleted' => true
+        ]);
+
+        $user->update([
             'is_deleted' => true
         ]);
 

@@ -16,6 +16,7 @@ import SendAnEvaluationToIrregularStudents from "./pages/evaluation/SendAnEvalua
 import EditStudent from "./pages/student/EditStudent";
 import DeleteStudent from "./pages/student/DeleteStudent";
 import EditEmployee from "./pages/employee/EditEmployee";
+import DeleteEmployee from "./pages/employee/DeleteEmployee";
 
 const App = () => {
   return (
@@ -27,6 +28,10 @@ const App = () => {
         <Route path="/employee/list" element={<Employees />} />
         <Route path="/employee/add" element={<AddEmployee />} />
         <Route path="/employee/edit/:employee_id" element={<EditEmployee />} />
+        <Route
+          path="/employee/delete/:employee_id"
+          element={<DeleteEmployee />}
+        />
         <Route path="/student/list" element={<Students />} />
         <Route path="/student/add" element={<AddStudent />} />
         <Route path="/student/edit/:student_id" element={<EditStudent />} />

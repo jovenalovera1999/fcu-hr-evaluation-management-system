@@ -189,7 +189,10 @@ const Employees = () => {
                         >
                           EDIT
                         </Link>
-                        <Link to={"#"} className="btn btn-sm btn-theme">
+                        <Link
+                          to={`/employee/delete/${employee.employee_id}`}
+                          className="btn btn-sm btn-theme"
+                        >
                           DELETE
                         </Link>
                       </div>

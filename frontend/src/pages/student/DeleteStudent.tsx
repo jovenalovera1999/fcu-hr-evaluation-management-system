@@ -87,6 +87,8 @@ const DeleteStudent = () => {
   };
 
   useEffect(() => {
+    document.title = "DELETE STUDENT | FCU HR EMS";
+
     if (
       !token ||
       !user ||

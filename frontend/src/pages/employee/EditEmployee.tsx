@@ -70,16 +70,34 @@ const EditEmployee = () => {
     setState((prevState) => ({
       ...prevState,
       loadingSubmit: true,
+      loadingEmployee: true,
     }));
 
     axiosInstance
-      .put("")
-      .then()
+      .put(`/employee/update/employee/${employee_id}`, state)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            toastMessage: "EMPLOYEE SUCCESSFULLY UPDATED!",
+            toastMessageSuccess: true,
+            toastMessageVisible: true,
+            errors: {} as Errors,
+            loadingSubmit: false,
+          }));
+
+          handleGetEmployee();
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
       .catch((error) => {
         if (error.response && error.response.status === 422) {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
+            loadingSubmit: false,
+            loadingEmployee: false,
           }));
         } else {
           errorHandler(error);
@@ -160,7 +178,7 @@ const EditEmployee = () => {
   };
 
   useEffect(() => {
-    document.title = "ADD EMPLOYEE | FCU HR EMS";
+    document.title = "EDIT EMPLOYEE | FCU HR EMS";
 
     if (
       !token ||
@@ -185,9 +203,9 @@ const EditEmployee = () => {
         visible={state.toastMessageVisible}
         onClose={handleCloseToastMessage}
       />
-      <form>
+      <form onSubmit={handleUpdateEmployee}>
         <div className="mx-auto mt-2">
-          <h4>ADD EMPLOYEE</h4>
+          <h4>EDIT EMPLOYEE</h4>
           <div className="row">
             <div className="col-sm-3">
               <div className="mb-3">

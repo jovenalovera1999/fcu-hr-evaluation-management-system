@@ -112,6 +112,7 @@ const EditStudent = () => {
     setState((prevState) => ({
       ...prevState,
       loadingSubmit: true,
+      loadingStudent: true,
     }));
 
     axiosInstance
@@ -126,6 +127,8 @@ const EditStudent = () => {
             toastMessageVisible: true,
             loadingSubmit: false,
           }));
+
+          handleGetStudent();
           // console.log(res.data.student);
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -137,6 +140,7 @@ const EditStudent = () => {
             ...prevState,
             errors: error.response.data.errors,
             loadingSubmit: false,
+            loadingStudent: false,
           }));
         }
       });
@@ -240,7 +244,7 @@ const EditStudent = () => {
   };
 
   useEffect(() => {
-    document.title = "ADD STUDENT | FCU HR EMS";
+    document.title = "EDIT STUDENT | FCU HR EMS";
 
     if (
       !token ||
