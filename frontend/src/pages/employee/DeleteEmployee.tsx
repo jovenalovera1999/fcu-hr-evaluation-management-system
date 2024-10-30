@@ -100,6 +100,9 @@ const DeleteEmployee = () => {
       <form onSubmit={handleDeleteEmployee}>
         <div className="mx-auto mt-2">
           <h4>DELETE EMPLOYEE</h4>
+          <div className="form-text mb-2">
+            ARE YOU SURE YOU DO WANT TO DELETE THIS EMPLOYEE?
+          </div>
           <div className="row">
             <div className="col-sm-3">
               <div className="mb-3">
@@ -200,7 +203,7 @@ const DeleteEmployee = () => {
               BACK
             </Link>
             <button type="submit" className="btn btn-theme">
-              UPDATE EMPLOYEE
+              DELETE EMPLOYEE
             </button>
           </div>
         </div>

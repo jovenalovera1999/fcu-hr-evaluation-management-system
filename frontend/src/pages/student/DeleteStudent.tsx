@@ -107,6 +107,9 @@ const DeleteStudent = () => {
       <form onSubmit={handleDeleteStudent}>
         <div className="mx-auto mt-2">
           <h4>DELETE STUDENT</h4>
+          <div className="form-text mb-2">
+            ARE YOU SURE YOU DO WANT TO DELETE THIS STUDENT?
+          </div>
           <div className="row">
             <div className="col-sm-3">
               <div className="mb-3">

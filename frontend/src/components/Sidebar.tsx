@@ -127,6 +127,32 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                     to={"#"}
                     className="sidebar-link collapsed"
                     data-bs-toggle="collapse"
+                    data-bs-target="#categories"
+                    aria-expanded="false"
+                    aria-controls="categories"
+                  >
+                    QUESTION CATEGORIES
+                  </Link>
+                  <ul
+                    id="categories"
+                    className="sidebar-dropdown list-unstyled collapse"
+                    data-bs-parent="#sidebar"
+                  >
+                    <li className="sidebar-item">
+                      <Link to={"#"} className="sidebar-link">
+                        LIST
+                      </Link>
+                      <Link to={"#"} className="sidebar-link">
+                        ADD
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
+                <li className="sidebar-item">
+                  <Link
+                    to={"#"}
+                    className="sidebar-link collapsed"
+                    data-bs-toggle="collapse"
                     data-bs-target="#evaluations"
                     aria-expanded="false"
                     aria-controls="evaluations"

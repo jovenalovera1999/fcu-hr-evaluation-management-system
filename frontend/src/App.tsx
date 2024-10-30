@@ -17,6 +17,7 @@ import EditStudent from "./pages/student/EditStudent";
 import DeleteStudent from "./pages/student/DeleteStudent";
 import EditEmployee from "./pages/employee/EditEmployee";
 import DeleteEmployee from "./pages/employee/DeleteEmployee";
+import Categories from "./pages/category/Categories";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/dashboard/admin" element={<Admin />} />
         <Route path="/" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
+
         <Route path="/employee/list" element={<Employees />} />
         <Route path="/employee/add" element={<AddEmployee />} />
         <Route path="/employee/edit/:employee_id" element={<EditEmployee />} />
@@ -32,12 +34,15 @@ const App = () => {
           path="/employee/delete/:employee_id"
           element={<DeleteEmployee />}
         />
+
         <Route path="/student/list" element={<Students />} />
         <Route path="/student/add" element={<AddStudent />} />
         <Route path="/student/edit/:student_id" element={<EditStudent />} />
         <Route path="/student/delete/:student_id" element={<DeleteStudent />} />
+
         <Route path="/question/list" element={<Questions />} />
         <Route path="/question/add" element={<AddQuestion />} />
+
         <Route
           path="/evaluation/to/students"
           element={<SendAnEvaluationToStudents />}
@@ -55,6 +60,8 @@ const App = () => {
           path="/evaluation/response/:evaluation_id"
           element={<Response />}
         />
+
+        <Route path="/category/list" element={<Categories />} />
       </Routes>
     </Router>
   );

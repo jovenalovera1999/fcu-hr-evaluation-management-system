@@ -162,6 +162,7 @@ const Employees = () => {
       errorHandler(401);
     } else {
       handleLoadDepartments();
+      handleToastMessageFromDeleteEmployee();
     }
   }, []);
 
