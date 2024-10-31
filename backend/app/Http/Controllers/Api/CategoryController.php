@@ -18,4 +18,49 @@ class CategoryController extends Controller
             'status' => 200
         ]);
     }
+
+    public function storeCategory(Request $request)
+    {
+        $validated = $request->validate([
+            'category' => ['required']
+        ]);
+
+        Category::create([
+            'category' => strtoupper($validated['category'])
+        ]);
+
+        return response()->json([
+            'status' => 200
+        ]);
+    }
+
+    public function updateCategory(Request $request, $categoryId)
+    {
+        $validated = $request->validate([
+            'category' => ['required']
+        ]);
+
+        $category = Category::find($categoryId);
+
+        $category->update([
+            'category' => strtoupper($validated['category'])
+        ]);
+
+        return response()->json([
+            'status' => 200
+        ]);
+    }
+
+    public function deleteCategory($categoryId)
+    {
+        $category = Category::find($categoryId);
+
+        $category->update([
+            'is_deleted' => true
+        ]);
+
+        return response()->json([
+            'status' => 200
+        ]);
+    }
 }
