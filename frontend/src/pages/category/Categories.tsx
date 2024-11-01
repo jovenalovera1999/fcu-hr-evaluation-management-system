@@ -5,6 +5,9 @@ import Layout from "../layout/Layout";
 import {
   Button,
   ButtonGroup,
+  Form,
+  FormControl,
+  FormLabel,
   Modal,
   ModalBody,
   ModalFooter,
@@ -39,7 +42,9 @@ const Categories = () => {
     showToast: false,
   });
 
-  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInput = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setState((prevState) => ({
       ...prevState,
@@ -58,7 +63,6 @@ const Categories = () => {
     setState((prevState) => ({
       ...prevState,
       category_id: 0,
-      category: "",
       errors: {} as Errors,
       showAddCategoryModal: false,
     }));
@@ -287,12 +291,14 @@ const Categories = () => {
                     <Button
                       onClick={() => handleOpenEditCategoryModal(category)}
                       className="btn-theme"
+                      size="sm"
                     >
                       EDIT
                     </Button>
                     <Button
                       onClick={() => handleOpenDeleteCategoryModal(category)}
                       className="btn-theme"
+                      size="sm"
                     >
                       DELETE
                     </Button>
@@ -311,12 +317,10 @@ const Categories = () => {
       >
         <ModalHeader>ADD CATEGORY</ModalHeader>
         <ModalBody>
-          <label htmlFor="category">CATEGORY</label>
-          <input
+          <FormLabel htmlFor="category">CATEGORY</FormLabel>
+          <FormControl
             type="text"
-            className={`form-control ${
-              state.errors.category ? "is-invalid" : ""
-            }`}
+            className={`${state.errors.category ? "is-invalid" : ""}`}
             name="category"
             id="category"
             value={state.category}
@@ -365,12 +369,10 @@ const Categories = () => {
       >
         <ModalHeader>EDIT CATEGORY</ModalHeader>
         <ModalBody>
-          <label htmlFor="category">CATEGORY</label>
-          <input
+          <FormLabel htmlFor="category">CATEGORY</FormLabel>
+          <FormControl
             type="text"
-            className={`form-control ${
-              state.errors.category ? "is-invalid" : ""
-            }`}
+            className={`${state.errors.category ? "is-invalid" : ""}`}
             name="category"
             id="category"
             value={state.category}
@@ -419,8 +421,10 @@ const Categories = () => {
       >
         <ModalHeader>DELETE CATEGORY</ModalHeader>
         <ModalBody>
-          ARE YOU SURE YOU WANT TO DELETE THIS CATEGORY?
-          <input
+          <FormLabel htmlFor="category">
+            ARE YOU SURE YOU WANT TO DELETE THIS CATEGORY?
+          </FormLabel>
+          <FormControl
             type="text"
             className="form-control"
             name="category"

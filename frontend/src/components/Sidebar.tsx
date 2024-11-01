@@ -120,12 +120,17 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                         ADD
                       </Link>
                     </li>
-                    <li className="sidebar-item">
-                      <Link to={"/category/list"} className="sidebar-link">
-                        CATEGORIES
-                      </Link>
-                    </li>
                   </ul>
+                </li>
+                <li className="sidebar-item">
+                  <Link to={"/employee/list"} className="sidebar-link">
+                    EMPLOYEES
+                  </Link>
+                </li>
+                <li className="sidebar-item">
+                  <Link to={"/category/list"} className="sidebar-link">
+                    CATEGORIES
+                  </Link>
                 </li>
                 <li className="sidebar-item">
                   <Link

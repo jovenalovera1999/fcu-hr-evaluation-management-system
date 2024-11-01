@@ -45,7 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/index/by/department/{departmentId}', 'indexByDepartment');
         Route::get('/get/employee/{employeeId}', 'getEmployee');
         Route::post('/store', 'store');
-        Route::put('/update/employee/{employeeId}', 'updateEmployee');
+        Route::put('/update/{employeeId}', 'updateEmployee');
         Route::put('/delete/employee/{employeeId}', 'deleteEmployee');
     });
 
