@@ -73,6 +73,7 @@ const Employees = () => {
     loadingEmployee: false,
     showAddEmployeeModal: false,
     showEditEmployeeModal: false,
+    showDeleteEmployeeModal: false,
     departments: [] as Departments[],
     positions: [] as Positions[],
     academicYears: [] as AcademicYears[],
@@ -112,6 +113,63 @@ const Employees = () => {
 
       handleLoadEmployees(parseInt(value));
     }
+  };
+
+  const handleLoadPositions = async () => {
+    axiosInstance
+      .get("/position/index")
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            positions: res.data.positions,
+            loadingPositions: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
+  const handleLoadDepartments = async () => {
+    axiosInstance
+      .get("/department/index")
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            departments: res.data.departments,
+            loadingDepartments: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
+  const handleLoadEmployees = async (departmentId: number) => {
+    axiosInstance
+      .get(`/employee/index/by/department/${departmentId}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            employees: res.data.employees,
+            loadingEmployees: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
   };
 
   const handleStoreEmployee = async (e: FormEvent) => {
@@ -214,60 +272,53 @@ const Employees = () => {
       });
   };
 
-  const handleLoadPositions = async () => {
-    axiosInstance
-      .get("/position/index")
-      .then((res) => {
-        if (res.data.status === 200) {
-          setState((prevState) => ({
-            ...prevState,
-            positions: res.data.positions,
-            loadingPositions: false,
-          }));
-        } else {
-          console.error("Unexpected status error: ", res.data.status);
-        }
-      })
-      .catch((error) => {
-        errorHandler(error);
-      });
-  };
+  const handleDeleteEmployee = async (e: FormEvent) => {
+    e.preventDefault();
 
-  const handleLoadDepartments = async () => {
-    axiosInstance
-      .get("/department/index")
-      .then((res) => {
-        if (res.data.status === 200) {
-          setState((prevState) => ({
-            ...prevState,
-            departments: res.data.departments,
-            loadingDepartments: false,
-          }));
-        } else {
-          console.error("Unexpected status error: ", res.data.status);
-        }
-      })
-      .catch((error) => {
-        errorHandler(error);
-      });
-  };
+    setState((prevState) => ({
+      ...prevState,
+      loadingEmployee: true,
+    }));
 
-  const handleLoadEmployees = async (departmentId: number) => {
     axiosInstance
-      .get(`/employee/index/by/department/${departmentId}`)
+      .put(`/employee/delete/${state.employee_id}`)
       .then((res) => {
         if (res.data.status === 200) {
+          handleLoadEmployees(parseInt(state.student_department));
+
           setState((prevState) => ({
             ...prevState,
-            employees: res.data.employees,
-            loadingEmployees: false,
+            employee_id: 0,
+            first_name: "",
+            middle_name: "",
+            last_name: "",
+            suffix_name: "",
+            position: "",
+            department: "",
+            username: "",
+            password: "",
+            password_confirmation: "",
+            errors: {} as Errors,
+            toastSuccess: true,
+            toastBody: "EMPLOYEE SUCCESSFULLY UPDATED.",
+            showToast: true,
+            loadingEmployee: false,
+            showDeleteEmployeeModal: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        if (error.response && error.response.status === 422) {
+          setState((prevState) => ({
+            ...prevState,
+            errors: error.response.data.errors,
+            loadingEmployee: false,
+          }));
+        } else {
+          errorHandler(error);
+        }
       });
   };
 
@@ -346,10 +397,10 @@ const Employees = () => {
       middle_name: employee.middle_name,
       last_name: employee.last_name,
       suffix_name: employee.suffix_name,
-      position: employee.position_id,
-      department: employee.department_id,
+      position: employee.position,
+      department: employee.department,
       username: employee.username,
-      showEditEmployeeModal: true,
+      showDeleteEmployeeModal: true,
     }));
   };
 
@@ -367,7 +418,7 @@ const Employees = () => {
       password: "",
       password_confirmation: "",
       errors: {} as Errors,
-      showEditEmployeeModal: false,
+      showDeleteEmployeeModal: false,
     }));
   };
 
@@ -446,7 +497,7 @@ const Employees = () => {
           </thead>
           <tbody>
             {state.loadingEmployees ? (
-              <tr key={1}>
+              <tr key={1} className="align-middle">
                 <td colSpan={4} className="text-center">
                   <Spinner
                     as="span"
@@ -487,6 +538,7 @@ const Employees = () => {
         </Table>
       </div>
 
+      {/* Stard of Add Employee Modal */}
       <Modal
         show={state.showAddEmployeeModal}
         onHide={handleCloseAddEmployeeModal}
@@ -705,7 +757,9 @@ const Employees = () => {
           </Button>
         </ModalFooter>
       </Modal>
+      {/* End of Add Employee Modal */}
 
+      {/* Start of Edit Employee Modal */}
       <Modal
         show={state.showEditEmployeeModal}
         onHide={handleCloseAddEmployeeModal}
@@ -886,6 +940,139 @@ const Employees = () => {
           </Button>
         </ModalFooter>
       </Modal>
+      {/* End of Edit Employee Modal */}
+
+      {/* Start of Delete Employee Modal */}
+      <Modal
+        show={state.showDeleteEmployeeModal}
+        onHide={handleCloseDeleteEmployeeModal}
+        fullscreen={true}
+        backdrop="static"
+      >
+        <ModalHeader>
+          ARE YOU SURE YOU WANT TO DELETE THIS EMPLOYEE?
+        </ModalHeader>
+        <ModalBody>
+          <Row>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  name="first_name"
+                  id="first_name"
+                  value={state.first_name}
+                  readOnly
+                />
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  name="middle_name"
+                  id="middle_name"
+                  value={state.middle_name}
+                  readOnly
+                />
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  name="last_name"
+                  id="last_name"
+                  value={state.last_name}
+                  readOnly
+                />
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  name="suffix_name"
+                  id="suffix_name"
+                  value={state.suffix_name}
+                  readOnly
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="position">POSITION</FormLabel>
+                <FormControl
+                  name="position"
+                  id="position"
+                  value={state.position}
+                  readOnly
+                />
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
+                <FormControl
+                  name="department"
+                  id="department"
+                  value={state.department}
+                  readOnly
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="username">USERNAME</FormLabel>
+                <FormControl
+                  type="text"
+                  name="username"
+                  id="username"
+                  value={state.username}
+                  readOnly
+                />
+              </div>
+            </Col>
+          </Row>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            className="btn-theme"
+            onClick={handleCloseDeleteEmployeeModal}
+            disabled={state.loadingEmployee}
+          >
+            CLOSE
+          </Button>
+          <Button
+            className="btn-theme"
+            onClick={handleDeleteEmployee}
+            disabled={state.loadingEmployee}
+          >
+            {state.loadingEmployee ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  role="status"
+                  size="sm"
+                  className="spinner-theme"
+                />{" "}
+                DELETING...
+              </>
+            ) : (
+              "YES"
+            )}
+          </Button>
+        </ModalFooter>
+      </Modal>
+      {/* End of Delete Employee Modal */}
     </>
   );
 

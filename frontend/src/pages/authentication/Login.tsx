@@ -1,9 +1,9 @@
 import axios from "axios";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Spinner from "../../components/Spinner";
-import ToastMessage from "../../components/ToastMessage";
 import CompanyLogo from "../../assets/img/company_logo.png";
+import AlertToastMessage from "../../components/AlertToastMessage";
+import { Button, Spinner } from "react-bootstrap";
 
 interface Errors {
   username?: string[];
@@ -14,15 +14,14 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [loadingLogin, setLoadingLogin] = useState(true);
-
   const [state, setState] = useState({
+    loadingLogin: false,
     username: "",
     password: "",
     errors: {} as Errors,
-    toastMessage: "",
-    toastMessageSuccess: false,
-    toastMessageVisible: false,
+    toastSuccess: false,
+    toastBody: "",
+    showToast: false,
   });
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -36,11 +35,10 @@ const Login = () => {
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
-    setLoadingLogin(true);
-
-    // const csrfToken = document
-    //   .querySelector("meta[name='csrf-token']")
-    //   ?.getAttribute("content");
+    setState((prevState) => ({
+      ...prevState,
+      loadingLogin: true,
+    }));
 
     await axios
       .post("http://127.0.0.1:8000/api/user/process/login", state, {
@@ -56,18 +54,23 @@ const Login = () => {
           const user = localStorage.getItem("user");
           const parsedUser = user ? JSON.parse(user) : null;
 
+          setState((prevState) => ({
+            ...prevState,
+            loadingLogin: false,
+          }));
+
           if (parsedUser.position === "ADMIN") {
             navigate("/dashboard/admin");
           } else {
             navigate("/evaluation/list");
           }
         } else {
-          setLoadingLogin(false);
-
           setState((prevState) => ({
             ...prevState,
-            toastMessage: "INCORRECT USERNAME OR PASSWORD, PLEASE TRY AGAIN.",
-            toastMessageVisible: true,
+            loadingLogin: false,
+            toastSuccess: false,
+            toastBody: "INCORRECT USERNAME OR PASSWORD, PLEASE TRY AGAIN.",
+            showToast: true,
           }));
         }
       })
@@ -78,7 +81,10 @@ const Login = () => {
             errors: error.response.data.errors,
           }));
 
-          setLoadingLogin(false);
+          setState((prevState) => ({
+            ...prevState,
+            loadingLogin: false,
+          }));
         } else {
           console.error("Unexpect server error: ", error);
         }
@@ -89,46 +95,44 @@ const Login = () => {
     if (location.state) {
       setState((prevState) => ({
         ...prevState,
-        toastMessage: location.state.toastMessage,
-        toastMessageSuccess: location.state.toastMessageSuccess,
-        toastMessageVisible: location.state.toastMessageVisible,
+        toastSuccess: location.state.toastSuccess,
+        toastBody: location.state.toastBody,
+        showToast: location.state.showToast,
       }));
     }
   };
 
-  const handleCloseToastMessage = () => {
+  const handleCloseToast = () => {
     navigate(".", {
       replace: true,
       state: {
         ...location.state,
-        toastMessage: "",
-        toastMessageSuccess: false,
-        toastMessageVisible: false,
+        toastSuccess: "",
+        toastBody: false,
+        showToast: false,
       },
     });
 
     setState((prevState) => ({
       ...prevState,
-      toastMessage: "",
-      toastMessageSuccess: false,
-      toastMessageVisible: false,
+      toastSuccess: false,
+      toastBody: "",
+      showToast: false,
     }));
   };
 
   useEffect(() => {
     document.title = "USER AUTHENTICATION | FCU HR EMS";
-
-    setLoadingLogin(false);
     handleToastMessageFromLogout();
   }, [location.state]);
 
   const content = (
     <>
-      <ToastMessage
-        message={state.toastMessage}
-        success={state.toastMessageSuccess}
-        visible={state.toastMessageVisible}
-        onClose={handleCloseToastMessage}
+      <AlertToastMessage
+        success={state.toastSuccess}
+        body={state.toastBody}
+        showToast={state.showToast}
+        onClose={handleCloseToast}
       />
       <form onSubmit={handleLogin}>
         <div
@@ -184,9 +188,26 @@ const Login = () => {
                 )}
               </div>
               <div className="d-flex justify-content-center">
-                <button type="submit" className="btn btn-theme w-100">
-                  LOGIN
-                </button>
+                <Button
+                  type="submit"
+                  className="btn-theme w-100"
+                  disabled={state.loadingLogin}
+                >
+                  {state.loadingLogin ? (
+                    <>
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        role="status"
+                        size="sm"
+                        className="spinner-theme"
+                      />{" "}
+                      LOGGING IN...
+                    </>
+                  ) : (
+                    "LOGIN"
+                  )}
+                </Button>
               </div>
             </div>
           </div>
@@ -195,7 +216,7 @@ const Login = () => {
     </>
   );
 
-  return loadingLogin ? <Spinner /> : content;
+  return content;
 };
 
 export default Login;

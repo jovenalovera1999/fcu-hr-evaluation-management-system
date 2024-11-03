@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Employees from "./pages/employee/Employees";
-import AddEmployee from "./pages/employee/AddEmployee";
 import AddStudent from "./pages/student/AddStudent";
 import Students from "./pages/student/Students";
 import AddQuestion from "./pages/question/AddQuestion";
@@ -8,15 +7,12 @@ import Questions from "./pages/question/Questions";
 import SendAnEvaluationToStudents from "./pages/evaluation/SendAnEvaluationToStudents";
 import Evaluations from "./pages/evaluation/Evaluations";
 import Login from "./pages/authentication/Login";
-import Logout from "./pages/authentication/Logout";
 import Response from "./pages/evaluation/Response";
 import SendAnEvaluationToEmployees from "./pages/evaluation/SendAnEvaluationToEmployees";
 import Admin from "./pages/dashboard/Admin";
 import SendAnEvaluationToIrregularStudents from "./pages/evaluation/SendAnEvaluationToIrregularStudents";
 import EditStudent from "./pages/student/EditStudent";
 import DeleteStudent from "./pages/student/DeleteStudent";
-import EditEmployee from "./pages/employee/EditEmployee";
-import DeleteEmployee from "./pages/employee/DeleteEmployee";
 import Categories from "./pages/category/Categories";
 
 const App = () => {
@@ -25,15 +21,8 @@ const App = () => {
       <Routes>
         <Route path="/dashboard/admin" element={<Admin />} />
         <Route path="/" element={<Login />} />
-        <Route path="/logout" element={<Logout />} />
 
         <Route path="/employee/list" element={<Employees />} />
-        <Route path="/employee/add" element={<AddEmployee />} />
-        <Route path="/employee/edit/:employee_id" element={<EditEmployee />} />
-        <Route
-          path="/employee/delete/:employee_id"
-          element={<DeleteEmployee />}
-        />
 
         <Route path="/student/list" element={<Students />} />
         <Route path="/student/add" element={<AddStudent />} />

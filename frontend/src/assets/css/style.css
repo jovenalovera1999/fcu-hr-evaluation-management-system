@@ -143,9 +143,9 @@ a.sidebar-link:hover {
   box-shadow: none;
 }
 
-.btn {
+/* .btn {
   border-radius: 2px;
-}
+} */
 
 .btn-theme,
 .btn-theme:active,
@@ -161,20 +161,23 @@ a.sidebar-link:hover {
   transition: all 0.3s ease;
 }
 
-.form-control,
-.form-select {
+/* .form-control,
+.form-select
+.form-check-input {
   border-radius: 2px;
-}
+} */
 
 .form-control:hover,
-.form-select:hover {
+.form-select:hover,
+.form-check-input:hover {
   border-color: #0c1e7d !important;
   box-shadow: 0 0 0 0 transparent !important;
   transition: all 0.3s ease;
 }
 
 .form-control:focus,
-.form-select:focus {
+.form-select:focus,
+.form-check-input:focus {
   border-color: #0c1e7d !important;
   box-shadow: 0 0 0 0 transparent !important;
 }

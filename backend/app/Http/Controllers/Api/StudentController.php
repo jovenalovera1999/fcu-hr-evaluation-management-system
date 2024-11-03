@@ -151,6 +151,7 @@ class StudentController extends Controller
         $students = Student::leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
             ->leftJoin('tbl_departments', 'tbl_students.department_id', '=', 'tbl_departments.department_id')
             ->leftJoin('tbl_sections', 'tbl_students.section_id', '=', 'tbl_sections.section_id')
+            // ->leftJoin('tbl_users.student_id', 'tbl_students.student_id', '=', 'tbl_users.student_id')
             ->where('tbl_students.department_id', $departmentId)
             ->where('tbl_students.year_level', $yearLevel)
             ->where('tbl_students.is_deleted', false)

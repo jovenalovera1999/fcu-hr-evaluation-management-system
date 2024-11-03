@@ -46,7 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/get/employee/{employeeId}', 'getEmployee');
         Route::post('/store', 'store');
         Route::put('/update/{employeeId}', 'updateEmployee');
-        Route::put('/delete/employee/{employeeId}', 'deleteEmployee');
+        Route::put('/delete/{employeeId}', 'deleteEmployee');
     });
 
     Route::controller(AcademicYearController::class)->prefix('academic_year')->group(function () {

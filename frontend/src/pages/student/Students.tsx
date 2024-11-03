@@ -1,14 +1,39 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import Spinner from "../../components/Spinner";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import ToastMessage from "../../components/ToastMessage";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Button,
+  Col,
+  FormControl,
+  FormLabel,
+  FormSelect,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Row,
+  Spinner,
+  Table,
+} from "react-bootstrap";
+import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
+import FormCheckLabel from "react-bootstrap/esm/FormCheckLabel";
+import AlertToastMessage from "../../components/AlertToastMessage";
 
 interface Departments {
   department_id: number;
   department: string;
+}
+
+interface Courses {
+  course_id: number;
+  course: string;
+}
+
+interface Sections {
+  section_id: number;
+  section: string;
 }
 
 interface Students {
@@ -24,28 +49,69 @@ interface Students {
   year_level: number;
 }
 
+interface Errors {
+  student_no?: string[];
+  first_name?: string[];
+  middle_name?: string[];
+  last_name?: string[];
+  suffix_name?: string[];
+  department?: string[];
+  course?: string[];
+  year_level?: string[];
+  section?: string[];
+  password?: string[];
+  password_confirmation?: string[];
+}
+
 const Students = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
 
-  const location = useLocation();
-  const navigate = useNavigate();
+  // const location = useLocation();
+  // const navigate = useNavigate();
 
   const [state, setState] = useState({
+    loadingStudent: false,
     loadingDepartments: true,
     loadingStudents: false,
+    loadingCourses: false,
+    loadingSections: false,
+    showAddStudentModal: false,
+    showEditStudentModal: false,
+    showDeleteStudentModal: false,
     departments: [] as Departments[],
     students: [] as Students[],
+    courses: [] as Courses[],
+    sections: [] as Sections[],
+    student_department: "",
+    student_year_level: "",
+    student_id: 0,
+    student_no: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    suffix_name: "",
     department: "",
+    course: "",
     year_level: "",
-    toastMessage: "",
-    toastMessageSuccess: false,
-    toastMessageVisible: false,
+    section: "",
+    irregular: false,
+    password: "",
+    password_confirmation: "",
+    errors: {} as Errors,
+    toastSuccess: false,
+    toastBody: "",
+    showToast: false,
+    // toastMessage: "",
+    // toastMessageSuccess: false,
+    // toastMessageVisible: false,
   });
 
-  const handleInput = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleInput = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setState((prevState) => ({
       ...prevState,
@@ -53,9 +119,13 @@ const Students = () => {
     }));
 
     const yearLevel =
-      name === "year_level" ? parseInt(value) : parseInt(state.year_level);
+      name === "student_year_level"
+        ? parseInt(value)
+        : parseInt(state.student_year_level);
     const departmentId =
-      name === "department" ? parseInt(value) : parseInt(state.department);
+      name === "student_department"
+        ? parseInt(value)
+        : parseInt(state.student_department);
 
     if (yearLevel && departmentId) {
       setState((prevState) => ({
@@ -64,6 +134,22 @@ const Students = () => {
       }));
 
       handleLoadStudents(yearLevel, departmentId);
+    }
+
+    if (name === "department") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingCourses: true,
+      }));
+
+      handleLoadCourses(parseInt(value));
+    } else if (name === "course") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingSections: true,
+      }));
+
+      handleLoadSections(parseInt(value));
     }
   };
 
@@ -76,6 +162,44 @@ const Students = () => {
             ...prevState,
             departments: res.data.departments,
             loadingDepartments: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
+  const handleLoadCourses = async (departmentId: number) => {
+    axiosInstance
+      .get(`/course/index/${departmentId}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            courses: res.data.courses,
+            loadingCourses: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
+  const handleLoadSections = async (courseId: number) => {
+    axiosInstance
+      .get(`/section/load/sections/by/course/${courseId}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            sections: res.data.sections,
+            loadingSections: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -110,6 +234,72 @@ const Students = () => {
       });
   };
 
+  const handleStoreStudent = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setState((prevState) => ({
+      ...prevState,
+      loadingStudent: true,
+    }));
+
+    axiosInstance
+      .post("/student/store", state)
+      .then((res) => {
+        if (res.data.status === 200) {
+          handleLoadStudents(
+            parseInt(state.student_year_level),
+            parseInt(state.student_department)
+          );
+
+          setState((prevState) => ({
+            ...prevState,
+            courses: [] as Courses[],
+            sections: [] as Sections[],
+            student_no: "",
+            first_name: "",
+            middle_name: "",
+            last_name: "",
+            suffix_name: "",
+            department: "",
+            course: "",
+            year_level: "",
+            section: "",
+            password: "",
+            password_confirmation: "",
+            irregular: false,
+            errors: {} as Errors,
+            loadingStudent: false,
+            showAddStudentModal: false,
+            toastSuccess: true,
+            toastBody: "STUDENT SUCCESSFULY SAVED.",
+            showToast: true,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 422) {
+          setState((prevState) => ({
+            ...prevState,
+            errors: error.response.data.errors,
+            loadingStudent: false,
+          }));
+        } else {
+          errorHandler(error);
+        }
+      });
+  };
+
+  // const handleCloseToastMessage = () => {
+  //   setState((prevState) => ({
+  //     ...prevState,
+  //     toastMessage: "",
+  //     toastMessageSuccess: false,
+  //     toastMessageVisible: false,
+  //   }));
+  // };
+
   const handleStudentFullName = (student: Students) => {
     let fullName = "";
 
@@ -136,33 +326,57 @@ const Students = () => {
     return `${student.year_level}${student.section}`;
   };
 
-  const handleToastMessageFromDeleteStudent = () => {
-    if (location.state && location.state.toastMessage) {
-      setState((prevState) => ({
-        ...prevState,
-        toastMessage: location.state.toastMessage,
-        toastMessageSuccess: location.state.toastMessageSuccess,
-        toastMessageVisible: location.state.toastMessageVisible,
-      }));
-    }
-  };
-
-  const handleCloseToastMessage = () => {
-    navigate(".", {
-      replace: true,
-      state: {
-        ...location.state,
-        toastMessage: "",
-        toastMessageSuccess: false,
-        toastMessageVisible: false,
-      },
-    });
-
+  const handleOpenAddStudentModal = () => {
     setState((prevState) => ({
       ...prevState,
-      toastMessage: "",
-      toastMessageSuccess: false,
-      toastMessageVisible: false,
+      showAddStudentModal: true,
+    }));
+  };
+
+  const handleCloseAddStudentModal = () => {
+    setState((prevState) => ({
+      ...prevState,
+      errors: {} as Errors,
+      showAddStudentModal: false,
+    }));
+  };
+
+  // const handleToastMessageFromDeleteStudent = () => {
+  //   if (location.state && location.state.toastMessage) {
+  //     setState((prevState) => ({
+  //       ...prevState,
+  //       toastMessage: location.state.toastMessage,
+  //       toastMessageSuccess: location.state.toastMessageSuccess,
+  //       toastMessageVisible: location.state.toastMessageVisible,
+  //     }));
+  //   }
+  // };
+
+  // const handleCloseToastMessage = () => {
+  //   navigate(".", {
+  //     replace: true,
+  //     state: {
+  //       ...location.state,
+  //       toastMessage: "",
+  //       toastMessageSuccess: false,
+  //       toastMessageVisible: false,
+  //     },
+  //   });
+
+  //   setState((prevState) => ({
+  //     ...prevState,
+  //     toastMessage: "",
+  //     toastMessageSuccess: false,
+  //     toastMessageVisible: false,
+  //   }));
+  // };
+
+  const handleCloseToast = () => {
+    setState((prevState) => ({
+      ...prevState,
+      toastSuccess: false,
+      toastBody: "",
+      showToast: false,
     }));
   };
 
@@ -179,28 +393,40 @@ const Students = () => {
       errorHandler(401);
     } else {
       handleLoadDepartments();
-      handleToastMessageFromDeleteStudent();
+      // handleToastMessageFromDeleteStudent();
     }
   }, []);
 
   const content = (
     <>
-      <ToastMessage
+      <AlertToastMessage
+        success={state.toastSuccess}
+        body={state.toastBody}
+        showToast={state.showToast}
+        onClose={handleCloseToast}
+      />
+      {/* <ToastMessage
         message={state.toastMessage}
         success={state.toastMessageSuccess}
         visible={state.toastMessageVisible}
         onClose={handleCloseToastMessage}
-      />
+      /> */}
       <div className="mx-auto mt-2">
-        <div className="row">
-          <div className="col-sm-3">
+        <div className="mb-3">
+          <div className="d-flex justify-content-end">
+            <Button className="btn-theme" onClick={handleOpenAddStudentModal}>
+              ADD STUDENT
+            </Button>
+          </div>
+        </div>
+        <Row>
+          <Col sm={3}>
             <div className="mb-3">
-              <label htmlFor="department">DEPARTMENT</label>
-              <select
-                name="department"
-                id="department"
-                className="form-select"
-                value={state.department}
+              <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
+              <FormSelect
+                name="student_department"
+                id="student_department"
+                value={state.student_department}
                 onChange={handleInput}
               >
                 <option value="">N/A</option>
@@ -212,17 +438,16 @@ const Students = () => {
                     {department.department}
                   </option>
                 ))}
-              </select>
+              </FormSelect>
             </div>
-          </div>
-          <div className="col-sm-3">
+          </Col>
+          <Col sm={3}>
             <div className="mb-3">
-              <label htmlFor="year_level">YEAR LEVEL</label>
-              <select
-                name="year_level"
-                id="year_level"
-                className="form-select"
-                value={state.year_level}
+              <FormLabel htmlFor="year_level">YEAR LEVEL</FormLabel>
+              <FormSelect
+                name="student_year_level"
+                id="student_year_level"
+                value={state.student_year_level}
                 onChange={handleInput}
               >
                 <option value="">N/A</option>
@@ -234,65 +459,375 @@ const Students = () => {
                 <option value="6">6</option>
                 <option value="7">7</option>
                 <option value="8">8</option>
-              </select>
+              </FormSelect>
             </div>
-          </div>
-        </div>
-        <div className="table-responsive">
-          <table className="table table-sm table-hover">
-            <caption>LIST OF STUDENTS</caption>
-            <thead>
-              <tr>
-                <th>NO.</th>
-                <th>STUDENT NO.</th>
-                <th>STUDENT NAME</th>
-                <th>DEPARTMENT/COURSE</th>
-                <th>SECTION</th>
-                <th>ACTION</th>
+          </Col>
+        </Row>
+        <Table hover size="sm" responsive="sm">
+          <caption>LIST OF STUDENTS</caption>
+          <thead>
+            <tr>
+              <th>NO.</th>
+              <th>STUDENT NO.</th>
+              <th>STUDENT NAME</th>
+              <th>DEPARTMENT/COURSE</th>
+              <th>SECTION</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {state.loadingStudents ? (
+              <tr key={1} className="align-middle">
+                <td colSpan={6} className="text-center">
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    role="status"
+                    className="spinner-theme"
+                  />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {state.loadingStudents ? (
-                <tr key={1}>
-                  <td colSpan={6}>
-                    <Spinner />
+            ) : (
+              state.students.map((student, index) => (
+                <tr key={student.student_id} className="align-middle">
+                  <td>{index + 1}</td>
+                  <td>{student.student_no}</td>
+                  <td>{handleStudentFullName(student)}</td>
+                  <td>{handleDepartmentAndCourse(student)}</td>
+                  <td>{handleYearLevelAndSection(student)}</td>
+                  <td>
+                    <div className="btn-group">
+                      <Button className="btn-theme" size="sm">
+                        EDIT
+                      </Button>
+                      {/* <Link
+                        to={`/student/delete/${student.student_id}`}
+                        className="btn btn-sm btn-theme"
+                      >
+                        DELETE
+                      </Link> */}
+                    </div>
                   </td>
                 </tr>
-              ) : (
-                state.students.map((student, index) => (
-                  <tr key={student.student_id} className="align-middle">
-                    <td>{index + 1}</td>
-                    <td>{student.student_no}</td>
-                    <td>{handleStudentFullName(student)}</td>
-                    <td>{handleDepartmentAndCourse(student)}</td>
-                    <td>{handleYearLevelAndSection(student)}</td>
-                    <td>
-                      <div className="btn-group">
-                        <Link
-                          to={`/student/edit/${student.student_id}`}
-                          className="btn btn-sm btn-theme"
-                        >
-                          EDIT
-                        </Link>
-                        <Link
-                          to={`/student/delete/${student.student_id}`}
-                          className="btn btn-sm btn-theme"
-                        >
-                          DELETE
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </Table>
       </div>
+
+      <Modal
+        show={state.showAddStudentModal}
+        onHide={handleCloseAddStudentModal}
+        fullscreen={true}
+        backdrop="static"
+      >
+        <ModalHeader>ADD STUDENT</ModalHeader>
+        <ModalBody>
+          <Row>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="student_no">STUDENT NO</FormLabel>
+                <FormControl
+                  type="text"
+                  className={`${state.errors.student_no ? "is-invalid" : ""}`}
+                  name="student_no"
+                  id="student_no"
+                  value={state.student_no}
+                  onChange={handleInput}
+                />
+                {state.errors.student_no && (
+                  <p className="text-danger">{state.errors.student_no[0]}</p>
+                )}
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  className={`${state.errors.first_name ? "is-invalid" : ""}`}
+                  name="first_name"
+                  id="first_name"
+                  value={state.first_name}
+                  onChange={handleInput}
+                />
+                {state.errors.first_name && (
+                  <p className="text-danger">{state.errors.first_name[0]}</p>
+                )}
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  className={`${state.errors.middle_name ? "is-invalid" : ""}`}
+                  name="middle_name"
+                  id="middle_name"
+                  value={state.middle_name}
+                  onChange={handleInput}
+                />
+                {state.errors.middle_name && (
+                  <p className="text-danger">{state.errors.middle_name[0]}</p>
+                )}
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  className={`${state.errors.last_name ? "is-invalid" : ""}`}
+                  name="last_name"
+                  id="last_name"
+                  value={state.last_name}
+                  onChange={handleInput}
+                />
+                {state.errors.last_name && (
+                  <p className="text-danger">{state.errors.last_name[0]}</p>
+                )}
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  className={`${state.errors.suffix_name ? "is-invalid" : ""}`}
+                  name="suffix_name"
+                  id="suffix_name"
+                  value={state.suffix_name}
+                  onChange={handleInput}
+                />
+                {state.errors.suffix_name && (
+                  <p className="text-danger">{state.errors.suffix_name[0]}</p>
+                )}
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
+                <FormSelect
+                  name="department"
+                  id="department"
+                  className={` ${state.errors.department ? "is-invalid" : ""}`}
+                  value={state.department}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.departments.map((department) => (
+                    <option
+                      value={department.department_id}
+                      key={department.department_id}
+                    >
+                      {department.department}
+                    </option>
+                  ))}
+                </FormSelect>
+                {state.errors.department && (
+                  <p className="text-danger">{state.errors.department[0]}</p>
+                )}
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="course">COURSE</FormLabel>
+                <FormSelect
+                  name="course"
+                  id="course"
+                  className={`${state.errors.course ? "is-invalid" : ""}`}
+                  value={state.course}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.loadingCourses ? (
+                    <option value="">Loading...</option>
+                  ) : (
+                    state.courses.map((course) => (
+                      <option value={course.course_id} key={course.course_id}>
+                        {course.course}
+                      </option>
+                    ))
+                  )}
+                </FormSelect>
+                {state.errors.course && (
+                  <p className="text-danger">{state.errors.course[0]}</p>
+                )}
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="year_level">YEAR LEVEL</FormLabel>
+                <FormSelect
+                  name="year_level"
+                  id="year_level"
+                  className={`${state.errors.year_level ? "is-invalid" : ""}`}
+                  value={state.year_level}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                </FormSelect>
+                {state.errors.year_level && (
+                  <p className="text-danger">{state.errors.year_level[0]}</p>
+                )}
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="section">SECTION</FormLabel>
+                <FormSelect
+                  name="section"
+                  id="section"
+                  className={`${state.errors.section ? "is-invalid" : ""}`}
+                  value={state.section}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.loadingSections ? (
+                    <option value="">Loading...</option>
+                  ) : (
+                    state.sections.map((section) => (
+                      <option
+                        value={section.section_id}
+                        key={section.section_id}
+                      >
+                        {section.section}
+                      </option>
+                    ))
+                  )}
+                </FormSelect>
+                {state.errors.section && (
+                  <p className="text-danger">{state.errors.section[0]}</p>
+                )}
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <hr />
+            <Col sm={6}>
+              <div className="mb-3">
+                <FormCheckInput
+                  type="checkbox"
+                  name="irregular"
+                  id="irregular"
+                  value={1}
+                  onChange={handleInput}
+                />{" "}
+                {""}
+                <FormCheckLabel htmlFor="irregular">
+                  IS STUDENT IRREGULAR? IF NOT, LEAVE IT.
+                </FormCheckLabel>
+              </div>
+            </Col>
+            <hr />
+          </Row>
+          <Row>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="password">PASSWORD</FormLabel>
+                <FormControl
+                  type="password"
+                  className={`${state.errors.password ? "is-invalid" : ""}`}
+                  name="password"
+                  id="password"
+                  value={state.password}
+                  onChange={handleInput}
+                />
+                {state.errors.password && (
+                  <p className="text-danger">{state.errors.password[0]}</p>
+                )}
+              </div>
+            </Col>
+            <Col sm={3}>
+              <FormLabel htmlFor="password_confirmation">
+                CONFIRM PASSWORD
+              </FormLabel>
+              <FormControl
+                type="password"
+                className={`${
+                  state.errors.password_confirmation ? "is-invalid" : ""
+                }`}
+                name="password_confirmation"
+                id="password_confirmation"
+                value={state.password_confirmation}
+                onChange={handleInput}
+              />
+              {state.errors.password_confirmation && (
+                <p className="text-danger">
+                  {state.errors.password_confirmation}
+                </p>
+              )}
+            </Col>
+          </Row>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            className="btn-theme"
+            onClick={handleCloseAddStudentModal}
+            disabled={state.loadingStudent}
+          >
+            CLOSE
+          </Button>
+          <Button
+            className="btn-theme"
+            onClick={handleStoreStudent}
+            disabled={state.loadingStudent}
+          >
+            {state.loadingStudent ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  role="status"
+                  size="sm"
+                  className="spinner-theme"
+                />{" "}
+                SAVING...
+              </>
+            ) : (
+              "SAVE"
+            )}
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 
-  return <Layout content={state.loadingDepartments ? <Spinner /> : content} />;
+  return (
+    <Layout
+      content={
+        state.loadingDepartments ? (
+          <>
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ minHeight: "80vh" }}
+            >
+              <Spinner
+                as="span"
+                animation="border"
+                role="status"
+                className="spinner-theme"
+              />
+            </div>
+          </>
+        ) : (
+          content
+        )
+      }
+    />
+  );
 };
 
 export default Students;

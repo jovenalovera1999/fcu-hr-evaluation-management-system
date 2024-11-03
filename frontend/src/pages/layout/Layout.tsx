@@ -1,6 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Spinner,
+} from "react-bootstrap";
+import axiosInstance from "../../axios/axiosInstance";
+import errorHandler from "../../handler/errorHandler";
 
 interface ContentProps {
   content: React.ReactNode;
@@ -15,6 +25,36 @@ const Layout = ({ content }: ContentProps) => {
   if (!parsedUser) {
     return null;
   }
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [loadingLogout, setLoadingLogout] = useState(false);
+
+  const handleLogout = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setLoadingLogout(true);
+
+    axiosInstance
+      .post("/user/process/logout", parsedUser)
+      .then((res) => {
+        if (res.data.status === 200) {
+          localStorage.clear();
+          navigate("/", {
+            state: {
+              toastSuccess: true,
+              toastBody: "YOU HAVE SUCCESSFULLY LOGGED OUT.",
+              showToast: true,
+            },
+          });
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
 
   const handleUserFullName = () => {
     let fullName = "";
@@ -33,8 +73,6 @@ const Layout = ({ content }: ContentProps) => {
 
     return fullName;
   };
-
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const handleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
@@ -75,12 +113,12 @@ const Layout = ({ content }: ContentProps) => {
                   </Link>
                   <ul className="dropdown-menu bg-theme">
                     <li className="bg-theme">
-                      <Link
+                      <Button
                         className="dropdown-item dropdown-item-theme"
-                        to={"/logout"}
+                        onClick={() => setShowModal(true)}
                       >
                         LOGOUT
-                      </Link>
+                      </Button>
                     </li>
                   </ul>
                 </li>
@@ -94,6 +132,44 @@ const Layout = ({ content }: ContentProps) => {
           </main>
         </div>
       </div>
+
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        backdrop="static"
+      >
+        <ModalHeader>LOGOUT</ModalHeader>
+        <ModalBody>ARE YOU SURE YOU WANT TO LOGOUT?</ModalBody>
+        <ModalFooter>
+          <Button
+            className="btn-theme"
+            onClick={() => setShowModal(false)}
+            disabled={loadingLogout}
+          >
+            CLOSE
+          </Button>
+          <Button
+            className="btn-theme"
+            onClick={handleLogout}
+            disabled={loadingLogout}
+          >
+            {loadingLogout ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  role="status"
+                  size="sm"
+                  className="spinner-theme"
+                />{" "}
+                LOGGING OUT...
+              </>
+            ) : (
+              "YES"
+            )}
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 };

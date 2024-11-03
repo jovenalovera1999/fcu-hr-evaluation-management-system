@@ -30,8 +30,8 @@ const AlertToastMessage = ({
       <div aria-live="polite" aria-atomic="true" className="position-relative">
         <ToastContainer
           position="top-end"
-          className="p-3"
-          style={{ zIndex: 1 }}
+          className="p-3 position-fixed"
+          style={{ top: 20, right: 20, zIndex: 1050 }}
         >
           <Toast
             show={show}
