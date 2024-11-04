@@ -79,9 +79,6 @@ const Students = () => {
     loadingStudents: false,
     loadingCourses: false,
     loadingSections: false,
-    showAddStudentModal: false,
-    showEditStudentModal: false,
-    showDeleteStudentModal: false,
     departments: [] as Departments[],
     students: [] as Students[],
     courses: [] as Courses[],
@@ -102,6 +99,9 @@ const Students = () => {
     password: "",
     password_confirmation: "",
     errors: {} as Errors,
+    showAddStudentModal: false,
+    showEditStudentModal: false,
+    showDeleteStudentModal: false,
     toastSuccess: false,
     toastBody: "",
     showToast: false,
@@ -257,6 +257,7 @@ const Students = () => {
             ...prevState,
             courses: [] as Courses[],
             sections: [] as Sections[],
+            student_id: 0,
             student_no: "",
             first_name: "",
             middle_name: "",
@@ -346,14 +347,50 @@ const Students = () => {
       });
   };
 
-  // const handleCloseToastMessage = () => {
-  //   setState((prevState) => ({
-  //     ...prevState,
-  //     toastMessage: "",
-  //     toastMessageSuccess: false,
-  //     toastMessageVisible: false,
-  //   }));
-  // };
+  const handleDeleteStudent = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setState((prevState) => ({
+      ...prevState,
+      loadingStudent: true,
+    }));
+
+    axiosInstance
+      .put(`/student/delete/${state.student_id}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          handleLoadStudents(
+            parseInt(state.student_year_level),
+            parseInt(state.student_department)
+          );
+
+          setState((prevState) => ({
+            ...prevState,
+            student_id: 0,
+            student_no: "",
+            first_name: "",
+            middle_name: "",
+            last_name: "",
+            suffix_name: "",
+            department: "",
+            course: "",
+            year_level: "",
+            section: "",
+            irregular: false,
+            loadingStudent: false,
+            showDeleteStudentModal: false,
+            toastSuccess: true,
+            toastBody: "STUDENT SUCCESSFULY DELETED.",
+            showToast: true,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
 
   const handleStudentFullName = (student: Students) => {
     let fullName = "";
@@ -391,6 +428,7 @@ const Students = () => {
   const handleCloseAddStudentModal = () => {
     setState((prevState) => ({
       ...prevState,
+      student_id: 0,
       errors: {} as Errors,
       showAddStudentModal: false,
     }));
@@ -414,7 +452,25 @@ const Students = () => {
     }));
   };
 
-  const handleCloseEditStudentModal = () => {
+  const handleOpenDeleteStudentModal = (student: Students) => {
+    setState((prevState) => ({
+      ...prevState,
+      student_id: student.student_id,
+      student_no: student.student_no,
+      first_name: student.first_name,
+      middle_name: student.middle_name,
+      last_name: student.last_name,
+      suffix_name: student.suffix_name,
+      department: student.department,
+      course: student.course,
+      year_level: student.year_level,
+      section: student.section,
+      irregular: student.is_irregular,
+      showDeleteStudentModal: true,
+    }));
+  };
+
+  const handleCloseEditAndDeleteStudentModal = () => {
     setState((prevState) => ({
       ...prevState,
       student_id: 0,
@@ -428,7 +484,9 @@ const Students = () => {
       year_level: "",
       section: "",
       irregular: false,
+      errors: {} as Errors,
       showEditStudentModal: false,
+      showDeleteStudentModal: false,
     }));
   };
 
@@ -587,6 +645,13 @@ const Students = () => {
                         onClick={() => handleOpenEditStudentModal(student)}
                       >
                         EDIT
+                      </Button>
+                      <Button
+                        className="btn-theme"
+                        size="sm"
+                        onClick={() => handleOpenDeleteStudentModal(student)}
+                      >
+                        DELETE
                       </Button>
                       {/* <Link
                         to={`/student/delete/${student.student_id}`}
@@ -893,7 +958,7 @@ const Students = () => {
 
       <Modal
         show={state.showEditStudentModal}
-        onHide={handleCloseEditStudentModal}
+        onHide={handleCloseEditAndDeleteStudentModal}
         fullscreen={true}
         backdrop="static"
       >
@@ -1114,7 +1179,7 @@ const Students = () => {
         <ModalFooter>
           <Button
             className="btn-theme"
-            onClick={handleCloseEditStudentModal}
+            onClick={handleCloseEditAndDeleteStudentModal}
             disabled={state.loadingStudent}
           >
             CLOSE
@@ -1137,6 +1202,178 @@ const Students = () => {
               </>
             ) : (
               "UPDATE"
+            )}
+          </Button>
+        </ModalFooter>
+      </Modal>
+
+      <Modal
+        show={state.showDeleteStudentModal}
+        onHide={handleCloseEditAndDeleteStudentModal}
+        fullscreen={true}
+        backdrop="static"
+      >
+        <ModalHeader>ARE YOU SURE YOU WANT TO DELETE THIS STUDENT?</ModalHeader>
+        <ModalBody>
+          <Row>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="student_no">STUDENT NO</FormLabel>
+                <FormControl
+                  type="text"
+                  name="student_no"
+                  id="student_no"
+                  value={state.student_no}
+                  readOnly
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  name="first_name"
+                  id="first_name"
+                  value={state.first_name}
+                  readOnly
+                />
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  name="middle_name"
+                  id="middle_name"
+                  value={state.middle_name}
+                  readOnly
+                />
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  name="last_name"
+                  id="last_name"
+                  value={state.last_name}
+                  readOnly
+                />
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
+                <FormControl
+                  type="text"
+                  name="suffix_name"
+                  id="suffix_name"
+                  value={state.suffix_name}
+                  readOnly
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
+                <FormControl
+                  type="text"
+                  name="department"
+                  id="department"
+                  value={state.department}
+                  readOnly
+                />
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="course">COURSE</FormLabel>
+                <FormControl
+                  type="text"
+                  name="course"
+                  id="course"
+                  value={state.course}
+                  readOnly
+                />
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="year_level">YEAR LEVEL</FormLabel>
+                <FormControl
+                  name="year_level"
+                  id="year_level"
+                  value={state.year_level}
+                  readOnly
+                />
+              </div>
+            </Col>
+            <Col sm={3}>
+              <div className="mb-3">
+                <FormLabel htmlFor="section">SECTION</FormLabel>
+                <FormControl
+                  name="section"
+                  id="section"
+                  value={state.section}
+                  readOnly
+                />
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <hr />
+            <Col sm={6}>
+              <div className="mb-3">
+                <FormCheckInput
+                  type="checkbox"
+                  name="irregular"
+                  id="irregular"
+                  value={1}
+                  checked={state.irregular}
+                  readOnly
+                />{" "}
+                {""}
+                <FormCheckLabel htmlFor="irregular">
+                  IS STUDENT IRREGULAR?
+                </FormCheckLabel>
+              </div>
+            </Col>
+            <hr />
+          </Row>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            className="btn-theme"
+            onClick={handleCloseEditAndDeleteStudentModal}
+            disabled={state.loadingStudent}
+          >
+            CLOSE
+          </Button>
+          <Button
+            className="btn-theme"
+            onClick={handleDeleteStudent}
+            disabled={state.loadingStudent}
+          >
+            {state.loadingStudent ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  role="status"
+                  size="sm"
+                  className="spinner-theme"
+                />{" "}
+                DELETING...
+              </>
+            ) : (
+              "YES"
             )}
           </Button>
         </ModalFooter>

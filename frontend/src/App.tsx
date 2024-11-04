@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Employees from "./pages/employee/Employees";
-import AddStudent from "./pages/student/AddStudent";
 import Students from "./pages/student/Students";
 import AddQuestion from "./pages/question/AddQuestion";
 import Questions from "./pages/question/Questions";
@@ -11,8 +10,6 @@ import Response from "./pages/evaluation/Response";
 import SendAnEvaluationToEmployees from "./pages/evaluation/SendAnEvaluationToEmployees";
 import Admin from "./pages/dashboard/Admin";
 import SendAnEvaluationToIrregularStudents from "./pages/evaluation/SendAnEvaluationToIrregularStudents";
-import EditStudent from "./pages/student/EditStudent";
-import DeleteStudent from "./pages/student/DeleteStudent";
 import Categories from "./pages/category/Categories";
 
 const App = () => {
@@ -23,11 +20,7 @@ const App = () => {
         <Route path="/" element={<Login />} />
 
         <Route path="/employee/list" element={<Employees />} />
-
         <Route path="/student/list" element={<Students />} />
-        <Route path="/student/add" element={<AddStudent />} />
-        <Route path="/student/edit/:student_id" element={<EditStudent />} />
-        <Route path="/student/delete/:student_id" element={<DeleteStudent />} />
 
         <Route path="/question/list" element={<Questions />} />
         <Route path="/question/add" element={<AddQuestion />} />

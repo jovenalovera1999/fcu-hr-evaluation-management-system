@@ -70,9 +70,6 @@ const Employees = () => {
     loadingPositions: true,
     loadingEmployees: false,
     loadingEmployee: false,
-    showAddEmployeeModal: false,
-    showEditEmployeeModal: false,
-    showDeleteEmployeeModal: false,
     departments: [] as Departments[],
     positions: [] as Positions[],
     academicYears: [] as AcademicYears[],
@@ -90,6 +87,9 @@ const Employees = () => {
     password: "",
     password_confirmation: "",
     errors: {} as Errors,
+    showAddEmployeeModal: false,
+    showEditEmployeeModal: false,
+    showDeleteEmployeeModal: false,
     toastSuccess: false,
     toastBody: "",
     showToast: false,
@@ -370,24 +370,6 @@ const Employees = () => {
     }));
   };
 
-  const handleCloseEditEmployeeModal = () => {
-    setState((prevState) => ({
-      ...prevState,
-      employee_id: 0,
-      first_name: "",
-      middle_name: "",
-      last_name: "",
-      suffix_name: "",
-      position: "",
-      department: "",
-      username: "",
-      password: "",
-      password_confirmation: "",
-      errors: {} as Errors,
-      showEditEmployeeModal: false,
-    }));
-  };
-
   const handleOpenDeleteEmployeeModal = (employee: Employees) => {
     setState((prevState) => ({
       ...prevState,
@@ -403,7 +385,7 @@ const Employees = () => {
     }));
   };
 
-  const handleCloseDeleteEmployeeModal = () => {
+  const handleCloseEditAndDeleteEmployeeModal = () => {
     setState((prevState) => ({
       ...prevState,
       employee_id: 0,
@@ -417,6 +399,7 @@ const Employees = () => {
       password: "",
       password_confirmation: "",
       errors: {} as Errors,
+      showEditEmployeeModal: false,
       showDeleteEmployeeModal: false,
     }));
   };
@@ -761,7 +744,7 @@ const Employees = () => {
       {/* Start of Edit Employee Modal */}
       <Modal
         show={state.showEditEmployeeModal}
-        onHide={handleCloseAddEmployeeModal}
+        onHide={handleCloseEditAndDeleteEmployeeModal}
         fullscreen={true}
         backdrop="static"
       >
@@ -912,7 +895,7 @@ const Employees = () => {
         <ModalFooter>
           <Button
             className="btn-theme"
-            onClick={handleCloseEditEmployeeModal}
+            onClick={handleCloseEditAndDeleteEmployeeModal}
             disabled={state.loadingEmployee}
           >
             CLOSE
@@ -944,7 +927,7 @@ const Employees = () => {
       {/* Start of Delete Employee Modal */}
       <Modal
         show={state.showDeleteEmployeeModal}
-        onHide={handleCloseDeleteEmployeeModal}
+        onHide={handleCloseEditAndDeleteEmployeeModal}
         fullscreen={true}
         backdrop="static"
       >
@@ -1044,7 +1027,7 @@ const Employees = () => {
         <ModalFooter>
           <Button
             className="btn-theme"
-            onClick={handleCloseDeleteEmployeeModal}
+            onClick={handleCloseEditAndDeleteEmployeeModal}
             disabled={state.loadingEmployee}
           >
             CLOSE

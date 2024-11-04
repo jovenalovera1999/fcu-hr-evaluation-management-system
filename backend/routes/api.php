@@ -74,7 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/get/student/{studentId}', 'getStudent');
         Route::post('/store', 'store');
         Route::put('/update/{studentId}', 'updateStudent');
-        Route::put('/delete/student/{studentId}', 'deleteStudent');
+        Route::put('/delete/{studentId}', 'deleteStudent');
     });
 
     Route::controller(CategoryController::class)->prefix('category')->group(function () {

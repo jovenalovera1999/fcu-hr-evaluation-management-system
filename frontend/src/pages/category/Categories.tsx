@@ -31,12 +31,12 @@ const Categories = () => {
     loadingCategories: true,
     loadingCategory: false,
     categories: [] as Categories[],
-    showAddCategoryModal: false,
-    showEditCategoryModal: false,
-    showDeleteCategoryModal: false,
     category_id: 0,
     category: "",
     errors: {} as Errors,
+    showAddCategoryModal: false,
+    showEditCategoryModal: false,
+    showDeleteCategoryModal: false,
     toastSuccess: false,
     toastBody: "",
     showToast: false,
@@ -52,20 +52,23 @@ const Categories = () => {
     }));
   };
 
-  const handleOpenAddCategoryModal = () => {
-    setState((prevState) => ({
-      ...prevState,
-      showAddCategoryModal: true,
-    }));
-  };
-
-  const handleCloseAddCategoryModal = () => {
-    setState((prevState) => ({
-      ...prevState,
-      category_id: 0,
-      errors: {} as Errors,
-      showAddCategoryModal: false,
-    }));
+  const handleLoadCategories = async () => {
+    axiosInstance
+      .get("/category/index")
+      .then((res) => {
+        if (res.data.status) {
+          setState((prevState) => ({
+            ...prevState,
+            categories: res.data.categories,
+            loadingCategories: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
   };
 
   const handleStoreCategory = async (e: FormEvent) => {
@@ -110,44 +113,6 @@ const Categories = () => {
       });
   };
 
-  const handleLoadCategories = async () => {
-    axiosInstance
-      .get("/category/index")
-      .then((res) => {
-        if (res.data.status) {
-          setState((prevState) => ({
-            ...prevState,
-            categories: res.data.categories,
-            loadingCategories: false,
-          }));
-        } else {
-          console.error("Unexpected status error: ", res.data.status);
-        }
-      })
-      .catch((error) => {
-        errorHandler(error);
-      });
-  };
-
-  const handleOpenEditCategoryModal = (category: Categories) => {
-    setState((prevState) => ({
-      ...prevState,
-      category_id: category.category_id,
-      category: category.category,
-      showEditCategoryModal: true,
-    }));
-  };
-
-  const handleCloseEditCategoryModal = () => {
-    setState((prevState) => ({
-      ...prevState,
-      category_id: 0,
-      category: "",
-      errors: {} as Errors,
-      showEditCategoryModal: false,
-    }));
-  };
-
   const handleUpdateCategory = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -190,25 +155,6 @@ const Categories = () => {
       });
   };
 
-  const handleOpenDeleteCategoryModal = (category: Categories) => {
-    setState((prevState) => ({
-      ...prevState,
-      category_id: category.category_id,
-      category: category.category,
-      showDeleteCategoryModal: true,
-    }));
-  };
-
-  const handleCloseDeleteCategoryModal = () => {
-    setState((prevState) => ({
-      ...prevState,
-      category_id: 0,
-      category: "",
-      errors: {} as Errors,
-      showDeleteCategoryModal: false,
-    }));
-  };
-
   const handleDeleteCategory = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -241,6 +187,51 @@ const Categories = () => {
       .catch((error) => {
         errorHandler(error);
       });
+  };
+
+  const handleOpenAddCategoryModal = () => {
+    setState((prevState) => ({
+      ...prevState,
+      showAddCategoryModal: true,
+    }));
+  };
+
+  const handleCloseAddCategoryModal = () => {
+    setState((prevState) => ({
+      ...prevState,
+      category_id: 0,
+      errors: {} as Errors,
+      showAddCategoryModal: false,
+    }));
+  };
+
+  const handleOpenEditCategoryModal = (category: Categories) => {
+    setState((prevState) => ({
+      ...prevState,
+      category_id: category.category_id,
+      category: category.category,
+      showEditCategoryModal: true,
+    }));
+  };
+
+  const handleOpenDeleteCategoryModal = (category: Categories) => {
+    setState((prevState) => ({
+      ...prevState,
+      category_id: category.category_id,
+      category: category.category,
+      showDeleteCategoryModal: true,
+    }));
+  };
+
+  const handleCloseEditAndDeleteCategoryModal = () => {
+    setState((prevState) => ({
+      ...prevState,
+      category_id: 0,
+      category: "",
+      errors: {} as Errors,
+      showEditCategoryModal: false,
+      showDeleteCategoryModal: false,
+    }));
   };
 
   const handleCloseToast = () => {
@@ -364,7 +355,7 @@ const Categories = () => {
 
       <Modal
         show={state.showEditCategoryModal}
-        onHide={handleCloseEditCategoryModal}
+        onHide={handleCloseEditAndDeleteCategoryModal}
         backdrop="static"
       >
         <ModalHeader>EDIT CATEGORY</ModalHeader>
@@ -386,7 +377,7 @@ const Categories = () => {
         <ModalFooter>
           <Button
             className="btn-theme"
-            onClick={() => handleCloseEditCategoryModal()}
+            onClick={handleCloseEditAndDeleteCategoryModal}
             disabled={state.loadingCategory}
           >
             CLOSE
@@ -416,7 +407,7 @@ const Categories = () => {
 
       <Modal
         show={state.showDeleteCategoryModal}
-        onHide={handleCloseDeleteCategoryModal}
+        onHide={handleCloseEditAndDeleteCategoryModal}
         backdrop="static"
       >
         <ModalHeader>DELETE CATEGORY</ModalHeader>
@@ -436,7 +427,7 @@ const Categories = () => {
         <ModalFooter>
           <Button
             className="btn-theme"
-            onClick={handleCloseDeleteCategoryModal}
+            onClick={handleCloseEditAndDeleteCategoryModal}
             disabled={state.loadingCategory}
           >
             CLOSE
