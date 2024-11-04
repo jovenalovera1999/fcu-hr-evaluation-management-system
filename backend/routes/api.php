@@ -73,7 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/load/irregular/student/ids/by/search', 'loadIrregularStudentIdsBySearch');
         Route::get('/get/student/{studentId}', 'getStudent');
         Route::post('/store', 'store');
-        Route::put('/update/student/{studentId}', 'updateStudent');
+        Route::put('/update/{studentId}', 'updateStudent');
         Route::put('/delete/student/{studentId}', 'deleteStudent');
     });
 
