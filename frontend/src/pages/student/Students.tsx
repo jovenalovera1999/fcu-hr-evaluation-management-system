@@ -2,7 +2,6 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
-import { useLocation, useNavigate } from "react-router-dom";
 import {
   Button,
   Col,
@@ -687,6 +686,7 @@ const Students = () => {
                   id="student_no"
                   value={state.student_no}
                   onChange={handleInput}
+                  autoFocus
                 />
                 {state.errors.student_no && (
                   <p className="text-danger">{state.errors.student_no[0]}</p>
@@ -975,6 +975,7 @@ const Students = () => {
                   id="student_no"
                   value={state.student_no}
                   onChange={handleInput}
+                  autoFocus
                 />
                 {state.errors.student_no && (
                   <p className="text-danger">{state.errors.student_no[0]}</p>
