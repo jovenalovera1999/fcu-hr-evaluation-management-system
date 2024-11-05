@@ -11,6 +11,7 @@ import SendAnEvaluationToEmployees from "./pages/evaluation/SendAnEvaluationToEm
 import Admin from "./pages/dashboard/Admin";
 import SendAnEvaluationToIrregularStudents from "./pages/evaluation/SendAnEvaluationToIrregularStudents";
 import Categories from "./pages/category/Categories";
+import Results from "./pages/evaluation/Results";
 
 const App = () => {
   return (
@@ -42,6 +43,7 @@ const App = () => {
           path="/evaluation/response/:evaluation_id"
           element={<Response />}
         />
+        <Route path="/evaluation/results" element={<Results />} />
 
         <Route path="/category/list" element={<Categories />} />
       </Routes>

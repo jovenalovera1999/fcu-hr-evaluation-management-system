@@ -10,6 +10,7 @@ use App\Models\Question;
 use App\Models\Response;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EvaluationController extends Controller
 {
@@ -44,6 +45,33 @@ class EvaluationController extends Controller
 
         return response()->json([
             'employees' => $employees,
+            'status' => 200
+        ]);
+    }
+
+    public function loadResults($semesterId)
+    {
+        $results = Evaluation::select(
+            'tbl_employees.*',
+            'tbl_positions.*',
+            'tbl_departments.*',
+            'tbl_evaluations.*',
+            DB::raw('COUNT(CASE WHEN tbl_responses.poor = TRUE THEN 1 END) AS poor'),
+            DB::raw('COUNT(CASE WHEN tbl_responses.mediocre = TRUE THEN 1 END) AS mediocre'),
+            DB::raw('COUNT(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 END) AS satisfactory'),
+            DB::raw('COUNT(CASE WHEN tbl_responses.good = TRUE THEN 1 END) AS good'),
+            DB::raw('COUNT(CASE WHEN tbl_responses.excellent = TRUE THEN 1 END) AS excellent')
+        )
+            ->leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
+            ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
+            ->leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
+            ->leftJoin('tbl_responses', 'tbl_evaluations.evaluation_id', '=', 'tbl_responses.evaluation_id')
+            ->where('tbl_evaluations.semester_id', $semesterId)
+            ->where('tbl_evaluations.is_completed', true)
+            ->get();
+
+        return response()->json([
+            'results' => $results,
             'status' => 200
         ]);
     }
