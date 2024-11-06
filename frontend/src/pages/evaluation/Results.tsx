@@ -3,6 +3,10 @@ import {
   Col,
   FormLabel,
   FormSelect,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
   Row,
   Spinner,
   Table,
@@ -23,7 +27,7 @@ interface Semesters {
 }
 
 interface Results {
-  evaluation_id: number;
+  employee_id: number;
   first_name: string;
   middle_name: string;
   last_name: string;
@@ -42,6 +46,7 @@ const Results = () => {
     results: [] as Results[],
     academic_year: "",
     semester: "",
+    showSummaryResponseModal: false,
   });
 
   const handleInput = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -123,6 +128,20 @@ const Results = () => {
       .catch((error) => {
         errorHandler(error);
       });
+  };
+
+  const handleOpenResponseSummary = () => {
+    setState((prevState) => ({
+      ...prevState,
+      showSummaryResponseModal: true,
+    }));
+  };
+
+  const handleCloseResponseSummary = () => {
+    setState((prevState) => ({
+      ...prevState,
+      showSummaryResponseModal: false,
+    }));
   };
 
   const handleEmployeeFullName = (employee: Results) => {
@@ -225,13 +244,17 @@ const Results = () => {
                 </tr>
               ) : (
                 state.results.map((result, index) => (
-                  <tr key={result.evaluation_id} className="align-middle">
+                  <tr key={result.employee_id} className="align-middle">
                     <td>{index + 1}</td>
                     <td>{handleEmployeeFullName(result)}</td>
                     <td>{result.position}</td>
                     <td>{result.department}</td>
                     <td>
-                      <Button className="btn-theme" size="sm">
+                      <Button
+                        className="btn-theme"
+                        size="sm"
+                        onClick={handleOpenResponseSummary}
+                      >
                         VIEW RATING
                       </Button>
                     </td>
@@ -242,6 +265,49 @@ const Results = () => {
           </Table>
         </Row>
       </div>
+
+      <Modal
+        show={state.showSummaryResponseModal}
+        onHide={handleCloseResponseSummary}
+        size="lg"
+      >
+        <ModalHeader>RESPONSE SUMMARY</ModalHeader>
+        <ModalBody>
+          <Row>
+            <h3></h3>
+            <Col>
+              POOR
+              <br />
+              <p className="fs-3">5</p>
+            </Col>
+            <Col>
+              MEDIOCRE
+              <br />
+              <p className="fs-3">5</p>
+            </Col>
+            <Col>
+              SATISFACTORY
+              <br />
+              <p className="fs-3">5</p>
+            </Col>
+            <Col>
+              GOOD
+              <br />
+              <p className="fs-3">5</p>
+            </Col>
+            <Col>
+              EXCELLENT
+              <br />
+              <p className="fs-3">5</p>
+            </Col>
+          </Row>
+        </ModalBody>
+        <ModalFooter>
+          <Button className="btn-theme" onClick={handleCloseResponseSummary}>
+            CLOSE
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 
