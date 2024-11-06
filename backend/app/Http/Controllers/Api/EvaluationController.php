@@ -51,45 +51,67 @@ class EvaluationController extends Controller
 
     public function loadResults($semesterId)
     {
+        // $results = Evaluation::select(
+        //     'tbl_employees.employee_id',
+        //     'tbl_employees.first_name',
+        //     'tbl_employees.middle_name',
+        //     'tbl_employees.last_name',
+        //     'tbl_employees.suffix_name',
+        //     'tbl_positions.position_id',
+        //     'tbl_positions.position',
+        //     'tbl_departments.department_id',
+        //     'tbl_departments.department',
+        //     'tbl_evaluations.evaluation_id',
+        //     'tbl_evaluations.semester_id',
+        //     'tbl_evaluations.is_completed',
+        //     DB::raw('COUNT(CASE WHEN tbl_responses.poor = TRUE THEN 1 END) AS poor'),
+        //     DB::raw('COUNT(CASE WHEN tbl_responses.mediocre = TRUE THEN 1 END) AS mediocre'),
+        //     DB::raw('COUNT(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 END) AS satisfactory'),
+        //     DB::raw('COUNT(CASE WHEN tbl_responses.good = TRUE THEN 1 END) AS good'),
+        //     DB::raw('COUNT(CASE WHEN tbl_responses.excellent = TRUE THEN 1 END) AS excellent')
+        // )
+        //     ->leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
+        //     ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
+        //     ->leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
+        //     ->leftJoin('tbl_responses', 'tbl_evaluations.evaluation_id', '=', 'tbl_responses.evaluation_id')
+        //     ->where('tbl_evaluations.semester_id', $semesterId)
+        //     ->where('tbl_evaluations.is_completed', true)
+        //     ->groupBy(
+        //         'tbl_employees.employee_id',
+        //         'tbl_employees.first_name',
+        //         'tbl_employees.middle_name',
+        //         'tbl_employees.last_name',
+        //         'tbl_employees.suffix_name',
+        //         'tbl_positions.position_id',
+        //         'tbl_positions.position',
+        //         'tbl_departments.department_id',
+        //         'tbl_departments.department',
+        //         'tbl_evaluations.evaluation_id',
+        //         'tbl_evaluations.semester_id',
+        //         'tbl_evaluations.is_completed',
+        //     )
+        //     ->get();
+
         $results = Evaluation::select(
             'tbl_employees.employee_id',
             'tbl_employees.first_name',
-            'tbl_employees.middle_name',
             'tbl_employees.last_name',
-            'tbl_employees.suffix_name',
-            'tbl_positions.position_id',
             'tbl_positions.position',
-            'tbl_departments.department_id',
-            'tbl_departments.department',
-            'tbl_evaluations.evaluation_id',
-            'tbl_evaluations.semester_id',
-            'tbl_evaluations.is_completed',
-            DB::raw('COUNT(CASE WHEN tbl_responses.poor = TRUE THEN 1 END) AS poor'),
-            DB::raw('COUNT(CASE WHEN tbl_responses.mediocre = TRUE THEN 1 END) AS mediocre'),
-            DB::raw('COUNT(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 END) AS satisfactory'),
-            DB::raw('COUNT(CASE WHEN tbl_responses.good = TRUE THEN 1 END) AS good'),
-            DB::raw('COUNT(CASE WHEN tbl_responses.excellent = TRUE THEN 1 END) AS excellent')
+            'tbl_departments.department'
         )
             ->leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
             ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
             ->leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
-            ->leftJoin('tbl_responses', 'tbl_evaluations.evaluation_id', '=', 'tbl_responses.evaluation_id')
             ->where('tbl_evaluations.semester_id', $semesterId)
+            ->where('tbl_evaluations.is_cancelled', false)
             ->where('tbl_evaluations.is_completed', true)
-            ->groupBy(
-                'tbl_employees.employee_id',
-                'tbl_employees.first_name',
-                'tbl_employees.middle_name',
-                'tbl_employees.last_name',
-                'tbl_employees.suffix_name',
-                'tbl_positions.position_id',
-                'tbl_positions.position',
-                'tbl_departments.department_id',
-                'tbl_departments.department',
-                'tbl_evaluations.evaluation_id',
-                'tbl_evaluations.semester_id',
-                'tbl_evaluations.is_completed',
-            )
+            // ->groupBy(
+            //     'tbl_evaluations.evaluation_id',
+            //     'tbl_employees.first_name',
+            //     'tbl_employees.last_name',
+            //     'tbl_positions.position',
+            //     'tbl_departments.department'
+            // )
             ->distinct()
             ->get();
 
@@ -232,5 +254,15 @@ class EvaluationController extends Controller
         return response()->json([
             'status' => 200
         ]);
+    }
+
+    public function viewEmployeeSummaryRating()
+    {
+        $totalPoor = Response::leftJoin('tbl_evaluations', 'tbl_responses.evaluation_id', '=', 'tbl_evaluations.evaluation_id')
+            ->leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
+            ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
+            ->leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
+            ->where('tbl_employees.first_name')
+            ->count();
     }
 }

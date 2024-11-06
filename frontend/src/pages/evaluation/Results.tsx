@@ -1,4 +1,5 @@
 import {
+  Button,
   Col,
   FormLabel,
   FormSelect,
@@ -29,11 +30,6 @@ interface Results {
   suffix_name: string;
   position: string;
   department: string;
-  poor: string;
-  mediocre: string;
-  satisfactory: string;
-  good: string;
-  excellent: string;
 }
 
 const Results = () => {
@@ -212,17 +208,13 @@ const Results = () => {
                 <th>NAME OF EMPLOYEE</th>
                 <th>POSITION</th>
                 <th>DEPARTMENT</th>
-                <th className="text-center">POOR</th>
-                <th className="text-center">MEDIOCRE</th>
-                <th className="text-center">SATISFACTORY</th>
-                <th className="text-center">GOOD</th>
-                <th className="text-center">EXCELLENT</th>
+                <th>ACTION</th>
               </tr>
             </thead>
             <tbody>
               {state.loadingResults ? (
                 <tr className="align-middle">
-                  <td colSpan={9} className="text-center">
+                  <td colSpan={5} className="text-center">
                     <Spinner
                       as="span"
                       animation="border"
@@ -238,11 +230,11 @@ const Results = () => {
                     <td>{handleEmployeeFullName(result)}</td>
                     <td>{result.position}</td>
                     <td>{result.department}</td>
-                    <td className="text-center">{result.poor}</td>
-                    <td className="text-center">{result.mediocre}</td>
-                    <td className="text-center">{result.satisfactory}</td>
-                    <td className="text-center">{result.good}</td>
-                    <td className="text-center">{result.excellent}</td>
+                    <td>
+                      <Button className="btn-theme" size="sm">
+                        VIEW RATING
+                      </Button>
+                    </td>
                   </tr>
                 ))
               )}
