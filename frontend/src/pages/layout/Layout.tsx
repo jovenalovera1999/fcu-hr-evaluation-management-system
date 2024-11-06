@@ -103,7 +103,7 @@ const Layout = ({ content }: ContentProps) => {
               <div className="ms-auto text-white">
                 <li className="nav-item dropdown">
                   <Link
-                    className="nav-link dropdown-toggle pb-1"
+                    className="nav-link dropdown-toggle pb-1 pe-2"
                     to={"#"}
                     role="button"
                     data-bs-toggle="dropdown"

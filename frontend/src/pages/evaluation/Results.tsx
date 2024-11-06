@@ -44,7 +44,7 @@ const Results = () => {
     academicYears: [] as AcademicYears[],
     semesters: [] as Semesters[],
     results: [] as Results[],
-    academicYear: "",
+    academic_year: "",
     semester: "",
   });
 
@@ -158,11 +158,11 @@ const Results = () => {
         <Row>
           <Col sm={3}>
             <div className="mb-3">
-              <FormLabel>ACADEMIC YEAR</FormLabel>
+              <FormLabel htmlFor="academic_year">ACADEMIC YEAR</FormLabel>
               <FormSelect
                 name="academic_year"
                 id="academic_year"
-                value={state.academicYear}
+                value={state.academic_year}
                 onChange={handleInput}
                 autoFocus
               >
@@ -212,18 +212,17 @@ const Results = () => {
                 <th>NAME OF EMPLOYEE</th>
                 <th>POSITION</th>
                 <th>DEPARTMENT</th>
-                <th>POOR</th>
-                <th>MEDIOCRE</th>
-                <th>SATISFACTORY</th>
-                <th>GOOD</th>
-                <th>EXCELLENT</th>
-                <th>ACTION</th>
+                <th className="text-center">POOR</th>
+                <th className="text-center">MEDIOCRE</th>
+                <th className="text-center">SATISFACTORY</th>
+                <th className="text-center">GOOD</th>
+                <th className="text-center">EXCELLENT</th>
               </tr>
             </thead>
             <tbody>
               {state.loadingResults ? (
                 <tr className="align-middle">
-                  <td colSpan={10} className="text-center">
+                  <td colSpan={9} className="text-center">
                     <Spinner
                       as="span"
                       animation="border"
@@ -239,12 +238,11 @@ const Results = () => {
                     <td>{handleEmployeeFullName(result)}</td>
                     <td>{result.position}</td>
                     <td>{result.department}</td>
-                    <td>{result.poor}</td>
-                    <td>{result.mediocre}</td>
-                    <td>{result.satisfactory}</td>
-                    <td>{result.good}</td>
-                    <td>{result.excellent}</td>
-                    <td></td>
+                    <td className="text-center">{result.poor}</td>
+                    <td className="text-center">{result.mediocre}</td>
+                    <td className="text-center">{result.satisfactory}</td>
+                    <td className="text-center">{result.good}</td>
+                    <td className="text-center">{result.excellent}</td>
                   </tr>
                 ))
               )}

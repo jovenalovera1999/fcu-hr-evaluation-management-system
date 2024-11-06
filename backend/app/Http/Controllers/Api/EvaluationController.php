@@ -52,10 +52,18 @@ class EvaluationController extends Controller
     public function loadResults($semesterId)
     {
         $results = Evaluation::select(
-            'tbl_employees.*',
-            'tbl_positions.*',
-            'tbl_departments.*',
-            'tbl_evaluations.*',
+            'tbl_employees.employee_id',
+            'tbl_employees.first_name',
+            'tbl_employees.middle_name',
+            'tbl_employees.last_name',
+            'tbl_employees.suffix_name',
+            'tbl_positions.position_id',
+            'tbl_positions.position',
+            'tbl_departments.department_id',
+            'tbl_departments.department',
+            'tbl_evaluations.evaluation_id',
+            'tbl_evaluations.semester_id',
+            'tbl_evaluations.is_completed',
             DB::raw('COUNT(CASE WHEN tbl_responses.poor = TRUE THEN 1 END) AS poor'),
             DB::raw('COUNT(CASE WHEN tbl_responses.mediocre = TRUE THEN 1 END) AS mediocre'),
             DB::raw('COUNT(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 END) AS satisfactory'),
@@ -68,6 +76,21 @@ class EvaluationController extends Controller
             ->leftJoin('tbl_responses', 'tbl_evaluations.evaluation_id', '=', 'tbl_responses.evaluation_id')
             ->where('tbl_evaluations.semester_id', $semesterId)
             ->where('tbl_evaluations.is_completed', true)
+            ->groupBy(
+                'tbl_employees.employee_id',
+                'tbl_employees.first_name',
+                'tbl_employees.middle_name',
+                'tbl_employees.last_name',
+                'tbl_employees.suffix_name',
+                'tbl_positions.position_id',
+                'tbl_positions.position',
+                'tbl_departments.department_id',
+                'tbl_departments.department',
+                'tbl_evaluations.evaluation_id',
+                'tbl_evaluations.semester_id',
+                'tbl_evaluations.is_completed',
+            )
+            ->distinct()
             ->get();
 
         return response()->json([
