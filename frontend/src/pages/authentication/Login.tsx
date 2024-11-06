@@ -3,7 +3,18 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CompanyLogo from "../../assets/img/company_logo.png";
 import AlertToastMessage from "../../components/AlertToastMessage";
-import { Button, Spinner } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardImg,
+  CardTitle,
+  FormControl,
+  FormLabel,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 
 interface Errors {
   username?: string[];
@@ -139,28 +150,25 @@ const Login = () => {
           className="d-flex justify-content-center align-items-center"
           style={{ minHeight: "80vh" }}
         >
-          <div className="card shadow col-sm-3">
-            <div className="row m-0">
-              <h5 className="card-title mt-3">
+          <Card className="card shadow col-sm-3">
+            <Row className="m-0">
+              <CardTitle className="mt-3">
                 <div className="d-flex justify-content-center align-items-center">
-                  <img
+                  <CardImg
+                    variant="top"
                     src={CompanyLogo}
-                    alt="Company Logo"
-                    className="img-fluid"
-                    width={100}
+                    style={{ width: "115px" }}
                   />
                   USER AUTHENTICATION | FCU HR EMS
                 </div>
-              </h5>
-            </div>
-            <div className="card-body">
+              </CardTitle>
+            </Row>
+            <CardBody>
               <div className="mb-3">
-                <label htmlFor="username">USERNAME</label>
-                <input
+                <FormLabel htmlFor="username">USERNAME</FormLabel>
+                <FormControl
                   type="text"
-                  className={`form-control ${
-                    state.errors.username ? "is-invalid" : ""
-                  }`}
+                  className={`${state.errors.username ? "is-invalid" : ""}`}
                   name="username"
                   id="username"
                   value={state.username}
@@ -172,12 +180,10 @@ const Login = () => {
                 )}
               </div>
               <div className="mb-3">
-                <label htmlFor="password">PASSWORD</label>
-                <input
+                <FormLabel htmlFor="password">PASSWORD</FormLabel>
+                <FormControl
                   type="password"
-                  className={`form-control ${
-                    state.errors.password ? "is-invalid" : ""
-                  }`}
+                  className={`${state.errors.password ? "is-invalid" : ""}`}
                   name="password"
                   id="password"
                   value={state.password}
@@ -209,8 +215,8 @@ const Login = () => {
                   )}
                 </Button>
               </div>
-            </div>
-          </div>
+            </CardBody>
+          </Card>
         </div>
       </form>
     </>

@@ -96,7 +96,7 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                       </Link>
                     </li>
                     <li className="sidebar-item">
-                      <Link to={"#"} className="sidebar-link">
+                      <Link to={"/evaluation/results"} className="sidebar-link">
                         RESULTS
                       </Link>
                     </li>
