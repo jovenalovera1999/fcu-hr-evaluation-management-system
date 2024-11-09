@@ -105,18 +105,31 @@ class EvaluationController extends Controller
             ->where('tbl_evaluations.semester_id', $semesterId)
             ->where('tbl_evaluations.is_cancelled', false)
             ->where('tbl_evaluations.is_completed', true)
-            // ->groupBy(
-            //     'tbl_evaluations.evaluation_id',
-            //     'tbl_employees.first_name',
-            //     'tbl_employees.last_name',
-            //     'tbl_positions.position',
-            //     'tbl_departments.department'
-            // )
             ->distinct()
             ->get();
 
         return response()->json([
             'results' => $results,
+            'status' => 200
+        ]);
+    }
+
+    public function loadResponseSummary($employeeId, $semesterId)
+    {
+        $summary = Response::select(
+            DB::raw('SUM(CASE WHEN tbl_responses.poor = TRUE THEN 1 ELSE 0 END) AS poor'),
+            DB::raw('SUM(CASE WHEN tbl_responses.mediocre = TRUE THEN 1 ELSE 0 END) AS mediocre'),
+            DB::raw('SUM(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 ELSE 0 END) AS satisfactory'),
+            DB::raw('SUM(CASE WHEN tbl_responses.good = TRUE THEN 1 ELSE 0 END) AS good'),
+            DB::raw('SUM(CASE WHEN tbl_responses.excellent = TRUE THEN 1 ELSE 0 END) AS excellent')
+        )
+            ->leftJoin('tbl_evaluations', 'tbl_responses.evaluation_id', '=', 'tbl_evaluations.evaluation_id')
+            ->where('tbl_evaluations.employee_to_evaluate_id', $employeeId)
+            ->where('tbl_evaluations.semester_id', $semesterId)
+            ->first();
+
+        return response()->json([
+            'summary' => $summary,
             'status' => 200
         ]);
     }

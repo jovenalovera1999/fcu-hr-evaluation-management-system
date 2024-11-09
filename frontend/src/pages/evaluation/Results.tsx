@@ -41,11 +41,18 @@ const Results = () => {
     loadingAcademicYears: true,
     loadingSemesters: false,
     loadingResults: false,
+    loadingSummary: false,
     academicYears: [] as AcademicYears[],
     semesters: [] as Semesters[],
     results: [] as Results[],
+    employee_id: 0,
     academic_year: "",
     semester: "",
+    poor: 0,
+    mediocre: 0,
+    satisfactory: 0,
+    good: 0,
+    excellent: 0,
     showSummaryResponseModal: false,
   });
 
@@ -130,11 +137,38 @@ const Results = () => {
       });
   };
 
-  const handleOpenResponseSummary = () => {
+  const handleLoadSummary = async () => {
+    axiosInstance
+      .get(`/evaluation/load/summary/${state.employee_id}/${state.semester}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            poor: res.data.summary.poor,
+            mediocre: res.data.summary.mediocre,
+            satisfactory: res.data.summary.satisfactory,
+            good: res.data.summary.good,
+            excellent: res.data.summary.excellent,
+            loadingSummary: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        console.error("Unexpected server error: ", error);
+      });
+  };
+
+  const handleOpenResponseSummary = (employee: Results) => {
     setState((prevState) => ({
       ...prevState,
+      loadingSummary: true,
+      employee_id: employee.employee_id,
       showSummaryResponseModal: true,
     }));
+
+    handleLoadSummary();
   };
 
   const handleCloseResponseSummary = () => {
@@ -253,7 +287,7 @@ const Results = () => {
                       <Button
                         className="btn-theme"
                         size="sm"
-                        onClick={handleOpenResponseSummary}
+                        onClick={() => handleOpenResponseSummary(result)}
                       >
                         VIEW RATING
                       </Button>
@@ -273,34 +307,46 @@ const Results = () => {
       >
         <ModalHeader>RESPONSE SUMMARY</ModalHeader>
         <ModalBody>
-          <Row>
-            <h3></h3>
-            <Col>
-              POOR
-              <br />
-              <p className="fs-3">5</p>
-            </Col>
-            <Col>
-              MEDIOCRE
-              <br />
-              <p className="fs-3">5</p>
-            </Col>
-            <Col>
-              SATISFACTORY
-              <br />
-              <p className="fs-3">5</p>
-            </Col>
-            <Col>
-              GOOD
-              <br />
-              <p className="fs-3">5</p>
-            </Col>
-            <Col>
-              EXCELLENT
-              <br />
-              <p className="fs-3">5</p>
-            </Col>
-          </Row>
+          {state.loadingSummary ? (
+            <>
+              <div className="d-flex justify-content-center align-items-center">
+                <Spinner
+                  as="span"
+                  animation="border"
+                  role="status"
+                  className="spinner-theme"
+                />
+              </div>
+            </>
+          ) : (
+            <Row>
+              <Col>
+                POOR
+                <br />
+                <p className="fs-3">{state.poor}</p>
+              </Col>
+              <Col>
+                MEDIOCRE
+                <br />
+                <p className="fs-3">{state.mediocre}</p>
+              </Col>
+              <Col>
+                SATISFACTORY
+                <br />
+                <p className="fs-3">{state.satisfactory}</p>
+              </Col>
+              <Col>
+                GOOD
+                <br />
+                <p className="fs-3">{state.good}</p>
+              </Col>
+              <Col>
+                EXCELLENT
+                <br />
+                <p className="fs-3">{state.excellent}</p>
+              </Col>
+            </Row>
+          )}
         </ModalBody>
         <ModalFooter>
           <Button className="btn-theme" onClick={handleCloseResponseSummary}>
