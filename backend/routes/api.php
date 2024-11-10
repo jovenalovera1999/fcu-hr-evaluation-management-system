@@ -91,8 +91,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(EvaluationController::class)->prefix('evaluation')->group(function () {
         Route::get('/index/{studentId}/{employeeId}', 'index');
-        Route::get('/load/results/{semesterId}', 'loadResults');
-        Route::get('/load/summary/{employeeId}/{semesterId}', 'loadResponseSummary');
         Route::post('/store/evaluations/for/students', 'storeEvaluationsForStudents');
         Route::post('/send/evaluations/for/irregular/students', 'sendEvaluationsForIrregularStudents');
         Route::post('/store/evaluation/for/employees', 'storeEvaluationsForEmployees');
@@ -101,6 +99,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(ResponseController::class)->prefix('response')->group(function () {
         Route::get('/index', 'index');
         Route::get('/index/{categoryId}', 'indexByCategories');
+        Route::get('/load/results/{semesterId}', 'loadResults');
+        Route::get('/load/summary/{employeeId}/{semesterId}', 'loadResponseSummary');
+        Route::get('/load/response/answers/{categoryId}', 'loadResponseAnswers');
         Route::get('/show/{evaluationId}', 'show');
         Route::put('/update/{evaluationId}', 'update');
     });

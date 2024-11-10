@@ -36,15 +36,34 @@ interface Results {
   department: string;
 }
 
+interface Categories {
+  category_id: number;
+  category: string;
+}
+
+interface Questions {
+  question_id: number;
+  question: string;
+  poor: boolean;
+  mediocre: boolean;
+  satisfactory: boolean;
+  good: boolean;
+  excellent: boolean;
+}
+
 const Results = () => {
   const [state, setState] = useState({
     loadingAcademicYears: true,
     loadingSemesters: false,
     loadingResults: false,
     loadingSummary: false,
+    loadingCategories: false,
+    loadingQuestions: false,
     academicYears: [] as AcademicYears[],
     semesters: [] as Semesters[],
     results: [] as Results[],
+    categories: [] as Categories[],
+    questions: {} as { [key: number]: Questions[] },
     employee_id: 0,
     academic_year: "",
     semester: "",
@@ -120,7 +139,7 @@ const Results = () => {
 
   const handleLoadResults = async (semesterId: number) => {
     axiosInstance
-      .get(`/evaluation/load/results/${semesterId}`)
+      .get(`/response/load/results/${semesterId}`)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -137,9 +156,9 @@ const Results = () => {
       });
   };
 
-  const handleLoadSummary = async () => {
+  const handleLoadSummary = async (employeeId: number, semesterId: number) => {
     axiosInstance
-      .get(`/evaluation/load/summary/${state.employee_id}/${state.semester}`)
+      .get(`/response/load/summary/${employeeId}/${semesterId}`)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -160,15 +179,76 @@ const Results = () => {
       });
   };
 
+  const handleLoadCategories = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingCategories: true,
+    }));
+
+    axiosInstance
+      .get("/category/index")
+      .then((res) => {
+        if (res.data.status === 200) {
+          res.data.categories.map((category: Categories) => {
+            setState((prevState) => ({
+              ...prevState,
+              loadingQuestions: true,
+            }));
+
+            handleLoadQuestions(category.category_id);
+          });
+
+          setState((prevState) => ({
+            ...prevState,
+            categories: res.data.categories,
+            loadingCategories: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
+  const handleLoadQuestions = async (categoryId: number) => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingQuestions: true,
+    }));
+
+    axiosInstance
+      .get("/response/load/response/answers/{categoryId}")
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            questions: {
+              ...prevState.questions,
+              [categoryId]: res.data.responses,
+            },
+            loadingQuestions: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
   const handleOpenResponseSummary = (employee: Results) => {
+    handleLoadSummary(employee.employee_id, parseInt(state.semester));
+    handleLoadCategories();
+
     setState((prevState) => ({
       ...prevState,
       loadingSummary: true,
       employee_id: employee.employee_id,
       showSummaryResponseModal: true,
     }));
-
-    handleLoadSummary();
   };
 
   const handleCloseResponseSummary = () => {
@@ -307,7 +387,9 @@ const Results = () => {
       >
         <ModalHeader>RESPONSE SUMMARY</ModalHeader>
         <ModalBody>
-          {state.loadingSummary ? (
+          {state.loadingSummary ||
+          state.loadingCategories ||
+          state.loadingQuestions ? (
             <>
               <div className="d-flex justify-content-center align-items-center">
                 <Spinner
@@ -319,33 +401,38 @@ const Results = () => {
               </div>
             </>
           ) : (
-            <Row>
-              <Col>
-                POOR
-                <br />
-                <p className="fs-3">{state.poor}</p>
-              </Col>
-              <Col>
-                MEDIOCRE
-                <br />
-                <p className="fs-3">{state.mediocre}</p>
-              </Col>
-              <Col>
-                SATISFACTORY
-                <br />
-                <p className="fs-3">{state.satisfactory}</p>
-              </Col>
-              <Col>
-                GOOD
-                <br />
-                <p className="fs-3">{state.good}</p>
-              </Col>
-              <Col>
-                EXCELLENT
-                <br />
-                <p className="fs-3">{state.excellent}</p>
-              </Col>
-            </Row>
+            <>
+              <Row>
+                <Col>
+                  POOR
+                  <br />
+                  <p className="fs-3">{state.poor}</p>
+                </Col>
+                <Col>
+                  MEDIOCRE
+                  <br />
+                  <p className="fs-3">{state.mediocre}</p>
+                </Col>
+                <Col>
+                  SATISFACTORY
+                  <br />
+                  <p className="fs-3">{state.satisfactory}</p>
+                </Col>
+                <Col>
+                  GOOD
+                  <br />
+                  <p className="fs-3">{state.good}</p>
+                </Col>
+                <Col>
+                  EXCELLENT
+                  <br />
+                  <p className="fs-3">{state.excellent}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Table hover size="sm" responsive="sm"></Table>
+              </Row>
+            </>
           )}
         </ModalBody>
         <ModalFooter>
