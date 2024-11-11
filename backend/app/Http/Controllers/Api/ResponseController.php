@@ -63,6 +63,7 @@ class ResponseController extends Controller
 
     public function loadResponseSummary($employeeId, $semesterId)
     {
+
         $summary = Response::select(
             DB::raw('SUM(CASE WHEN tbl_responses.poor = TRUE THEN 1 ELSE 0 END) AS poor'),
             DB::raw('SUM(CASE WHEN tbl_responses.mediocre = TRUE THEN 1 ELSE 0 END) AS mediocre'),
@@ -82,12 +83,31 @@ class ResponseController extends Controller
         ]);
     }
 
-    public function loadResponseAnswers($categoryId)
+    public function loadResponseAnswers($employeeId, $semesterId, $categoryId)
     {
-        $responses = Response::leftJoin('tbl_questions', 'tbl_responses.question_id', '=', 'tbl_questions.question_id')
-            ->leftJoin('tbl_categories', 'tbl_questions.category_id', '=', 'tbl_categories.category_id')
+        // $totalStudents = Evaluation::where('tbl_evaluations.employee_to_evaluate_id', $employeeId)
+        //     ->where('tbl_evaluations.semester_id', $semesterId)
+        //     ->where('tbl_evaluations.is_cancelled', false)
+        //     ->where('tbl_evaluations.is_completed', true)
+        //     ->count();
+
+        $responses = Response::select(
+            'tbl_questions.question',
+            DB::raw('SUM(CASE WHEN tbl_responses.poor = TRUE THEN 1 ELSE 0 END) AS question_poor'),
+            DB::raw('SUM(CASE WHEN tbl_responses.mediocre = TRUE THEN 1 ELSE 0 END) AS question_mediocre'),
+            DB::raw('SUM(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 ELSE 0 END) AS question_satisfactory'),
+            DB::raw('SUM(CASE WHEN tbl_responses.good = TRUE THEN 1 ELSE 0 END) AS question_good'),
+            DB::raw('SUM(CASE WHEN tbl_responses.excellent = TRUE THEN 1 ELSE 0 END) AS question_excellent')
+        )
+            ->leftJoin('tbl_questions', 'tbl_responses.question_id', '=', 'tbl_questions.question_id')
+            ->leftJoin('tbl_evaluations', 'tbl_responses.evaluation_id', '=', 'tbl_evaluations.evaluation_id')
+            ->where('tbl_evaluations.employee_to_evaluate_id', $employeeId)
+            ->where('tbl_evaluations.semester_id', $semesterId)
             ->where('tbl_questions.category_id', $categoryId)
             ->where('tbl_questions.is_deleted', false)
+            ->groupBy(
+                'tbl_questions.question'
+            )
             ->get();
 
         return response()->json([

@@ -44,11 +44,11 @@ interface Categories {
 interface Questions {
   question_id: number;
   question: string;
-  poor: boolean;
-  mediocre: boolean;
-  satisfactory: boolean;
-  good: boolean;
-  excellent: boolean;
+  question_poor: string;
+  question_mediocre: string;
+  question_satisfactory: string;
+  question_good: string;
+  question_excellent: string;
 }
 
 const Results = () => {
@@ -219,7 +219,9 @@ const Results = () => {
     }));
 
     axiosInstance
-      .get("/response/load/response/answers/{categoryId}")
+      .get(
+        `/response/load/response/answers/${state.employee_id}/${state.semester}/${categoryId}`
+      )
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
@@ -429,9 +431,61 @@ const Results = () => {
                   <p className="fs-3">{state.excellent}</p>
                 </Col>
               </Row>
-              <Row>
-                <Table hover size="sm" responsive="sm"></Table>
-              </Row>
+              {state.categories.map((category) => (
+                <Row>
+                  <Table hover size="sm" responsive="sm">
+                    <caption>{category.category}</caption>
+                    <thead>
+                      <tr className="align-middle">
+                        <td className="text-center">NO.</td>
+                        <td className="text-center">QUESTION</td>
+                        <td className="text-center">POOR</td>
+                        <td className="text-center">MEDIOCRE</td>
+                        <td className="text-center">SATISFACTORY</td>
+                        <td className="text-center">GOOD</td>
+                        <td className="text-center">EXCELLENT</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {state.questions[category.category_id] ? (
+                        state.questions[category.category_id].map(
+                          (question, index) => (
+                            <tr className="align-middle">
+                              <td className="text-center">{index + 1}</td>
+                              <td>{question.question}</td>
+                              <td className="text-center">
+                                {question.question_poor}
+                              </td>
+                              <td className="text-center">
+                                {question.question_mediocre}
+                              </td>
+                              <td className="text-center">
+                                {question.question_satisfactory}
+                              </td>
+                              <td className="text-center">
+                                {question.question_good}
+                              </td>
+                              <td className="text-center">
+                                {question.question_excellent}
+                              </td>
+                            </tr>
+                          )
+                        )
+                      ) : (
+                        <tr className="align-middle">
+                          <td colSpan={7} className="text-center">
+                            <Spinner
+                              as="span"
+                              animation="border"
+                              role="status"
+                            />
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+                </Row>
+              ))}
             </>
           )}
         </ModalBody>

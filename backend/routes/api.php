@@ -101,7 +101,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/index/{categoryId}', 'indexByCategories');
         Route::get('/load/results/{semesterId}', 'loadResults');
         Route::get('/load/summary/{employeeId}/{semesterId}', 'loadResponseSummary');
-        Route::get('/load/response/answers/{categoryId}', 'loadResponseAnswers');
+        Route::get('/load/response/answers/{employeeId}/{semesterId}/{categoryId}', 'loadResponseAnswers');
         Route::get('/show/{evaluationId}', 'show');
         Route::put('/update/{evaluationId}', 'update');
     });
