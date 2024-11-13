@@ -29,11 +29,6 @@ interface Departments {
   department: string;
 }
 
-interface AcademicYears {
-  academic_year_id: number;
-  academic_year: string;
-}
-
 interface Employees {
   employee_id: number;
   first_name: string;
@@ -57,6 +52,7 @@ interface Errors {
   username?: string[];
   password?: string[];
   password_confirmation?: string[];
+  current_password?: string[];
 }
 
 const Employees = () => {
@@ -72,10 +68,8 @@ const Employees = () => {
     loadingEmployee: false,
     departments: [] as Departments[],
     positions: [] as Positions[],
-    academicYears: [] as AcademicYears[],
     employees: [] as Employees[],
-    student_department: "",
-    academic_year: "",
+    employee_department: "",
     employee_id: 0,
     first_name: "",
     middle_name: "",
@@ -86,14 +80,34 @@ const Employees = () => {
     username: "",
     password: "",
     password_confirmation: "",
+    current_password: "",
     errors: {} as Errors,
     showAddEmployeeModal: false,
+    showChangePasswordModal: false,
     showEditEmployeeModal: false,
     showDeleteEmployeeModal: false,
     toastSuccess: false,
     toastBody: "",
     showToast: false,
   });
+
+  const handleResetNecessaryFields = () => {
+    setState((prevState) => ({
+      ...prevState,
+      employee_id: 0,
+      first_name: "",
+      middle_name: "",
+      last_name: "",
+      suffix_name: "",
+      position: "",
+      department: "",
+      username: "",
+      password: "",
+      password_confirmation: "",
+      current_password: "",
+      errors: {} as Errors,
+    }));
+  };
 
   const handleInput = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -104,7 +118,7 @@ const Employees = () => {
       [name]: value,
     }));
 
-    if (name === "student_department") {
+    if (name === "employee_department") {
       setState((prevState) => ({
         ...prevState,
         loadingEmployees: true,
@@ -183,21 +197,12 @@ const Employees = () => {
       .post("/employee/store", state)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadEmployees(parseInt(state.student_department));
+          handleLoadEmployees(parseInt(state.employee_department));
+
+          handleResetNecessaryFields();
 
           setState((prevState) => ({
             ...prevState,
-            employee_id: 0,
-            first_name: "",
-            middle_name: "",
-            last_name: "",
-            suffix_name: "",
-            position: "",
-            department: "",
-            username: "",
-            password: "",
-            password_confirmation: "",
-            errors: {} as Errors,
             toastSuccess: true,
             toastBody: "EMPLOYEE SUCCESSFULLY SAVED.",
             showToast: true,
@@ -233,21 +238,12 @@ const Employees = () => {
       .put(`/employee/update/${state.employee_id}`, state)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadEmployees(parseInt(state.student_department));
+          handleLoadEmployees(parseInt(state.employee_department));
+
+          handleResetNecessaryFields();
 
           setState((prevState) => ({
             ...prevState,
-            employee_id: 0,
-            first_name: "",
-            middle_name: "",
-            last_name: "",
-            suffix_name: "",
-            position: "",
-            department: "",
-            username: "",
-            password: "",
-            password_confirmation: "",
-            errors: {} as Errors,
             toastSuccess: true,
             toastBody: "EMPLOYEE SUCCESSFULLY UPDATED.",
             showToast: true,
@@ -271,6 +267,51 @@ const Employees = () => {
       });
   };
 
+  // const handleUpdateEmployeePassword = async (e: FormEvent) => {
+  //   e.preventDefault();
+
+  //   setState((prevState) => ({
+  //     ...prevState,
+  //     loadingEmployee: true,
+  //   }));
+
+  //   axiosInstance
+  //     .put(`/employee/update/password/${state.employee_id}`)
+  //     .then((res) => {
+  //       if (res.data.status === 200) {
+  //         handleResetNecessaryFields();
+
+  //         setState((prevState) => ({
+  //           ...prevState,
+  //           toastSuccess: true,
+  //           toastBody: "EMPLOYEE PASSWORD SUCCESSFULLY UPDATED.",
+  //           showToast: true,
+  //           loadingEmployee: false,
+  //           showChangePasswordModal: false,
+  //         }));
+  //       } else {
+  //         setState((prevState) => ({
+  //           ...prevState,
+  //           toastSuccess: false,
+  //           toastBody: "FAILED TO UPDATE EMPLOYEE PASSWORD.",
+  //           showToast: true,
+  //           loadingEmployee: false,
+  //         }));
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       if (error.response && error.response.status === 422) {
+  //         setState((prevState) => ({
+  //           ...prevState,
+  //           errors: error.response.data.errors,
+  //           loadingEmployee: false,
+  //         }));
+  //       } else {
+  //         errorHandler(error);
+  //       }
+  //     });
+  // };
+
   const handleDeleteEmployee = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -283,21 +324,12 @@ const Employees = () => {
       .put(`/employee/delete/${state.employee_id}`)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadEmployees(parseInt(state.student_department));
+          handleLoadEmployees(parseInt(state.employee_department));
+
+          handleResetNecessaryFields();
 
           setState((prevState) => ({
             ...prevState,
-            employee_id: 0,
-            first_name: "",
-            middle_name: "",
-            last_name: "",
-            suffix_name: "",
-            position: "",
-            department: "",
-            username: "",
-            password: "",
-            password_confirmation: "",
-            errors: {} as Errors,
             toastSuccess: true,
             toastBody: "EMPLOYEE SUCCESSFULLY UPDATED.",
             showToast: true,
@@ -346,15 +378,6 @@ const Employees = () => {
     }));
   };
 
-  const handleCloseAddEmployeeModal = () => {
-    setState((prevState) => ({
-      ...prevState,
-      employee_id: 0,
-      errors: {} as Errors,
-      showAddEmployeeModal: false,
-    }));
-  };
-
   const handleOpenEditEmployeeModal = (employee: Employees) => {
     setState((prevState) => ({
       ...prevState,
@@ -385,24 +408,49 @@ const Employees = () => {
     }));
   };
 
-  const handleCloseEditAndDeleteEmployeeModal = () => {
+  // const handleOpenChangePasswordModal = (employee: Employees) => {
+  //   setState((prevState) => ({
+  //     ...prevState,
+  //     employee_id: employee.employee_id,
+  //     showChangePasswordModal: true,
+  //   }));
+  // };
+
+  const handleCloseAddEmployeeModal = () => {
     setState((prevState) => ({
       ...prevState,
       employee_id: 0,
-      first_name: "",
-      middle_name: "",
-      last_name: "",
-      suffix_name: "",
-      position: "",
-      department: "",
-      username: "",
-      password: "",
-      password_confirmation: "",
       errors: {} as Errors,
+      showAddEmployeeModal: false,
+    }));
+  };
+
+  const handleCloseEditEmployeeModal = () => {
+    handleResetNecessaryFields();
+
+    setState((prevState) => ({
+      ...prevState,
       showEditEmployeeModal: false,
+    }));
+  };
+
+  const handleCloseDeleteEmployeeModal = () => {
+    handleResetNecessaryFields();
+
+    setState((prevState) => ({
+      ...prevState,
       showDeleteEmployeeModal: false,
     }));
   };
+
+  // const handleCloseChangePasswordModal = () => {
+  //   handleResetNecessaryFields();
+
+  //   setState((prevState) => ({
+  //     ...prevState,
+  //     showChangePasswordModal: false,
+  //   }));
+  // };
 
   const handleCloseToast = () => {
     setState((prevState) => ({
@@ -448,11 +496,11 @@ const Employees = () => {
         </div>
         <Col sm={3}>
           <div className="mb-3">
-            <FormLabel htmlFor="student_department">DEPARTMENT</FormLabel>
+            <FormLabel htmlFor="employee_department">DEPARTMENT</FormLabel>
             <FormSelect
-              name="student_department"
-              id="student_department"
-              value={state.student_department}
+              name="employee_department"
+              id="employee_department"
+              value={state.employee_department}
               onChange={handleInput}
             >
               <option value="">N/A</option>
@@ -497,6 +545,13 @@ const Employees = () => {
                   <td>{employee.position}</td>
                   <td>
                     <ButtonGroup>
+                      {/* <Button
+                        className="btn-theme"
+                        size="sm"
+                        onClick={() => handleOpenChangePasswordModal(employee)}
+                      >
+                        CHANGE PASSWORD
+                      </Button> */}
                       <Button
                         className="btn-theme"
                         size="sm"
@@ -520,7 +575,89 @@ const Employees = () => {
         </Table>
       </div>
 
-      {/* Stard of Add Employee Modal */}
+      {/* <Modal
+        size="sm"
+        show={state.showChangePasswordModal}
+        onHide={handleCloseChangePasswordModal}
+        backdrop="static"
+      >
+        <ModalHeader>CHANGE PASSWORD</ModalHeader>
+        <ModalBody>
+          <div className="mb-3">
+            <FormLabel htmlFor="password">NEW PASSWORD</FormLabel>
+            <FormControl
+              type="password"
+              name="password"
+              className={`${state.errors.password ? "is-invalid" : ""}`}
+              id="password"
+              value={state.password}
+              onChange={handleInput}
+              autoFocus
+            />
+            {state.errors.password && (
+              <p className="text-danger">{state.errors.password[0]}</p>
+            )}
+          </div>
+          <div className="mb-3">
+            <FormLabel htmlFor="password_confirmation">
+              PASSWORD CONFIRMATION
+            </FormLabel>
+            <FormControl
+              type="password"
+              className={`${
+                state.errors.password_confirmation ? "is-invalid" : ""
+              }`}
+              name="password_confirmation"
+              id="password_confirmation"
+              value={state.password_confirmation}
+              onChange={handleInput}
+            />
+            {state.errors.password_confirmation && (
+              <p className="text-danger">
+                {state.errors.password_confirmation[0]}
+              </p>
+            )}
+          </div>
+          <div className="mb-3">
+            <FormLabel htmlFor="current_password">CURRENT PASSWORD</FormLabel>
+            <FormControl
+              type="password"
+              className={`${state.errors.current_password ? "is-invalid" : ""}`}
+              name="current_password"
+              id="current_password"
+              value={state.current_password}
+              onChange={handleInput}
+            />
+            {state.errors.current_password && (
+              <p className="text-danger">{state.errors.current_password[0]}</p>
+            )}
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            className="btn-theme"
+            onClick={handleCloseChangePasswordModal}
+            disabled={state.loadingEmployee}
+          >
+            CLOSE
+          </Button>
+          <Button
+            className="btn-theme"
+            onClick={handleUpdateEmployeePassword}
+            disabled={state.loadingEmployee}
+          >
+            {state.loadingEmployee ? (
+              <>
+                <Spinner as="span" animation="border" role="status" size="sm" />{" "}
+                UPDATING...
+              </>
+            ) : (
+              "SAVE"
+            )}
+          </Button>
+        </ModalFooter>
+      </Modal> */}
+
       <Modal
         show={state.showAddEmployeeModal}
         onHide={handleCloseAddEmployeeModal}
@@ -739,12 +876,10 @@ const Employees = () => {
           </Button>
         </ModalFooter>
       </Modal>
-      {/* End of Add Employee Modal */}
 
-      {/* Start of Edit Employee Modal */}
       <Modal
         show={state.showEditEmployeeModal}
-        onHide={handleCloseEditAndDeleteEmployeeModal}
+        onHide={handleCloseEditEmployeeModal}
         fullscreen={true}
         backdrop="static"
       >
@@ -895,7 +1030,7 @@ const Employees = () => {
         <ModalFooter>
           <Button
             className="btn-theme"
-            onClick={handleCloseEditAndDeleteEmployeeModal}
+            onClick={handleCloseEditEmployeeModal}
             disabled={state.loadingEmployee}
           >
             CLOSE
@@ -922,12 +1057,10 @@ const Employees = () => {
           </Button>
         </ModalFooter>
       </Modal>
-      {/* End of Edit Employee Modal */}
 
-      {/* Start of Delete Employee Modal */}
       <Modal
         show={state.showDeleteEmployeeModal}
-        onHide={handleCloseEditAndDeleteEmployeeModal}
+        onHide={handleCloseDeleteEmployeeModal}
         fullscreen={true}
         backdrop="static"
       >
@@ -1027,7 +1160,7 @@ const Employees = () => {
         <ModalFooter>
           <Button
             className="btn-theme"
-            onClick={handleCloseEditAndDeleteEmployeeModal}
+            onClick={handleCloseDeleteEmployeeModal}
             disabled={state.loadingEmployee}
           >
             CLOSE
@@ -1054,7 +1187,6 @@ const Employees = () => {
           </Button>
         </ModalFooter>
       </Modal>
-      {/* End of Delete Employee Modal */}
     </>
   );
 

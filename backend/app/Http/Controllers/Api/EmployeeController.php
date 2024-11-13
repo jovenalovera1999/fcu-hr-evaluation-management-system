@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends Controller
 {
@@ -112,6 +113,28 @@ class EmployeeController extends Controller
         return response()->json([
             'status' => 200
         ]);
+    }
+
+    public function updatePassword(Request $request, $employeeId)
+    {
+        $validated = $request->validate([
+            'password' => ['required', 'max:15', 'confirmed'],
+            'password_confirmation' => ['required'],
+            'current_password' => ['required']
+        ]);
+
+        $employee = User::where('tbl_users.employee_id', $employeeId)
+            ->first();
+
+        if (Hash::check($validated['current_password'], $employee->password)) {
+            $employee->update([
+                'password' => bcrypt(strtoupper($validated['password']))
+            ]);
+
+            return response()->json([
+                'status' => 200
+            ]);
+        }
     }
 
     public function deleteEmployee($employeeId)
