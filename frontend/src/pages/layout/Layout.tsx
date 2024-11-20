@@ -1,8 +1,10 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Button,
+  FormControl,
+  FormLabel,
   Modal,
   ModalBody,
   ModalFooter,
@@ -14,6 +16,12 @@ import errorHandler from "../../handler/errorHandler";
 
 interface ContentProps {
   content: React.ReactNode;
+}
+
+interface Errors {
+  password: string[];
+  password_confirmation: string[];
+  current_password: string[];
 }
 
 const Layout = ({ content }: ContentProps) => {
@@ -29,6 +37,25 @@ const Layout = ({ content }: ContentProps) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [loadingLogout, setLoadingLogout] = useState(false);
+
+  const [state, setState] = useState({
+    user_id: 0,
+    password: "",
+    password_confirmation: "",
+    current_password: "",
+    errors: {} as Errors,
+    showChangePasswordModal: false,
+  });
+
+  const handleInput = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const handleLogout = async (e: FormEvent) => {
     e.preventDefault();
@@ -74,6 +101,25 @@ const Layout = ({ content }: ContentProps) => {
     return fullName;
   };
 
+  const handleOpenChangePasswordModal = () => {
+    setState((prevState) => ({
+      ...prevState,
+      user_id: parsedUser.user_id,
+      showChangePasswordModal: true,
+    }));
+  };
+
+  const handleCloseChangePasswordModal = () => {
+    setState((prevState) => ({
+      ...prevState,
+      user_id: 0,
+      password: "",
+      password_confirmation: "",
+      errors: {} as Errors,
+      showChangePasswordModal: false,
+    }));
+  };
+
   const handleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
@@ -115,6 +161,14 @@ const Layout = ({ content }: ContentProps) => {
                     <li className="bg-theme">
                       <Button
                         className="dropdown-item dropdown-item-theme"
+                        onClick={() => handleOpenChangePasswordModal()}
+                      >
+                        CHANGE PASSWORD
+                      </Button>
+                    </li>
+                    <li className="bg-theme">
+                      <Button
+                        className="dropdown-item dropdown-item-theme"
                         onClick={() => setShowModal(true)}
                       >
                         LOGOUT
@@ -132,6 +186,70 @@ const Layout = ({ content }: ContentProps) => {
           </main>
         </div>
       </div>
+
+      <Modal
+        show={state.showChangePasswordModal}
+        onHide={handleCloseChangePasswordModal}
+        size="sm"
+        backdrop="static"
+      >
+        <ModalHeader>CHANGE PASSWORD</ModalHeader>
+        <ModalBody>
+          <div className="mb-3">
+            <FormLabel htmlFor="password">NEW PASSWORD</FormLabel>
+            <FormControl
+              type="password"
+              className={`${state.errors.password ? "is-invalid" : ""}`}
+              name="password"
+              id="password"
+              value={state.password}
+              onChange={handleInput}
+              autoFocus
+            />
+            {state.errors.password && (
+              <p className="text-danger">{state.errors.password[0]}</p>
+            )}
+          </div>
+          <div className="mb-3">
+            <FormLabel htmlFor="password_confirmation">
+              PASSWORD CONFIRMATION
+            </FormLabel>
+            <FormControl
+              type="password"
+              className={`${
+                state.errors.password_confirmation ? "is-invalid" : ""
+              }`}
+              name="password_confirmation"
+              id="password_confirmation"
+              value={state.password_confirmation}
+              onChange={handleInput}
+            />
+            {state.errors.password_confirmation && (
+              <p className="text-danger">
+                {state.errors.password_confirmation}
+              </p>
+            )}
+          </div>
+          <div className="mb-3">
+            <FormLabel htmlFor="current_password">CURRENT PASSWORD</FormLabel>
+            <FormControl
+              className={`${state.errors.current_password ? "is-invalid" : ""}`}
+              name="current_password"
+              id="current_password"
+              value={state.current_password}
+              onChange={handleInput}
+            />
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            className="btn-theme"
+            onClick={handleCloseChangePasswordModal}
+          >
+            CLOSE
+          </Button>
+        </ModalFooter>
+      </Modal>
 
       <Modal
         show={showModal}

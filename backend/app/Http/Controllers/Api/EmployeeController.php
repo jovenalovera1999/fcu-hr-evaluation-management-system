@@ -119,22 +119,19 @@ class EmployeeController extends Controller
     {
         $validated = $request->validate([
             'password' => ['required', 'max:15', 'confirmed'],
-            'password_confirmation' => ['required'],
-            'current_password' => ['required']
+            'password_confirmation' => ['required']
         ]);
 
         $employee = User::where('tbl_users.employee_id', $employeeId)
             ->first();
 
-        if (Hash::check($validated['current_password'], $employee->password)) {
-            $employee->update([
-                'password' => bcrypt(strtoupper($validated['password']))
-            ]);
+        $employee->update([
+            'password' => bcrypt(strtoupper($validated['password']))
+        ]);
 
-            return response()->json([
-                'status' => 200
-            ]);
-        }
+        return response()->json([
+            'status' => 200
+        ]);
     }
 
     public function deleteEmployee($employeeId)

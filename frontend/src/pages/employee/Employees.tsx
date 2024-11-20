@@ -52,7 +52,6 @@ interface Errors {
   username?: string[];
   password?: string[];
   password_confirmation?: string[];
-  current_password?: string[];
 }
 
 const Employees = () => {
@@ -80,7 +79,6 @@ const Employees = () => {
     username: "",
     password: "",
     password_confirmation: "",
-    current_password: "",
     errors: {} as Errors,
     showAddEmployeeModal: false,
     showChangePasswordModal: false,
@@ -104,7 +102,6 @@ const Employees = () => {
       username: "",
       password: "",
       password_confirmation: "",
-      current_password: "",
       errors: {} as Errors,
     }));
   };
@@ -267,50 +264,50 @@ const Employees = () => {
       });
   };
 
-  // const handleUpdateEmployeePassword = async (e: FormEvent) => {
-  //   e.preventDefault();
+  const handleUpdateEmployeePassword = async (e: FormEvent) => {
+    e.preventDefault();
 
-  //   setState((prevState) => ({
-  //     ...prevState,
-  //     loadingEmployee: true,
-  //   }));
+    setState((prevState) => ({
+      ...prevState,
+      loadingEmployee: true,
+    }));
 
-  //   axiosInstance
-  //     .put(`/employee/update/password/${state.employee_id}`)
-  //     .then((res) => {
-  //       if (res.data.status === 200) {
-  //         handleResetNecessaryFields();
+    axiosInstance
+      .put(`/employee/update/password/${state.employee_id}`, state)
+      .then((res) => {
+        if (res.data.status === 200) {
+          handleResetNecessaryFields();
 
-  //         setState((prevState) => ({
-  //           ...prevState,
-  //           toastSuccess: true,
-  //           toastBody: "EMPLOYEE PASSWORD SUCCESSFULLY UPDATED.",
-  //           showToast: true,
-  //           loadingEmployee: false,
-  //           showChangePasswordModal: false,
-  //         }));
-  //       } else {
-  //         setState((prevState) => ({
-  //           ...prevState,
-  //           toastSuccess: false,
-  //           toastBody: "FAILED TO UPDATE EMPLOYEE PASSWORD.",
-  //           showToast: true,
-  //           loadingEmployee: false,
-  //         }));
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       if (error.response && error.response.status === 422) {
-  //         setState((prevState) => ({
-  //           ...prevState,
-  //           errors: error.response.data.errors,
-  //           loadingEmployee: false,
-  //         }));
-  //       } else {
-  //         errorHandler(error);
-  //       }
-  //     });
-  // };
+          setState((prevState) => ({
+            ...prevState,
+            toastSuccess: true,
+            toastBody: "EMPLOYEE PASSWORD SUCCESSFULLY UPDATED.",
+            showToast: true,
+            loadingEmployee: false,
+            showChangePasswordModal: false,
+          }));
+        } else {
+          setState((prevState) => ({
+            ...prevState,
+            toastSuccess: false,
+            toastBody: "FAILED TO UPDATE EMPLOYEE PASSWORD.",
+            showToast: true,
+            loadingEmployee: false,
+          }));
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 422) {
+          setState((prevState) => ({
+            ...prevState,
+            errors: error.response.data.errors,
+            loadingEmployee: false,
+          }));
+        } else {
+          errorHandler(error);
+        }
+      });
+  };
 
   const handleDeleteEmployee = async (e: FormEvent) => {
     e.preventDefault();
@@ -408,13 +405,13 @@ const Employees = () => {
     }));
   };
 
-  // const handleOpenChangePasswordModal = (employee: Employees) => {
-  //   setState((prevState) => ({
-  //     ...prevState,
-  //     employee_id: employee.employee_id,
-  //     showChangePasswordModal: true,
-  //   }));
-  // };
+  const handleOpenChangePasswordModal = (employee: Employees) => {
+    setState((prevState) => ({
+      ...prevState,
+      employee_id: employee.employee_id,
+      showChangePasswordModal: true,
+    }));
+  };
 
   const handleCloseAddEmployeeModal = () => {
     setState((prevState) => ({
@@ -443,14 +440,14 @@ const Employees = () => {
     }));
   };
 
-  // const handleCloseChangePasswordModal = () => {
-  //   handleResetNecessaryFields();
+  const handleCloseChangePasswordModal = () => {
+    handleResetNecessaryFields();
 
-  //   setState((prevState) => ({
-  //     ...prevState,
-  //     showChangePasswordModal: false,
-  //   }));
-  // };
+    setState((prevState) => ({
+      ...prevState,
+      showChangePasswordModal: false,
+    }));
+  };
 
   const handleCloseToast = () => {
     setState((prevState) => ({
@@ -545,13 +542,13 @@ const Employees = () => {
                   <td>{employee.position}</td>
                   <td>
                     <ButtonGroup>
-                      {/* <Button
+                      <Button
                         className="btn-theme"
                         size="sm"
                         onClick={() => handleOpenChangePasswordModal(employee)}
                       >
                         CHANGE PASSWORD
-                      </Button> */}
+                      </Button>
                       <Button
                         className="btn-theme"
                         size="sm"
@@ -575,7 +572,7 @@ const Employees = () => {
         </Table>
       </div>
 
-      {/* <Modal
+      <Modal
         size="sm"
         show={state.showChangePasswordModal}
         onHide={handleCloseChangePasswordModal}
@@ -618,20 +615,6 @@ const Employees = () => {
               </p>
             )}
           </div>
-          <div className="mb-3">
-            <FormLabel htmlFor="current_password">CURRENT PASSWORD</FormLabel>
-            <FormControl
-              type="password"
-              className={`${state.errors.current_password ? "is-invalid" : ""}`}
-              name="current_password"
-              id="current_password"
-              value={state.current_password}
-              onChange={handleInput}
-            />
-            {state.errors.current_password && (
-              <p className="text-danger">{state.errors.current_password[0]}</p>
-            )}
-          </div>
         </ModalBody>
         <ModalFooter>
           <Button
@@ -648,7 +631,13 @@ const Employees = () => {
           >
             {state.loadingEmployee ? (
               <>
-                <Spinner as="span" animation="border" role="status" size="sm" />{" "}
+                <Spinner
+                  as="span"
+                  animation="border"
+                  role="status"
+                  size="sm"
+                  className="spinner-theme"
+                />{" "}
                 UPDATING...
               </>
             ) : (
@@ -656,7 +645,7 @@ const Employees = () => {
             )}
           </Button>
         </ModalFooter>
-      </Modal> */}
+      </Modal>
 
       <Modal
         show={state.showAddEmployeeModal}
