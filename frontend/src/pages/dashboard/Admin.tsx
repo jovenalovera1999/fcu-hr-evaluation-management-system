@@ -16,7 +16,7 @@ import { Bar, Pie } from "react-chartjs-2";
 import Spinner from "../../components/Spinner";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
-import { Col, Row } from "react-bootstrap";
+import { Col, FormLabel, FormSelect, Row } from "react-bootstrap";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -253,7 +253,7 @@ const Admin = () => {
         <Col className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
-            style={{ minHeight: "100px" }}
+            style={{ minHeight: "120px" }}
           >
             <h5 className="card-title">TOTAL NO. OF STUDENTS</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
@@ -264,7 +264,7 @@ const Admin = () => {
         <Col className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
-            style={{ minHeight: "100px" }}
+            style={{ minHeight: "120px" }}
           >
             <h5 className="card-title">TOTAL NO. OF EMPLOYEES</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
@@ -275,7 +275,7 @@ const Admin = () => {
         <Col className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
-            style={{ minHeight: "100px" }}
+            style={{ minHeight: "120px" }}
           >
             <h5 className="card-title">TOTAL RESPONDERS</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
@@ -286,7 +286,7 @@ const Admin = () => {
         <Col className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
-            style={{ minHeight: "100px" }}
+            style={{ minHeight: "120px" }}
           >
             <h5 className="card-title">TOTAL RESPONDED</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
@@ -295,84 +295,82 @@ const Admin = () => {
           </div>
         </Col>
       </Row>
-      <Row></Row>
-      <div className="row mb-3">
-        <div className="col-sm-2 g-2 mx-auto">
+      <Row className="mb-3">
+        <Col className="g-2 mx-auto">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
-            style={{ minHeight: "100px" }}
+            style={{ minHeight: "120px" }}
           >
             <h5 className="card-title">NO. OF RESPONDED POOR</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
               {state.totalPoor}
             </p>
           </div>
-        </div>
-        <div className="col-sm-2 g-2 mx-auto">
+        </Col>
+        <Col className="g-2 mx-auto">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
-            style={{ minHeight: "100px" }}
+            style={{ minHeight: "120px" }}
           >
             <h5 className="card-title">NO. OF RESPONDED MEDIOCRE</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
               {state.totalMediocre}
             </p>
           </div>
-        </div>
-        <div className="col-sm-2 g-2 mx-auto">
+        </Col>
+        <Col className="g-2 mx-auto">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
-            style={{ minHeight: "100px" }}
+            style={{ minHeight: "120px" }}
           >
             <h5 className="card-title">NO. OF RESPONDED SATISFACTORY</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
               {state.totalSatisfactory}
             </p>
           </div>
-        </div>
-        <div className="col-sm-2 g-2 mx-auto">
+        </Col>
+        <Col className="g-2 mx-auto">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
-            style={{ minHeight: "100px" }}
+            style={{ minHeight: "120px" }}
           >
             <h5 className="card-title">NO. OF RESPONDED GOOD</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
               {state.totalGood}
             </p>
           </div>
-        </div>
-        <div className="col-sm-2 g-2 mx-auto">
+        </Col>
+        <Col className="g-2 mx-auto">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
-            style={{ minHeight: "100px" }}
+            style={{ minHeight: "120px" }}
           >
             <h5 className="card-title">NO. OF RESPONDED EXECELLENT</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
               {state.totalExcellent}
             </p>
           </div>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-sm-4 g-2">
+        </Col>
+      </Row>
+      <Row>
+        <Col sm={5} className="g-2">
           <Pie options={optionsPieChart} data={dataPieChart} />
-        </div>
-        <div className="col-sm-8 g-2">
+        </Col>
+        <Col sm={7} className="g-2">
           <Bar options={optionsBarChart} data={dataBarChart} />
-        </div>
-      </div>
+        </Col>
+      </Row>
     </>
   );
 
   const content = (
     <>
-      <div className="row mb-2">
-        <div className="col-sm-3">
-          <label htmlFor="academic_year">ACADEMIC YEAR</label>
-          <select
+      <Row className="mb-2">
+        <Col sm={3}>
+          <FormLabel htmlFor="academic_year">ACADEMIC YEAR</FormLabel>
+          <FormSelect
             name="academic_year"
             id="academic_year"
-            className="form-select"
             value={state.academic_year}
             onChange={handleInput}
           >
@@ -385,14 +383,13 @@ const Admin = () => {
                 {academicYear.academic_year}
               </option>
             ))}
-          </select>
-        </div>
-        <div className="col-sm-3">
-          <label htmlFor="semester">SEMESTER</label>
-          <select
+          </FormSelect>
+        </Col>
+        <Col sm={3}>
+          <FormLabel htmlFor="semester">SEMESTER</FormLabel>
+          <FormSelect
             name="semester"
             id="semester"
-            className="form-select"
             value={state.semester}
             onChange={handleInput}
           >
@@ -406,9 +403,9 @@ const Admin = () => {
                 </option>
               ))
             )}
-          </select>
-        </div>
-      </div>
+          </FormSelect>
+        </Col>
+      </Row>
       {state.loadingStatistics ? <Spinner /> : statisticsComponents}
     </>
   );
