@@ -3,6 +3,7 @@ import Sidebar from "../../components/Sidebar";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Button,
+  Container,
   FormControl,
   FormLabel,
   Modal,
@@ -13,6 +14,7 @@ import {
 } from "react-bootstrap";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
+import AlertToastMessage from "../../components/AlertToastMessage";
 
 interface ContentProps {
   content: React.ReactNode;
@@ -35,17 +37,30 @@ const Layout = ({ content }: ContentProps) => {
   }
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [loadingLogout, setLoadingLogout] = useState(false);
 
   const [state, setState] = useState({
-    user_id: 0,
+    loadingUser: false,
+    loadingLogout: false,
     password: "",
     password_confirmation: "",
     current_password: "",
     errors: {} as Errors,
+    showLogoutModal: false,
     showChangePasswordModal: false,
+    toastSuccess: false,
+    toastBody: "",
+    showToast: false,
   });
+
+  const handleResetNecessaryFields = () => {
+    setState((prevState) => ({
+      ...prevState,
+      password: "",
+      password_confirmation: "",
+      current_password: "",
+      errors: {} as Errors,
+    }));
+  };
 
   const handleInput = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -57,16 +72,65 @@ const Layout = ({ content }: ContentProps) => {
     }));
   };
 
-  const handleLogout = async (e: FormEvent) => {
+  const handleUpdateUserPassword = async (e: FormEvent) => {
     e.preventDefault();
 
-    setLoadingLogout(true);
+    setState((prevState) => ({
+      ...prevState,
+      loadingUser: true,
+    }));
+
+    axiosInstance
+      .put(`/user/update/password/${parsedUser.user_id}`, state)
+      .then((res) => {
+        if (res.data.status === 200) {
+          handleResetNecessaryFields();
+          setState((prevState) => ({
+            ...prevState,
+            loadingUser: false,
+            showChangePasswordModal: false,
+            toastSuccess: true,
+            toastBody: "YOUR PASSWORD HAS BEEN SUCCESSFULLY UPDATED.",
+            showToast: true,
+          }));
+        } else {
+          setState((prevState) => ({
+            ...prevState,
+            loadingUser: false,
+            toastSuccess: false,
+            toastBody: "INCORRECT CURRENT PASSWORD.",
+            showToast: true,
+          }));
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 422) {
+          setState((prevState) => ({
+            ...prevState,
+            errors: error.response.data.errors,
+            loadingUser: false,
+          }));
+        } else {
+          errorHandler(error);
+        }
+      });
+  };
+
+  const handleLogoutUser = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setState((prevState) => ({
+      ...prevState,
+      loadingLogout: true,
+    }));
 
     axiosInstance
       .post("/user/process/logout", parsedUser)
       .then((res) => {
         if (res.data.status === 200) {
+          handleResetNecessaryFields();
           localStorage.clear();
+
           navigate("/", {
             state: {
               toastSuccess: true,
@@ -101,6 +165,13 @@ const Layout = ({ content }: ContentProps) => {
     return fullName;
   };
 
+  const handleOpenLogoutModal = () => {
+    setState((prevState) => ({
+      ...prevState,
+      showLogoutModal: true,
+    }));
+  };
+
   const handleOpenChangePasswordModal = () => {
     setState((prevState) => ({
       ...prevState,
@@ -109,14 +180,28 @@ const Layout = ({ content }: ContentProps) => {
     }));
   };
 
-  const handleCloseChangePasswordModal = () => {
+  const handleCloseLogoutModal = () => {
     setState((prevState) => ({
       ...prevState,
-      user_id: 0,
-      password: "",
-      password_confirmation: "",
-      errors: {} as Errors,
+      showLogoutModal: false,
+    }));
+  };
+
+  const handleCloseChangePasswordModal = () => {
+    handleResetNecessaryFields();
+
+    setState((prevState) => ({
+      ...prevState,
       showChangePasswordModal: false,
+    }));
+  };
+
+  const handleCloseToast = () => {
+    setState((prevState) => ({
+      ...prevState,
+      toastSuccess: false,
+      toastBody: "",
+      showToast: false,
     }));
   };
 
@@ -132,6 +217,12 @@ const Layout = ({ content }: ContentProps) => {
 
   return (
     <>
+      <AlertToastMessage
+        success={state.toastSuccess}
+        body={state.toastBody}
+        showToast={state.showToast}
+        onClose={handleCloseToast}
+      />
       <div className="wrapper">
         <Sidebar isCollapsed={isSidebarCollapsed} />
         <div className="main">
@@ -161,7 +252,7 @@ const Layout = ({ content }: ContentProps) => {
                     <li className="bg-theme">
                       <Button
                         className="dropdown-item dropdown-item-theme"
-                        onClick={() => handleOpenChangePasswordModal()}
+                        onClick={handleOpenChangePasswordModal}
                       >
                         CHANGE PASSWORD
                       </Button>
@@ -169,7 +260,7 @@ const Layout = ({ content }: ContentProps) => {
                     <li className="bg-theme">
                       <Button
                         className="dropdown-item dropdown-item-theme"
-                        onClick={() => setShowModal(true)}
+                        onClick={handleOpenLogoutModal}
                       >
                         LOGOUT
                       </Button>
@@ -180,9 +271,9 @@ const Layout = ({ content }: ContentProps) => {
             </div>
           </nav>
           <main className="content px-3 py-2">
-            <div className="container-fluid">
+            <Container fluid>
               <div className="mb-3">{content}</div>
-            </div>
+            </Container>
           </main>
         </div>
       </div>
@@ -233,27 +324,52 @@ const Layout = ({ content }: ContentProps) => {
           <div className="mb-3">
             <FormLabel htmlFor="current_password">CURRENT PASSWORD</FormLabel>
             <FormControl
+              type="password"
               className={`${state.errors.current_password ? "is-invalid" : ""}`}
               name="current_password"
               id="current_password"
               value={state.current_password}
               onChange={handleInput}
             />
+            {state.errors.current_password && (
+              <p className="text-danger">{state.errors.current_password[0]}</p>
+            )}
           </div>
         </ModalBody>
         <ModalFooter>
           <Button
             className="btn-theme"
             onClick={handleCloseChangePasswordModal}
+            disabled={state.loadingUser}
           >
             CLOSE
+          </Button>
+          <Button
+            className="btn-theme"
+            onClick={handleUpdateUserPassword}
+            disabled={state.loadingUser}
+          >
+            {state.loadingUser ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  role="status"
+                  size="sm"
+                  className="spinner-theme"
+                />{" "}
+                UPDATING...
+              </>
+            ) : (
+              "SAVE"
+            )}
           </Button>
         </ModalFooter>
       </Modal>
 
       <Modal
-        show={showModal}
-        onHide={() => setShowModal(false)}
+        show={state.showLogoutModal}
+        onHide={handleCloseLogoutModal}
         backdrop="static"
       >
         <ModalHeader>LOGOUT</ModalHeader>
@@ -261,17 +377,17 @@ const Layout = ({ content }: ContentProps) => {
         <ModalFooter>
           <Button
             className="btn-theme"
-            onClick={() => setShowModal(false)}
-            disabled={loadingLogout}
+            onClick={handleCloseLogoutModal}
+            disabled={state.loadingLogout}
           >
             CLOSE
           </Button>
           <Button
             className="btn-theme"
-            onClick={handleLogout}
-            disabled={loadingLogout}
+            onClick={handleLogoutUser}
+            disabled={state.loadingLogout}
           >
-            {loadingLogout ? (
+            {state.loadingLogout ? (
               <>
                 <Spinner
                   as="span"

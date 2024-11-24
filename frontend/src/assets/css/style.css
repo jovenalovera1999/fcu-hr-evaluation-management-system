@@ -196,12 +196,13 @@ a.sidebar-link:hover {
 }
 
 .dropdown-item-theme {
-  color: white;
+  background-color: #0c1e7d !important;
+  color: #fff !important;
 }
 
 .dropdown-item-theme:hover {
-  background-color: #fff;
-  color: #000;
+  background-color: #fff !important;
+  color: #000 !important;
   transition: all 0.3s ease;
 }
 

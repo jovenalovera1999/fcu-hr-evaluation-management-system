@@ -16,6 +16,7 @@ import { Bar, Pie } from "react-chartjs-2";
 import Spinner from "../../components/Spinner";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
+import { Col, Row } from "react-bootstrap";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -248,8 +249,8 @@ const Admin = () => {
 
   const statisticsComponents = (
     <>
-      <div className="row">
-        <div className="col-sm-3 g-2">
+      <Row>
+        <Col className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "100px" }}
@@ -259,8 +260,8 @@ const Admin = () => {
               {state.totalStudents}
             </p>
           </div>
-        </div>
-        <div className="col-sm-3 g-2">
+        </Col>
+        <Col className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "100px" }}
@@ -270,8 +271,8 @@ const Admin = () => {
               {state.totalEmployees}
             </p>
           </div>
-        </div>
-        <div className="col-sm-3 g-2">
+        </Col>
+        <Col className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "100px" }}
@@ -281,8 +282,8 @@ const Admin = () => {
               {state.totalResponders}
             </p>
           </div>
-        </div>
-        <div className="col-sm-3 g-2">
+        </Col>
+        <Col className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "100px" }}
@@ -292,8 +293,9 @@ const Admin = () => {
               {state.totalResponded}
             </p>
           </div>
-        </div>
-      </div>
+        </Col>
+      </Row>
+      <Row></Row>
       <div className="row mb-3">
         <div className="col-sm-2 g-2 mx-auto">
           <div
