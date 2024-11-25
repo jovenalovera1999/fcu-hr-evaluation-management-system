@@ -15,10 +15,10 @@ class Response extends Model
         'evaluation_id',
         'question_id',
         'poor',
-        'mediocre',
+        'unsatisfactory',
         'satisfactory',
-        'good',
-        'excellent',
+        'very_satisfactory',
+        'outstanding',
         'is_deleted'
     ];
 }

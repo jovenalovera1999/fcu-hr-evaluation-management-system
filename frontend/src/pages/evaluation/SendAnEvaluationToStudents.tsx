@@ -142,8 +142,6 @@ const SendAnEvaluationToStudents = () => {
       selectAll: allSelected,
       selectedEmployees: updateSelectedEmployees,
     }));
-
-    // console.log(updateSelectedEmployees);
   };
 
   const handleSelectEmployee = (employeeId: number) => {
@@ -155,8 +153,6 @@ const SendAnEvaluationToStudents = () => {
 
       const allSelected =
         updateSelectedEmployees.length === prevState.employees.length;
-
-      console.log(updateSelectedEmployees);
 
       return {
         ...prevState,
@@ -196,8 +192,6 @@ const SendAnEvaluationToStudents = () => {
             toastMessageSuccess: true,
             toastMessageVisible: true,
           }));
-
-          // console.log(res.data);
         } else {
           console.error("Unexpected status error: ", res.data.status);
         }

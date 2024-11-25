@@ -16,10 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('evaluation_id');
             $table->unsignedBigInteger('question_id');
             $table->tinyInteger('poor')->default(false);
-            $table->tinyInteger('mediocre')->default(false);
+            $table->tinyInteger('unsatisfactory')->default(false);
             $table->tinyInteger('satisfactory')->default(false);
-            $table->tinyInteger('good')->default(false);
-            $table->tinyInteger('excellent')->default(false);
+            $table->tinyInteger('very_satisfactory')->default(false);
+            $table->tinyInteger('outstanding')->default(false);
             $table->tinyInteger('is_deleted')->default(false);
             $table->timestamps();
 

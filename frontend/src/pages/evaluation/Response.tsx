@@ -265,10 +265,10 @@ const Response = () => {
                       <th className="text-center">NO.</th>
                       <th className="text-center">QUESTION</th>
                       <th className="text-center">POOR</th>
-                      <th className="text-center">MEDIOCRE</th>
+                      <th className="text-center">UNSATISFACTORY</th>
                       <th className="text-center">SATISFACTORY</th>
-                      <th className="text-center">GOOD</th>
-                      <th className="text-center">EXCELLENT</th>
+                      <th className="text-center">VERY SATISFACTORY</th>
+                      <th className="text-center">OUTSTANDING</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -294,7 +294,7 @@ const Response = () => {
                                 type="radio"
                                 className="form-check-input"
                                 name={`answers[${question.question_id}]`}
-                                value="mediocre"
+                                value="unsatisfactory"
                                 onChange={(e) =>
                                   handleInput(e, question.question_id)
                                 }
@@ -316,7 +316,7 @@ const Response = () => {
                                 type="radio"
                                 className="form-check-input"
                                 name={`answers[${question.question_id}]`}
-                                value="good"
+                                value="very_satisfactory"
                                 onChange={(e) =>
                                   handleInput(e, question.question_id)
                                 }
@@ -327,7 +327,7 @@ const Response = () => {
                                 type="radio"
                                 className="form-check-input"
                                 name={`answers[${question.question_id}]`}
-                                value="excellent"
+                                value="outstanding"
                                 onChange={(e) =>
                                   handleInput(e, question.question_id)
                                 }

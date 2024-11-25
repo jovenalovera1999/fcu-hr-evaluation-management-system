@@ -248,7 +248,7 @@ const Layout = ({ content }: ContentProps) => {
                   >
                     {handleUserFullName()}
                   </Link>
-                  <ul className="dropdown-menu bg-theme">
+                  <ul className="dropdown-menu dropdown-menu-end bg-theme">
                     <li className="bg-theme">
                       <Button
                         className="dropdown-item dropdown-item-theme"

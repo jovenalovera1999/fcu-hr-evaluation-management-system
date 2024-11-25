@@ -45,10 +45,10 @@ interface Questions {
   question_id: number;
   question: string;
   question_poor: string;
-  question_mediocre: string;
+  question_unsatisfactory: string;
   question_satisfactory: string;
-  question_good: string;
-  question_excellent: string;
+  question_very_satisfactory: string;
+  question_outstanding: string;
 }
 
 const Results = () => {
@@ -68,10 +68,10 @@ const Results = () => {
     academic_year: "",
     semester: "",
     poor: 0,
-    mediocre: 0,
+    unsatisfactory: 0,
     satisfactory: 0,
-    good: 0,
-    excellent: 0,
+    very_satisfactory: 0,
+    outstanding: 0,
     showSummaryResponseModal: false,
   });
 
@@ -164,10 +164,10 @@ const Results = () => {
           setState((prevState) => ({
             ...prevState,
             poor: res.data.summary.poor,
-            mediocre: res.data.summary.mediocre,
+            unsatisfactory: res.data.summary.unsatisfactory,
             satisfactory: res.data.summary.satisfactory,
-            good: res.data.summary.good,
-            excellent: res.data.summary.excellent,
+            very_satisfactory: res.data.summary.very_satisfactory,
+            outstanding: res.data.summary.outstanding,
             loadingSummary: false,
           }));
         } else {
@@ -242,15 +242,15 @@ const Results = () => {
   };
 
   const handleOpenResponseSummary = (employee: Results) => {
-    handleLoadSummary(employee.employee_id, parseInt(state.semester));
-    handleLoadCategories();
-
     setState((prevState) => ({
       ...prevState,
       loadingSummary: true,
       employee_id: employee.employee_id,
       showSummaryResponseModal: true,
     }));
+
+    handleLoadCategories();
+    handleLoadSummary(employee.employee_id, parseInt(state.semester));
   };
 
   const handleCloseResponseSummary = () => {
@@ -385,7 +385,7 @@ const Results = () => {
       <Modal
         show={state.showSummaryResponseModal}
         onHide={handleCloseResponseSummary}
-        size="lg"
+        fullscreen={true}
       >
         <ModalHeader>RESPONSE SUMMARY</ModalHeader>
         <ModalBody>
@@ -411,9 +411,9 @@ const Results = () => {
                   <p className="fs-3">{state.poor}</p>
                 </Col>
                 <Col>
-                  MEDIOCRE
+                  UNSATISFACTORY
                   <br />
-                  <p className="fs-3">{state.mediocre}</p>
+                  <p className="fs-3">{state.unsatisfactory}</p>
                 </Col>
                 <Col>
                   SATISFACTORY
@@ -421,14 +421,14 @@ const Results = () => {
                   <p className="fs-3">{state.satisfactory}</p>
                 </Col>
                 <Col>
-                  GOOD
+                  VERY SATISFACTORY
                   <br />
-                  <p className="fs-3">{state.good}</p>
+                  <p className="fs-3">{state.very_satisfactory}</p>
                 </Col>
                 <Col>
-                  EXCELLENT
+                  OUTSTANDING
                   <br />
-                  <p className="fs-3">{state.excellent}</p>
+                  <p className="fs-3">{state.outstanding}</p>
                 </Col>
               </Row>
               {state.categories.map((category) => (
@@ -440,10 +440,10 @@ const Results = () => {
                         <td className="text-center">NO.</td>
                         <td className="text-center">QUESTION</td>
                         <td className="text-center">POOR</td>
-                        <td className="text-center">MEDIOCRE</td>
+                        <td className="text-center">UNSATISFACTORY</td>
                         <td className="text-center">SATISFACTORY</td>
-                        <td className="text-center">GOOD</td>
-                        <td className="text-center">EXCELLENT</td>
+                        <td className="text-center">VERY SATISFACTORY</td>
+                        <td className="text-center">OUTSTANDING</td>
                       </tr>
                     </thead>
                     <tbody>
@@ -457,16 +457,16 @@ const Results = () => {
                                 {question.question_poor}
                               </td>
                               <td className="text-center">
-                                {question.question_mediocre}
+                                {question.question_unsatisfactory}
                               </td>
                               <td className="text-center">
                                 {question.question_satisfactory}
                               </td>
                               <td className="text-center">
-                                {question.question_good}
+                                {question.question_very_satisfactory}
                               </td>
                               <td className="text-center">
-                                {question.question_excellent}
+                                {question.question_outstanding}
                               </td>
                             </tr>
                           )

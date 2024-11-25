@@ -66,10 +66,10 @@ class ResponseController extends Controller
 
         $summary = Response::select(
             DB::raw('SUM(CASE WHEN tbl_responses.poor = TRUE THEN 1 ELSE 0 END) AS poor'),
-            DB::raw('SUM(CASE WHEN tbl_responses.mediocre = TRUE THEN 1 ELSE 0 END) AS mediocre'),
+            DB::raw('SUM(CASE WHEN tbl_responses.unsatisfactory = TRUE THEN 1 ELSE 0 END) AS unsatisfactory'),
             DB::raw('SUM(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 ELSE 0 END) AS satisfactory'),
-            DB::raw('SUM(CASE WHEN tbl_responses.good = TRUE THEN 1 ELSE 0 END) AS good'),
-            DB::raw('SUM(CASE WHEN tbl_responses.excellent = TRUE THEN 1 ELSE 0 END) AS excellent')
+            DB::raw('SUM(CASE WHEN tbl_responses.very_satisfactory = TRUE THEN 1 ELSE 0 END) AS very_satisfactory'),
+            DB::raw('SUM(CASE WHEN tbl_responses.outstanding = TRUE THEN 1 ELSE 0 END) AS outstanding')
         )
             ->leftJoin('tbl_evaluations', 'tbl_responses.evaluation_id', '=', 'tbl_evaluations.evaluation_id')
             ->where('tbl_evaluations.employee_to_evaluate_id', $employeeId)
@@ -85,19 +85,13 @@ class ResponseController extends Controller
 
     public function loadResponseAnswers($employeeId, $semesterId, $categoryId)
     {
-        // $totalStudents = Evaluation::where('tbl_evaluations.employee_to_evaluate_id', $employeeId)
-        //     ->where('tbl_evaluations.semester_id', $semesterId)
-        //     ->where('tbl_evaluations.is_cancelled', false)
-        //     ->where('tbl_evaluations.is_completed', true)
-        //     ->count();
-
         $responses = Response::select(
             'tbl_questions.question',
             DB::raw('SUM(CASE WHEN tbl_responses.poor = TRUE THEN 1 ELSE 0 END) AS question_poor'),
-            DB::raw('SUM(CASE WHEN tbl_responses.mediocre = TRUE THEN 1 ELSE 0 END) AS question_mediocre'),
+            DB::raw('SUM(CASE WHEN tbl_responses.unsatisfactory = TRUE THEN 1 ELSE 0 END) AS question_unsatisfactory'),
             DB::raw('SUM(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 ELSE 0 END) AS question_satisfactory'),
-            DB::raw('SUM(CASE WHEN tbl_responses.good = TRUE THEN 1 ELSE 0 END) AS question_good'),
-            DB::raw('SUM(CASE WHEN tbl_responses.excellent = TRUE THEN 1 ELSE 0 END) AS question_excellent')
+            DB::raw('SUM(CASE WHEN tbl_responses.very_satisfactory = TRUE THEN 1 ELSE 0 END) AS question_very_satisfactory'),
+            DB::raw('SUM(CASE WHEN tbl_responses.outstanding = TRUE THEN 1 ELSE 0 END) AS question_outstanding')
         )
             ->leftJoin('tbl_questions', 'tbl_responses.question_id', '=', 'tbl_questions.question_id')
             ->leftJoin('tbl_evaluations', 'tbl_responses.evaluation_id', '=', 'tbl_evaluations.evaluation_id')
@@ -138,26 +132,26 @@ class ResponseController extends Controller
 
             if ($response) {
                 $response->poor = false;
-                $response->mediocre = false;
+                $response->unsatisfactory = false;
                 $response->satisfactory = false;
-                $response->good = false;
-                $response->excellent = false;
+                $response->very_satisfactory = false;
+                $response->outstanding = false;
 
                 switch ($answer) {
                     case 'poor':
                         $response->poor = true;
                         break;
-                    case 'mediocre':
-                        $response->mediocre = true;
+                    case 'unsatisfactory':
+                        $response->unsatisfactory = true;
                         break;
                     case 'satisfactory':
                         $response->satisfactory = true;
                         break;
-                    case 'good':
-                        $response->good = true;
+                    case 'very_satisfactory':
+                        $response->very_satisfactory = true;
                         break;
-                    case 'excellent':
-                        $response->excellent = true;
+                    case 'outstanding':
+                        $response->outstanding = true;
                         break;
                 }
 
