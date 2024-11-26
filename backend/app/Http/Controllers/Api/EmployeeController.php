@@ -30,6 +30,19 @@ class EmployeeController extends Controller
         ]);
     }
 
+    public function loadEmployeesByAcademicYearAndSemester($academicYearId, $semesterId)
+    {
+        $employees = Employee::leftJoin("tbl_evaluations", "tbl_employees.employee_id", "=", "tbl_evaluations.employee_to_evaluate_id")
+            ->leftJoin("tbl_semesters", "tbl_evaluations.semester_id", "=", "tbl_semesters.semester_id")
+            ->where("tbl_semesters.academic_year_id", $academicYearId)
+            ->where("tbl_evaluations.semester_id", $semesterId)
+            ->get();
+
+        return response()->json([
+            "employees" => $employees
+        ], 200);
+    }
+
     public function getEmployee($employeeId)
     {
         $employee = Employee::leftJoin('tbl_users', 'tbl_employees.employee_id', '=', 'tbl_users.employee_id')

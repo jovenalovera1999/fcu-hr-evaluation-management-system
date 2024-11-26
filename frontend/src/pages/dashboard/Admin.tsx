@@ -47,10 +47,10 @@ const Admin = () => {
     totalResponders: 0,
     totalResponded: 0,
     totalPoor: 0,
-    totalMediocre: 0,
+    totalUnsatisfactory: 0,
     totalSatisfactory: 0,
-    totalGood: 0,
-    totalExcellent: 0,
+    totalVerySatisfactory: 0,
+    totalOutstanding: 0,
   });
 
   const handleInput = (
@@ -141,10 +141,10 @@ const Admin = () => {
             totalResponders: res.data.totalResponders,
             totalResponded: res.data.totalResponded,
             totalPoor: res.data.totalPoor,
-            totalMediocre: res.data.totalMediocre,
+            totalUnsatisfactory: res.data.totalUnsatisfactory,
             totalSatisfactory: res.data.totalSatisfactory,
-            totalGood: res.data.totalGood,
-            totalExcellent: res.data.totalExcellent,
+            totalVerySatisfactory: res.data.totalVerySatisfactory,
+            totalOutstanding: res.data.totalOutstanding,
             loadingStatistics: false,
           }));
         } else {
@@ -214,15 +214,21 @@ const Admin = () => {
   };
 
   const dataBarChart: ChartData<"bar", number[], string> = {
-    labels: ["POOR", "MEDIOCRE", "SATISFACTORY", "GOOD", "EXCELLENT"],
+    labels: [
+      "POOR",
+      "UNSATISFACTORY",
+      "SATISFACTORY",
+      "VERY SATISFACTORY",
+      "OUTSTANDING",
+    ],
     datasets: [
       {
         data: [
-          state.totalGood,
-          state.totalMediocre,
+          state.totalPoor,
+          state.totalUnsatisfactory,
           state.totalSatisfactory,
-          state.totalGood,
-          state.totalExcellent,
+          state.totalVerySatisfactory,
+          state.totalOutstanding,
         ],
         backgroundColor: "rgba(12, 30, 125, 0.2)",
         borderColor: "rgba(12, 30, 125, 1)",
@@ -312,9 +318,9 @@ const Admin = () => {
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
           >
-            <h5 className="card-title">NO. OF RESPONDED MEDIOCRE</h5>
+            <h5 className="card-title">NO. OF RESPONDED UNSATISFACTORY</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
-              {state.totalMediocre}
+              {state.totalUnsatisfactory}
             </p>
           </div>
         </Col>
@@ -334,9 +340,9 @@ const Admin = () => {
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
           >
-            <h5 className="card-title">NO. OF RESPONDED GOOD</h5>
+            <h5 className="card-title">NO. OF RESPONDED VERY SATISFACTORY</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
-              {state.totalGood}
+              {state.totalVerySatisfactory}
             </p>
           </div>
         </Col>
@@ -345,9 +351,9 @@ const Admin = () => {
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
           >
-            <h5 className="card-title">NO. OF RESPONDED EXECELLENT</h5>
+            <h5 className="card-title">NO. OF RESPONDED OUTSTANDING</h5>
             <p className="position-absolute bottom-0 end-0 m-2 fs-5">
-              {state.totalExcellent}
+              {state.totalOutstanding}
             </p>
           </div>
         </Col>
@@ -367,43 +373,47 @@ const Admin = () => {
     <>
       <Row className="mb-2">
         <Col sm={3}>
-          <FormLabel htmlFor="academic_year">ACADEMIC YEAR</FormLabel>
-          <FormSelect
-            name="academic_year"
-            id="academic_year"
-            value={state.academic_year}
-            onChange={handleInput}
-          >
-            <option value="">N/A</option>
-            {state.academicYears.map((academicYear) => (
-              <option
-                value={academicYear.academic_year_id}
-                key={academicYear.academic_year_id}
-              >
-                {academicYear.academic_year}
-              </option>
-            ))}
-          </FormSelect>
+          <div className="mb-3">
+            <FormLabel htmlFor="academic_year">ACADEMIC YEAR</FormLabel>
+            <FormSelect
+              name="academic_year"
+              id="academic_year"
+              value={state.academic_year}
+              onChange={handleInput}
+            >
+              <option value="">N/A</option>
+              {state.academicYears.map((academicYear) => (
+                <option
+                  value={academicYear.academic_year_id}
+                  key={academicYear.academic_year_id}
+                >
+                  {academicYear.academic_year}
+                </option>
+              ))}
+            </FormSelect>
+          </div>
         </Col>
         <Col sm={3}>
-          <FormLabel htmlFor="semester">SEMESTER</FormLabel>
-          <FormSelect
-            name="semester"
-            id="semester"
-            value={state.semester}
-            onChange={handleInput}
-          >
-            <option value="">N/A</option>
-            {state.loadingSemesters ? (
-              <option value="">Loading...</option>
-            ) : (
-              state.semesters.map((semester) => (
-                <option value={semester.semester_id}>
-                  {semester.semester}
-                </option>
-              ))
-            )}
-          </FormSelect>
+          <div className="mb-3">
+            <FormLabel htmlFor="semester">SEMESTER</FormLabel>
+            <FormSelect
+              name="semester"
+              id="semester"
+              value={state.semester}
+              onChange={handleInput}
+            >
+              <option value="">N/A</option>
+              {state.loadingSemesters ? (
+                <option value="">Loading...</option>
+              ) : (
+                state.semesters.map((semester) => (
+                  <option value={semester.semester_id}>
+                    {semester.semester}
+                  </option>
+                ))
+              )}
+            </FormSelect>
+          </div>
         </Col>
       </Row>
       {state.loadingStatistics ? <Spinner /> : statisticsComponents}
