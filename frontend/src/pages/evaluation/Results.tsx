@@ -26,7 +26,7 @@ interface Semesters {
   semester: string;
 }
 
-interface Employee {
+interface Employees {
   employee_id: number;
   first_name: string;
   middle_name: string;
@@ -499,11 +499,12 @@ const Results = () => {
 
   const [state, setState] = useState({
     loadingAcademicYears: true,
-    loadingSemesters: true,
+    loadingSemesters: false,
     loadingEmployees: false,
     loadingQuestions: false,
     academicYears: [] as AcademicYears[],
     semesters: [] as Semesters[],
+    employees: [] as Employees[],
     academic_year: "",
     semester: "",
   });
@@ -516,7 +517,28 @@ const Results = () => {
     }));
 
     if (name === "academic_year") {
+      setState((prevState) => ({
+        ...prevState,
+        loadingSemesters: true,
+      }));
+
       handleLoadSemesters(parseInt(value));
+    }
+
+    const academicYearId =
+      name === "academic_year"
+        ? parseInt(value)
+        : parseInt(state.academic_year);
+    const semesterId =
+      name === "semester" ? parseInt(value) : parseInt(state.semester);
+
+    if (academicYearId && semesterId) {
+      setState((prevState) => ({
+        ...prevState,
+        loadingEmployees: true,
+      }));
+
+      handleLoadEmployees(academicYearId, semesterId);
     }
   };
 
@@ -558,8 +580,46 @@ const Results = () => {
       });
   };
 
-  const handleLoadEmployees = async () => {
-    axiosInstance.get("/employee/");
+  const handleLoadEmployees = async (
+    academicYearId: number,
+    semesterId: number
+  ) => {
+    axiosInstance
+      .get(
+        `/employee/load/by/academic_year/and/semester/${academicYearId}/${semesterId}`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            employees: res.data.employees,
+            loadingEmployees: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
+  const handleEmployeeFullName = (employee: Employees) => {
+    let fullName = "";
+
+    if (employee.middle_name) {
+      fullName = `${employee.last_name}, ${
+        employee.first_name
+      } ${employee.middle_name.charAt(0)}.`;
+    } else {
+      fullName = `${employee.last_name}, ${employee.first_name}`;
+    }
+
+    if (employee.suffix_name) {
+      fullName += ` ${employee.suffix_name}`;
+    }
+
+    return fullName;
   };
 
   useEffect(() => {
@@ -619,18 +679,69 @@ const Results = () => {
       </Row>
       <Table hover size="sm" responsive="sm">
         <thead>
-          <th>NO.</th>
-          <th>NAME OF EMPLOYEE</th>
-          <th>DEPARTMENT</th>
-          <th>POSITION</th>
-          <th>ACTION</th>
+          <tr>
+            <th>NO.</th>
+            <th>NAME OF EMPLOYEE</th>
+            <th>DEPARTMENT</th>
+            <th>POSITION</th>
+            <th>ACTION</th>
+          </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          {state.loadingEmployees ? (
+            <tr>
+              <td colSpan={5} className="text-center">
+                <Spinner
+                  as="span"
+                  animation="border"
+                  role="status"
+                  className="spinner-theme"
+                />
+              </td>
+            </tr>
+          ) : (
+            state.employees.map((employee, index) => (
+              <tr key={employee.employee_id} className="align-middle">
+                <td>{index + 1}</td>
+                <td>{handleEmployeeFullName(employee)}</td>
+                <td>{employee.department}</td>
+                <td>{employee.position}</td>
+                <td>
+                  <Button className="btn-theme" size="sm">
+                    VIEW RESULT
+                  </Button>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
       </Table>
     </>
   );
 
-  return <Layout content={content} />;
+  return (
+    <Layout
+      content={
+        state.loadingAcademicYears ? (
+          <>
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ minHeight: "80vh" }}
+            >
+              <Spinner
+                as="span"
+                animation="border"
+                role="status"
+                className="spinner-theme"
+              />
+            </div>
+          </>
+        ) : (
+          content
+        )
+      }
+    />
+  );
 };
 
 export default Results;

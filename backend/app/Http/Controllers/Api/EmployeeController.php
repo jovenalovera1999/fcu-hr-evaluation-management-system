@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
+use App\Models\Response;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends Controller
@@ -32,11 +34,26 @@ class EmployeeController extends Controller
 
     public function loadEmployeesByAcademicYearAndSemester($academicYearId, $semesterId)
     {
-        $employees = Employee::leftJoin("tbl_evaluations", "tbl_employees.employee_id", "=", "tbl_evaluations.employee_to_evaluate_id")
+        $employees = Employee::select("tbl_employees.employee_id", "tbl_employees.first_name", "tbl_employees.middle_name", "tbl_employees.last_name", "tbl_employees.suffix_name", "tbl_positions.position", "tbl_departments.department")
+            ->leftJoin("tbl_positions", "tbl_employees.position_id", "=", "tbl_positions.position_id")
+            ->leftJoin("tbl_departments", "tbl_employees.department_id", "=", "tbl_departments.department_id")
+            ->leftJoin("tbl_evaluations", "tbl_employees.employee_id", "=", "tbl_evaluations.employee_to_evaluate_id")
             ->leftJoin("tbl_semesters", "tbl_evaluations.semester_id", "=", "tbl_semesters.semester_id")
             ->where("tbl_semesters.academic_year_id", $academicYearId)
             ->where("tbl_evaluations.semester_id", $semesterId)
+            ->where("tbl_employees.is_deleted", false)
+            ->where("tbl_evaluations.is_cancelled", false)
+            ->where("tbl_evaluations.is_completed", true)
+            ->distinct()
             ->get();
+
+        // $overallTotalAnswers = Response::select(
+        //     DB::raw("SUM(CASE WHEN tbl_responses.poor = TRUE THEN 1 ELSE 0 END) AS poor"),
+        //     DB::raw("SUM(CASE WHEN tbl_responses.unsatisfactory = TRUE THEN 1 ELSE 0 END)"),
+        //     DB::raw("SUM(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 ELSE 0 END)"),
+        //     DB::raw("SUM(CASE WHEN tbl_responses.very_satisfactory = TRUE THEN 1 ELSE 0 END)"),
+        //     DB::raw("SUM(CASE WHEN tbl_responses.outstanding = TRUE THEN 1 ELSE 0 END)")
+        // );
 
         return response()->json([
             "employees" => $employees
