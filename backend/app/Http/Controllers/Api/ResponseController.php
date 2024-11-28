@@ -79,9 +79,9 @@ class ResponseController extends Controller
             ->where("tbl_evaluations.is_completed", true)
             ->where("tbl_questions.is_deleted", false)
             ->groupBy("tbl_questions.question_id", "tbl_questions.question")
-            ->first();
+            ->get();
 
-        response()->json([
+        return response()->json([
             "questionsAndResponses" => $questionsAndResponses
         ], 200);
     }

@@ -155,7 +155,7 @@ const Response = () => {
 
   const handleLoadQuestionsByCategories = async (categoryId: number) => {
     axiosInstance
-      .get(`/response/index/${categoryId}}`)
+      .get(`/response/index/${categoryId}`)
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({
