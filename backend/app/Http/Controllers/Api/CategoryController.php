@@ -16,7 +16,7 @@ class CategoryController extends Controller
         return response()->json([
             'categories' => $categories,
             'status' => 200
-        ]);
+        ], 200);
     }
 
     public function storeCategory(Request $request)

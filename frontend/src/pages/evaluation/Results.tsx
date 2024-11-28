@@ -44,11 +44,11 @@ interface Categories {
 interface Questions {
   question_id: number;
   question: string;
-  question_poor: string;
-  question_unsatisfactory: string;
-  question_satisfactory: string;
-  question_very_satisfactory: string;
-  question_outstanding: string;
+  totalPoor: string;
+  totalUnsatisfactory: string;
+  totalSatisfactory: string;
+  totalVerySatisfactory: string;
+  totalOutstanding: string;
 }
 
 const Results = () => {
@@ -501,12 +501,28 @@ const Results = () => {
     loadingAcademicYears: true,
     loadingSemesters: false,
     loadingEmployees: false,
+    loadingCategories: false,
     loadingQuestions: false,
+    loadingResult: false,
     academicYears: [] as AcademicYears[],
     semesters: [] as Semesters[],
     employees: [] as Employees[],
+    categories: [] as Categories[],
+    questions: {} as { [key: number]: Questions[] },
     academic_year: "",
     semester: "",
+    category: "",
+    totalPoor: 0,
+    totalUnsatisfactory: 0,
+    totalSatisfactory: 0,
+    totalVerySatisfactory: 0,
+    totalOutstanding: 0,
+    questionTotalPoor: 0,
+    questionTotalUnsatisfactory: 0,
+    questionTotalSatisfactory: 0,
+    questionTotalVerySatisfactory: 0,
+    questionTotalOutstanding: 0,
+    showResultModal: false,
   });
 
   const handleInput = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -622,6 +638,126 @@ const Results = () => {
     return fullName;
   };
 
+  const handleLoadCountOverallTotalResponses = async (
+    employeeId: number,
+    semesterId: number
+  ) => {
+    axiosInstance
+      .get(
+        `/response/count/overall/total/responses/${employeeId}/${semesterId}`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            totalPoor: res.data.overallTotalResponses.poor,
+            totalUnsatisfactory: res.data.overallTotalResponses.unsatisfactory,
+            totalSatisfactory: res.data.overallTotalResponses.satisfactory,
+            totalVerySatisfactory:
+              res.data.overallTotalResponses.very_satisfactory,
+            totalOutstanding: res.data.overallTotalResponses.outstanding,
+            loadingResult: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
+  const handleLoadQuestionsWithCountOfResponses = async (
+    employeeId: number,
+    semesterId: number,
+    categoryId: number
+  ) => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingQuestions: true,
+    }));
+
+    axiosInstance
+      .get(
+        `/response/load/questions/with/count/of/responses/${employeeId}/${semesterId}/${categoryId}`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            questions: {
+              ...prevState.questions,
+              [categoryId]: res.data.questionsAndResponses,
+            },
+            loadingQuestions: false,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error);
+      });
+  };
+
+  const handleOpenResultModal = (employee: Employees) => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingResult: true,
+    }));
+
+    handleLoadCountOverallTotalResponses(
+      employee.employee_id,
+      parseInt(state.semester)
+    );
+
+    const handleLoadCategories = async () => {
+      setState((prevState) => ({
+        ...prevState,
+        loadingCategories: true,
+      }));
+
+      axiosInstance
+        .get("/response/load/categories")
+        .then((res) => {
+          if (res.status === 200) {
+            res.data.categories.map((category: Categories) => {
+              handleLoadQuestionsWithCountOfResponses(
+                employee.employee_id,
+                parseInt(state.semester),
+                category.category_id
+              );
+            });
+            setState((prevState) => ({
+              ...prevState,
+              categories: res.data.categories,
+              loadingCategories: false,
+            }));
+          } else {
+            console.error("Unexpected status error: ", res.status);
+          }
+        })
+        .catch((error) => {
+          errorHandler(error);
+        });
+    };
+
+    handleLoadCategories();
+
+    setState((prevState) => ({
+      ...prevState,
+      showResultModal: true,
+    }));
+  };
+
+  const handleCloseResultModal = () => {
+    setState((prevState) => ({
+      ...prevState,
+      questions: {} as { [key: number]: Questions[] },
+      showResultModal: false,
+    }));
+  };
+
   useEffect(() => {
     document.title = "RESULTS | FCU HR EMS";
     handleLoadAcademicYears();
@@ -707,7 +843,11 @@ const Results = () => {
                 <td>{employee.department}</td>
                 <td>{employee.position}</td>
                 <td>
-                  <Button className="btn-theme" size="sm">
+                  <Button
+                    className="btn-theme"
+                    size="sm"
+                    onClick={() => handleOpenResultModal(employee)}
+                  >
                     VIEW RESULT
                   </Button>
                 </td>
@@ -716,6 +856,121 @@ const Results = () => {
           )}
         </tbody>
       </Table>
+
+      <Modal
+        fullscreen={true}
+        show={state.showResultModal}
+        onHide={handleCloseResultModal}
+      >
+        <ModalHeader>EVALUATION RESULT</ModalHeader>
+        <ModalBody>
+          {state.loadingResult ||
+          state.loadingCategories ||
+          state.loadingQuestions ? (
+            <>
+              <div className="d-flex justify-content-center align-items center">
+                <Spinner
+                  as="span"
+                  animation="border"
+                  role="status"
+                  className="spinner-theme"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <Row>
+                <Col>
+                  <div className="mb-3">
+                    POOR
+                    <br />
+                    <p className="fs-3">{state.totalPoor}</p>
+                  </div>
+                </Col>
+                <Col>
+                  <div className="mb-3">
+                    UNSATISFACTORY
+                    <br />
+                    <p className="fs-3">{state.totalUnsatisfactory}</p>
+                  </div>
+                </Col>
+                <Col>
+                  <div className="mb-3">
+                    SATISFACTORY
+                    <br />
+                    <p className="fs-3">{state.totalSatisfactory}</p>
+                  </div>
+                </Col>
+                <Col>
+                  <div className="mb-3">
+                    VERY SATISFACTORY
+                    <br />
+                    <p className="fs-3">{state.totalVerySatisfactory}</p>
+                  </div>
+                </Col>
+                <Col>
+                  <div className="mb-3">
+                    OUTSTANDING
+                    <br />
+                    <p className="fs-3">{state.totalOutstanding}</p>
+                  </div>
+                </Col>
+              </Row>
+              {state.categories.map((category) => (
+                <Row key={category.category_id}>
+                  <Table hover size="sm" responsive="sm">
+                    <caption>{category.category}</caption>
+                    <thead>
+                      <tr>
+                        <th>NO.</th>
+                        <th>QUESTION</th>
+                        <th>POOR</th>
+                        <th>UNSATISFACTORY</th>
+                        <th>SATISFACTORY</th>
+                        <th>VERY SATISFACTORY</th>
+                        <th>OUTSTANDING</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {state.questions[category.category_id] ? (
+                        state.questions[category.category_id].map(
+                          (question, index) => (
+                            <tr key={question.question_id}>
+                              <td>{index + 1}</td>
+                              <td>{question.question}</td>
+                              <td>{question.totalPoor}</td>
+                              <td>{question.totalUnsatisfactory}</td>
+                              <td>{question.totalSatisfactory}</td>
+                              <td>{question.totalVerySatisfactory}</td>
+                              <td>{question.totalOutstanding}</td>
+                            </tr>
+                          )
+                        )
+                      ) : (
+                        <tr className="align-middle">
+                          <td colSpan={7} className="text-center">
+                            <Spinner
+                              as="span"
+                              animation="border"
+                              role="status"
+                              className="spinner-theme"
+                            />
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
+                </Row>
+              ))}
+            </>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button className="btn-theme" onClick={handleCloseResultModal}>
+            CLOSE
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 

@@ -105,6 +105,9 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::get("/load/results/{semesterId}", "loadResults");
         Route::get("/load/summary/{employeeId}/{semesterId}", "loadResponseSummary");
         Route::get("/load/response/answers/{employeeId}/{semesterId}/{categoryId}", "loadResponseAnswers");
+        Route::get("/count/overall/total/responses/{employeeId}/{semesterId}", "countOverallTotalResponses");
+        Route::get("/load/categories", "loadCategories");
+        Route::get("/load/questions/with/count/of/responses/{employeeId}/{semesterId}/{categoryId}", "loadQuestionsWithCountOfResponses");
         Route::get("/show/{evaluationId}", "show");
         Route::put("/update/{evaluationId}", "update");
     });
