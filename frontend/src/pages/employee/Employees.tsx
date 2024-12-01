@@ -18,6 +18,7 @@ import {
   Table,
 } from "react-bootstrap";
 import AlertToastMessage from "../../components/AlertToastMessage";
+import { useNavigate } from "react-router-dom";
 
 interface Positions {
   position_id: number;
@@ -59,6 +60,8 @@ const Employees = () => {
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingDepartments: true,
@@ -140,7 +143,7 @@ const Employees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -159,7 +162,7 @@ const Employees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -178,7 +181,7 @@ const Employees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -218,7 +221,7 @@ const Employees = () => {
             loadingEmployee: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -259,7 +262,7 @@ const Employees = () => {
             loadingEmployee: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -304,7 +307,7 @@ const Employees = () => {
             loadingEmployee: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -345,7 +348,7 @@ const Employees = () => {
             loadingEmployee: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -468,7 +471,7 @@ const Employees = () => {
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      errorHandler(401);
+      errorHandler(401, navigate);
     } else {
       handleLoadPositions();
       handleLoadDepartments();

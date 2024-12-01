@@ -15,6 +15,7 @@ import Layout from "../layout/Layout";
 import { ChangeEvent, useEffect, useState } from "react";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
+import { useNavigate } from "react-router-dom";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -52,6 +53,8 @@ interface Questions {
 }
 
 const Results = () => {
+  const navigate = useNavigate();
+
   const [state, setState] = useState({
     loadingAcademicYears: true,
     loadingSemesters: false,
@@ -128,7 +131,7 @@ const Results = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -147,7 +150,7 @@ const Results = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -171,7 +174,7 @@ const Results = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -218,7 +221,7 @@ const Results = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -251,7 +254,7 @@ const Results = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -293,7 +296,7 @@ const Results = () => {
           }
         })
         .catch((error) => {
-          errorHandler(error);
+          errorHandler(error, navigate);
         });
     };
 

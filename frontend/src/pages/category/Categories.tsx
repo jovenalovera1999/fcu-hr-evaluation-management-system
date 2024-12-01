@@ -16,6 +16,7 @@ import {
   Table,
 } from "react-bootstrap";
 import AlertToastMessage from "../../components/AlertToastMessage";
+import { useNavigate } from "react-router-dom";
 
 interface Categories {
   category_id: number;
@@ -27,6 +28,8 @@ interface Errors {
 }
 
 const Categories = () => {
+  const navigate = useNavigate();
+
   const [state, setState] = useState({
     loadingCategories: true,
     loadingCategory: false,
@@ -67,7 +70,7 @@ const Categories = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -108,7 +111,7 @@ const Categories = () => {
             loadingCategory: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -150,7 +153,7 @@ const Categories = () => {
             loadingCategory: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -185,7 +188,7 @@ const Categories = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 

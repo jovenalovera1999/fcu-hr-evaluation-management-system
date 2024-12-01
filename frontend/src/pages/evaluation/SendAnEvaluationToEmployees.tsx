@@ -4,6 +4,7 @@ import Layout from "../layout/Layout";
 import Spinner from "../../components/Spinner";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
+import { useNavigate } from "react-router-dom";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -35,6 +36,8 @@ const SendAnEvaluationToEmployees = () => {
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingSubmit: false,
@@ -142,7 +145,7 @@ const SendAnEvaluationToEmployees = () => {
             loadingSubmit: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -171,7 +174,7 @@ const SendAnEvaluationToEmployees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -190,7 +193,7 @@ const SendAnEvaluationToEmployees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -209,7 +212,7 @@ const SendAnEvaluationToEmployees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -241,7 +244,7 @@ const SendAnEvaluationToEmployees = () => {
       !parsedUser.position ||
       parsedUser.position !== "ADMIN"
     ) {
-      errorHandler(401);
+      errorHandler(401, navigate);
     } else {
       handleLoadAcademicYears();
       handleLoadDepartments();

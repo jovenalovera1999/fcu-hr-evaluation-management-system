@@ -17,6 +17,7 @@ import Spinner from "../../components/Spinner";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import { Col, FormLabel, FormSelect, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -33,6 +34,8 @@ const Admin = () => {
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingAcademicYears: true,
@@ -103,7 +106,7 @@ const Admin = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -152,7 +155,7 @@ const Admin = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -247,7 +250,7 @@ const Admin = () => {
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      errorHandler(401);
+      errorHandler(401, navigate);
     } else {
       handleLoadAcademicYears();
     }

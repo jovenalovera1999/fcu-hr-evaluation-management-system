@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-const errorHandler = (error: any) => {
-  const navigate = useNavigate();
-
+const errorHandler = (error: any, navigate: ReturnType<typeof useNavigate>) => {
   if ((error.response && error.response.status === 401) || error === 401) {
     navigate("/", {
       state: {

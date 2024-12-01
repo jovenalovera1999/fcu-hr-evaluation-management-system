@@ -10,6 +10,7 @@ import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import Spinner from "../../components/Spinner";
 import { debounce } from "chart.js/helpers";
+import { useNavigate } from "react-router-dom";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -60,6 +61,8 @@ interface Errors {
 }
 
 const SendAnEvaluationToIrregularStudents = () => {
+  const navigate = useNavigate();
+
   const [state, setState] = useState({
     loadingSubmit: false,
     loadingAcademicYears: true,
@@ -154,7 +157,7 @@ const SendAnEvaluationToIrregularStudents = () => {
             loadingSubmit: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -174,7 +177,7 @@ const SendAnEvaluationToIrregularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -220,7 +223,7 @@ const SendAnEvaluationToIrregularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -302,7 +305,7 @@ const SendAnEvaluationToIrregularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -364,7 +367,7 @@ const SendAnEvaluationToIrregularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -383,7 +386,7 @@ const SendAnEvaluationToIrregularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 

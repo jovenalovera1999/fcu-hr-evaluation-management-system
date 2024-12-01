@@ -19,6 +19,7 @@ import {
 import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 import FormCheckLabel from "react-bootstrap/esm/FormCheckLabel";
 import AlertToastMessage from "../../components/AlertToastMessage";
+import { useNavigate } from "react-router-dom";
 
 interface Departments {
   department_id: number;
@@ -71,6 +72,8 @@ const Students = () => {
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingStudent: false,
@@ -169,7 +172,7 @@ const Students = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -188,7 +191,7 @@ const Students = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -207,7 +210,7 @@ const Students = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -231,7 +234,7 @@ const Students = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -288,7 +291,7 @@ const Students = () => {
             loadingStudent: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -341,7 +344,7 @@ const Students = () => {
             loadingStudent: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -387,7 +390,7 @@ const Students = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -508,7 +511,7 @@ const Students = () => {
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      errorHandler(401);
+      errorHandler(401, navigate);
     } else {
       handleLoadDepartments();
     }

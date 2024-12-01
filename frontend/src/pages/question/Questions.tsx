@@ -15,6 +15,7 @@ import {
   Table,
 } from "react-bootstrap";
 import AlertToastMessage from "../../components/AlertToastMessage";
+import { useNavigate } from "react-router-dom";
 
 interface Categories {
   category_id: number;
@@ -37,6 +38,8 @@ const Questions = () => {
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingCategories: true,
@@ -81,7 +84,7 @@ const Questions = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -100,7 +103,7 @@ const Questions = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -142,7 +145,7 @@ const Questions = () => {
             loadingQuestion: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -182,7 +185,7 @@ const Questions = () => {
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      errorHandler(401);
+      errorHandler(401, navigate);
     } else {
       handleLoadQuestions();
       handleLoadCategories();

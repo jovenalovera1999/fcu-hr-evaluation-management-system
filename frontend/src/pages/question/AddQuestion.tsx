@@ -4,6 +4,7 @@ import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
+import { useNavigate } from "react-router-dom";
 
 interface Categories {
   category_id: number;
@@ -20,6 +21,8 @@ const AddQuestion = () => {
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingSave: false,
@@ -77,7 +80,7 @@ const AddQuestion = () => {
             loadingSave: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -106,7 +109,7 @@ const AddQuestion = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -120,7 +123,7 @@ const AddQuestion = () => {
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      errorHandler(401);
+      errorHandler(401, navigate);
     } else {
       handleLoadCategories();
     }

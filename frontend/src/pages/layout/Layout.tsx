@@ -111,7 +111,7 @@ const Layout = ({ content }: ContentProps) => {
             loadingUser: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -143,7 +143,7 @@ const Layout = ({ content }: ContentProps) => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -211,7 +211,7 @@ const Layout = ({ content }: ContentProps) => {
 
   useEffect(() => {
     if (!parsedUser) {
-      navigate("/");
+      errorHandler(401, navigate);
     }
   }, [parsedUser, navigate]);
 

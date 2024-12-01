@@ -53,7 +53,7 @@ const Evaluations = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -108,8 +108,8 @@ const Evaluations = () => {
   useEffect(() => {
     document.title = "EMPLOYEES EVALUATION | FCU HR EMS";
 
-    if (!token || !user || !parsedUser) {
-      errorHandler(401);
+    if (!token || !user || !parsedUser || parsedUser.position !== "ADMIN") {
+      errorHandler(401, navigate);
     } else {
       if (parsedUser.is_student) {
         handleLoadEmployees(parsedUser.student_id, 0);

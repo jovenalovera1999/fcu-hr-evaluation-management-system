@@ -4,7 +4,7 @@ import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -55,6 +55,8 @@ const SendAnEvaluationToStudents = () => {
 
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
+
+  const navigate = useNavigate();
 
   const [state, setState] = useState({
     loadingSubmit: false,
@@ -204,7 +206,7 @@ const SendAnEvaluationToStudents = () => {
             loadingSubmit: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -231,7 +233,7 @@ const SendAnEvaluationToStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -250,7 +252,7 @@ const SendAnEvaluationToStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -269,7 +271,7 @@ const SendAnEvaluationToStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -288,7 +290,7 @@ const SendAnEvaluationToStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -307,7 +309,7 @@ const SendAnEvaluationToStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -326,7 +328,7 @@ const SendAnEvaluationToStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -358,7 +360,7 @@ const SendAnEvaluationToStudents = () => {
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      errorHandler(401);
+      errorHandler(401, navigate);
     } else {
       handleLoadAcademicYears();
       handleLoadDepartments();

@@ -120,7 +120,7 @@ const Response = () => {
             loadingSubmitEvaluation: false,
           }));
         } else {
-          errorHandler(error);
+          errorHandler(error, navigate);
         }
       });
   };
@@ -149,7 +149,7 @@ const Response = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -171,7 +171,7 @@ const Response = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -195,7 +195,7 @@ const Response = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error);
+        errorHandler(error, navigate);
       });
   };
 
@@ -221,7 +221,7 @@ const Response = () => {
     document.title = "RESPONSE | FCU HR EMS";
 
     if (!token || !user || !parsedUser) {
-      errorHandler(401);
+      errorHandler(401, navigate);
     } else {
       handleLoadCategories();
       handleFetchEvaluation();
