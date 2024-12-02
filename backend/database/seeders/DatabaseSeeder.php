@@ -33,12 +33,14 @@ class DatabaseSeeder extends Seeder
 
         AcademicYear::factory()->createMany([
             ["academic_year" => "2022-2023"],
-            ["academic_year" => "2023-2024"]
+            ["academic_year" => "2023-2024"],
+            ["academic_year" => "2024-2025"]
         ]);
 
         Position::factory()->createMany([
             ["position" => "ADMIN"],
             ["position" => "STAFF"],
+            ["position" => "DEAN"],
             ["position" => "FULL-TIME FACULTY"],
             ["position" => "PART-TIME FACULTY"]
         ]);
@@ -196,7 +198,7 @@ class DatabaseSeeder extends Seeder
             "password" => bcrypt(strtoupper("admin"))
         ]);
 
-        $user->createToken("EmployeeToken")->plainTextToken;
+        $user->createToken("AdminToken")->plainTextToken;
 
         Employee::factory(100)->create()->each(function ($employee) {
             $user = User::create([

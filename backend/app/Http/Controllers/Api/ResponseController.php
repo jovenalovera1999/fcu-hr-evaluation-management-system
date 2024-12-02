@@ -21,28 +21,18 @@ class ResponseController extends Controller
             DB::raw("SUM(CASE WHEN tbl_responses.unsatisfactory = TRUE THEN 1 ELSE 0 END) AS unsatisfactory"),
             DB::raw("SUM(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 ELSE 0 END) AS satisfactory"),
             DB::raw("SUM(CASE WHEN tbl_responses.very_satisfactory = TRUE THEN 1 ELSE 0 END) AS very_satisfactory"),
-            DB::raw("SUM(CASE WHEN tbl_responses.outstanding = TRUE THEN 1 ELSE 0 END) AS outstanding")
+            DB::raw("SUM(CASE WHEN tbl_responses.outstanding = TRUE THEN 1 ELSE 0 END) AS outstanding"),
+            DB::raw("ROUND((SUM(CASE WHEN tbl_responses.poor = TRUE THEN 1 ELSE 0 END) / COUNT(*)) * 100, 0) AS poor_percentage"),
+            DB::raw("ROUND((SUM(CASE WHEN tbl_responses.unsatisfactory = TRUE THEN 1 ELSE 0 END) / COUNT(*)) * 100, 0) AS unsatisfactory_percentage"),
+            DB::raw("ROUND((SUM(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 ELSE 0 END) / COUNT(*)) * 100, 0) AS satisfactory_percentage"),
+            DB::raw("ROUND((SUM(CASE WHEN tbl_responses.very_satisfactory = TRUE THEN 1 ELSE 0 END) / COUNT(*)) * 100, 0) AS very_satisfactory_percentage"),
+            DB::raw("ROUND((SUM(CASE WHEN tbl_responses.outstanding = TRUE THEN 1 ELSE 0 END) / COUNT(*)) * 100, 0) AS outstanding_percentage")
         )
             ->leftJoin("tbl_evaluations", "tbl_responses.evaluation_id", "=", "tbl_evaluations.evaluation_id")
             ->where("tbl_evaluations.employee_to_evaluate_id", $employeeId)
             ->where("tbl_evaluations.semester_id", $semesterId)
             ->where("tbl_responses.is_deleted", false)
             ->first();
-
-        // $totalResponses = Response::select(
-        //     "tbl_questions.question",
-        //     DB::raw("SUM(CASE WHEN tbl_responses.poor = TRUE THEN 1 ELSE 0 END) AS totalResponsesPoor"),
-        //     DB::raw("SUM(CASE WHEN tbl_responses.unsatisfactory = TRUE THEN 1 ELSE 0 END) AS totalResponsesUnsatisfactory"),
-        //     DB::raw("SUM(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 ELSE 0 END) AS totalResponsesSatisfactory"),
-        //     DB::raw("SUM(CASE WHEN tbl_responses.very_satisfactory = TRUE THEN 1 ELSE 0 END) AS totalVerySatisfactory"),
-        //     DB::raw("SUM(CASE WHEN tbl_responses.outstanding = TRUE THEN 1 ELSE 0 END) AS totalOutstanding")
-        // )
-        //     ->leftJoin("tbl_questions", "tbl_responses.question_id", "=", "tbl_questions.question_id")
-        //     ->leftJoin("tbl_evaluations", "tbl_responses.evaluation_id", "=", "tbl_evaluations.evaluation_id")
-        //     ->where("tbl_evaluations.employee_to_evaluate_id", $employeeId)
-        //     ->where("tbl_evaluations.semester_id", $semesterId)
-        //     ->where("tbl_questions.category_id", $categoryId)
-        //     ->first();
 
         return response()->json([
             "overallTotalResponses" => $overallTotalResponses

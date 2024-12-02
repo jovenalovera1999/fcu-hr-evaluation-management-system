@@ -75,11 +75,11 @@ const Results = () => {
     totalSatisfactory: 0,
     totalVerySatisfactory: 0,
     totalOutstanding: 0,
-    questionTotalPoor: 0,
-    questionTotalUnsatisfactory: 0,
-    questionTotalSatisfactory: 0,
-    questionTotalVerySatisfactory: 0,
-    questionTotalOutstanding: 0,
+    poorPercentage: 0,
+    unsatisfactoryPercentage: 0,
+    satisfactoryPercentage: 0,
+    verySatisfactoryPercentage: 0,
+    outstandingPercentage: 0,
     showResultModal: false,
   });
 
@@ -214,6 +214,15 @@ const Results = () => {
             totalVerySatisfactory:
               res.data.overallTotalResponses.very_satisfactory,
             totalOutstanding: res.data.overallTotalResponses.outstanding,
+            poorPercentage: res.data.overallTotalResponses.poor_percentage,
+            unsatisfactoryPercentage:
+              res.data.overallTotalResponses.unsatisfactory_percentage,
+            satisfactoryPercentage:
+              res.data.overallTotalResponses.satisfactory_percentage,
+            verySatisfactoryPercentage:
+              res.data.overallTotalResponses.very_satisfactory_percentage,
+            outstandingPercentage:
+              res.data.overallTotalResponses.outstanding_percentage,
             loadingResult: false,
           }));
         } else {
@@ -312,6 +321,16 @@ const Results = () => {
     setState((prevState) => ({
       ...prevState,
       questions: {} as { [key: number]: Questions[] },
+      totalPoor: 0,
+      totalUnsatisfactory: 0,
+      totalSatisfactory: 0,
+      totalVerySatisfactory: 0,
+      totalOutstanding: 0,
+      poorPercentage: 0,
+      unsatisfactoryPercentage: 0,
+      satisfactoryPercentage: 0,
+      verySatisfactoryPercentage: 0,
+      outstandingPercentage: 0,
       showResultModal: false,
     }));
   };
@@ -442,35 +461,37 @@ const Results = () => {
                   <div className="mb-3">
                     POOR
                     <br />
-                    <p className="fs-3">{state.totalPoor}</p>
+                    <p className="fs-3">
+                      {`${state.totalPoor} (${state.poorPercentage}%)`}
+                    </p>
                   </div>
                 </Col>
                 <Col>
                   <div className="mb-3">
                     UNSATISFACTORY
                     <br />
-                    <p className="fs-3">{state.totalUnsatisfactory}</p>
+                    <p className="fs-3">{`${state.totalUnsatisfactory} (${state.unsatisfactoryPercentage}%)`}</p>
                   </div>
                 </Col>
                 <Col>
                   <div className="mb-3">
                     SATISFACTORY
                     <br />
-                    <p className="fs-3">{state.totalSatisfactory}</p>
+                    <p className="fs-3">{`${state.totalSatisfactory} (${state.satisfactoryPercentage}%)`}</p>
                   </div>
                 </Col>
                 <Col>
                   <div className="mb-3">
                     VERY SATISFACTORY
                     <br />
-                    <p className="fs-3">{state.totalVerySatisfactory}</p>
+                    <p className="fs-3">{`${state.totalVerySatisfactory} (${state.verySatisfactoryPercentage}%)`}</p>
                   </div>
                 </Col>
                 <Col>
                   <div className="mb-3">
                     OUTSTANDING
                     <br />
-                    <p className="fs-3">{state.totalOutstanding}</p>
+                    <p className="fs-3">{`${state.totalOutstanding} (${state.outstandingPercentage}%)`}</p>
                   </div>
                 </Col>
               </Row>
@@ -479,28 +500,41 @@ const Results = () => {
                   <Table hover size="sm" responsive="sm">
                     <caption>{category.category}</caption>
                     <thead>
-                      <tr>
-                        <th>NO.</th>
-                        <th>QUESTION</th>
-                        <th>POOR</th>
-                        <th>UNSATISFACTORY</th>
-                        <th>SATISFACTORY</th>
-                        <th>VERY SATISFACTORY</th>
-                        <th>OUTSTANDING</th>
+                      <tr className="align-middle">
+                        <th className="text-center">NO.</th>
+                        <th className="text-center">QUESTION</th>
+                        <th className="text-center">POOR</th>
+                        <th className="text-center">UNSATISFACTORY</th>
+                        <th className="text-center">SATISFACTORY</th>
+                        <th className="text-center">VERY SATISFACTORY</th>
+                        <th className="text-center">OUTSTANDING</th>
                       </tr>
                     </thead>
                     <tbody>
                       {state.questions[category.category_id] ? (
                         state.questions[category.category_id].map(
                           (question, index) => (
-                            <tr key={question.question_id}>
-                              <td>{index + 1}</td>
+                            <tr
+                              className="align-middle"
+                              key={question.question_id}
+                            >
+                              <td className="text-center">{index + 1}</td>
                               <td>{question.question}</td>
-                              <td>{question.totalPoor}</td>
-                              <td>{question.totalUnsatisfactory}</td>
-                              <td>{question.totalSatisfactory}</td>
-                              <td>{question.totalVerySatisfactory}</td>
-                              <td>{question.totalOutstanding}</td>
+                              <td className="text-center">
+                                {question.totalPoor}
+                              </td>
+                              <td className="text-center">
+                                {question.totalUnsatisfactory}
+                              </td>
+                              <td className="text-center">
+                                {question.totalSatisfactory}
+                              </td>
+                              <td className="text-center">
+                                {question.totalVerySatisfactory}
+                              </td>
+                              <td className="text-center">
+                                {question.totalOutstanding}
+                              </td>
                             </tr>
                           )
                         )
