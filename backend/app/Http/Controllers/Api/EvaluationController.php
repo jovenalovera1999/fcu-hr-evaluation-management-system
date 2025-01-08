@@ -144,6 +144,7 @@ class EvaluationController extends Controller
     {
         $validated = $request->validate([
             "academic_year" => ["required"],
+            'semester' => ['required'],
             "department" => ["required"],
             "employees_department" => ["required"],
             "selectedEmployees" => ["array", "min:1"]
@@ -165,7 +166,7 @@ class EvaluationController extends Controller
                 $evaluation = Evaluation::create([
                     "employee_to_response_id" => $employee->employee_id,
                     "employee_to_evaluate_id" => $selectedEmployee,
-                    "academic_year_id" => $validated["academic_year"]
+                    "semester_id" => $validated["semester"]
                 ]);
 
                 foreach ($questions as $question) {

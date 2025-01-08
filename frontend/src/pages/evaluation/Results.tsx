@@ -554,6 +554,9 @@ const Results = () => {
                   </Table>
                 </Row>
               ))}
+              <Row>
+                <Button className="btn-theme">COMMENTS</Button>
+              </Row>
             </>
           )}
         </ModalBody>

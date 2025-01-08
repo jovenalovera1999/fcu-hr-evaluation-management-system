@@ -11,6 +11,11 @@ interface AcademicYears {
   academic_year: string;
 }
 
+interface Semesters {
+  semester_id: number;
+  semester: string;
+}
+
 interface Departments {
   department_id: number;
   department: string;
@@ -26,6 +31,7 @@ interface Employees {
 
 interface Errors {
   academic_year?: string[];
+  semester?: string[];
   department?: string[];
   employees_department?: string[];
   selectedEmployees?: string[];
@@ -41,13 +47,16 @@ const SendAnEvaluationToEmployees = () => {
 
   const [state, setState] = useState({
     loadingSubmit: false,
-    loadingAcademicYears: true,
-    loadingDepartments: true,
+    loadingAcademicYears: false,
+    loadingSemesters: false,
+    loadingDepartments: false,
     loadingEmployees: false,
     academic_years: [] as AcademicYears[],
+    semesters: [] as Semesters[],
     departments: [] as Departments[],
     employees: [] as Employees[],
     academic_year: "",
+    semester: "",
     department: "",
     employees_department: "",
     selectedEmployees: [] as number[],
@@ -67,7 +76,9 @@ const SendAnEvaluationToEmployees = () => {
       [name]: value,
     }));
 
-    if (name === "employees_department") {
+    if (name === "academic_year") {
+      handleLoadSemesters(parseInt(value));
+    } else if (name === "employees_department") {
       setState((prevState) => ({
         ...prevState,
         loadingEmployees: true,
@@ -160,6 +171,12 @@ const SendAnEvaluationToEmployees = () => {
   };
 
   const handleLoadAcademicYears = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingAcademicYears: true,
+      academic_years: [] as AcademicYears[],
+    }));
+
     axiosInstance
       .get("/academic_year/index")
       .then((res) => {
@@ -167,7 +184,6 @@ const SendAnEvaluationToEmployees = () => {
           setState((prevState) => ({
             ...prevState,
             academic_years: res.data.academicYears,
-            loadingAcademicYears: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -175,10 +191,52 @@ const SendAnEvaluationToEmployees = () => {
       })
       .catch((error) => {
         errorHandler(error, navigate);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingAcademicYears: false,
+        }));
+      });
+  };
+
+  const handleLoadSemesters = async (academicYearId: number) => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingSemesters: true,
+      semesters: [] as Semesters[],
+    }));
+
+    axiosInstance
+      .get(`/semester/load/semesters/by/academic_year/${academicYearId}`)
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            semesters: res.data.semesters,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error, null);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingSemesters: false,
+        }));
       });
   };
 
   const handleLoadDepartments = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingDepartments: true,
+      departments: [] as Departments[],
+    }));
+
     axiosInstance
       .get("/department/index")
       .then((res) => {
@@ -186,7 +244,6 @@ const SendAnEvaluationToEmployees = () => {
           setState((prevState) => ({
             ...prevState,
             departments: res.data.departments,
-            loadingDepartments: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -194,6 +251,12 @@ const SendAnEvaluationToEmployees = () => {
       })
       .catch((error) => {
         errorHandler(error, navigate);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingDepartments: false,
+        }));
       });
   };
 
@@ -288,6 +351,34 @@ const SendAnEvaluationToEmployees = () => {
                 {state.errors.academic_year && (
                   <p className="text-danger">{state.errors.academic_year[0]}</p>
                 )}
+              </div>
+            </div>
+            <div className="col-sm-3">
+              <div className="mb-3">
+                <label htmlFor="semester">SEMESTER</label>
+                <select
+                  name="semester"
+                  id="semester"
+                  className={`form-select ${
+                    state.errors.semester ? "is-invalid" : ""
+                  }`}
+                  value={state.semester}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.loadingSemesters ? (
+                    <option value="">LOADING...</option>
+                  ) : (
+                    state.semesters.map((semester) => (
+                      <option
+                        value={semester.semester_id}
+                        key={semester.semester_id}
+                      >
+                        {semester.semester}
+                      </option>
+                    ))
+                  )}
+                </select>
               </div>
             </div>
             <div className="col-sm-3">
