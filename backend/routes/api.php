@@ -89,7 +89,7 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::controller(QuestionController::class)->prefix("question")->group(function () {
         Route::get("/index", "index");
-        Route::get('/loadQuestionsByCategory/{categoryId}', 'loadQuestionsByCategory');
+        Route::get('/loadQuestionsByCategory/{categoryId}/{position}', 'loadQuestionsByCategory');
         Route::post("/store", "store");
     });
 

@@ -14,6 +14,7 @@ class Question extends Model
     protected $fillable = [
         'category_id',
         'question',
+        'position_id',
         'is_deleted'
     ];
 }

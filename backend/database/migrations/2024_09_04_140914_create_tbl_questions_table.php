@@ -15,12 +15,19 @@ return new class extends Migration
             $table->id('question_id');
             $table->unsignedBigInteger('category_id');
             $table->text('question');
+            $table->unsignedBigInteger('position_id');
             $table->tinyInteger('is_deleted')->default(false);
             $table->timestamps();
 
             $table->foreign('category_id')
                 ->references('category_id')
                 ->on('tbl_categories')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreign('position_id')
+                ->references('position_id')
+                ->on('tbl_positions')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
         });

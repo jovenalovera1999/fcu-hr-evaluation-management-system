@@ -11,6 +11,7 @@ class QuestionController extends Controller
     public function index()
     {
         $questions = Question::leftJoin("tbl_categories", "tbl_questions.category_id", "=", "tbl_categories.category_id")
+            ->leftJoin('tbl_positions', 'tbl_questions.position_id', '=', 'tbl_positions.position_id')
             ->where("tbl_questions.is_deleted", false)
             ->orderBy("tbl_categories.category", "asc")
             ->get();
@@ -21,9 +22,11 @@ class QuestionController extends Controller
         ]);
     }
 
-    public function loadQuestionsByCategory($categoryId)
+    public function loadQuestionsByCategory($categoryId, $position)
     {
-        $questions = Question::where("tbl_questions.category_id", $categoryId)
+        $questions = Question::leftJoin('tbl_positions', 'tbl_questions.position_id', '=', 'tbl_positions.position_id')
+            ->where('tbl_positions.position', strtoupper($position))
+            ->where("tbl_questions.category_id", $categoryId)
             ->where("tbl_questions.is_deleted", false)
             ->get();
 
@@ -37,12 +40,14 @@ class QuestionController extends Controller
     {
         $validated = $request->validate([
             "category" => ["required"],
-            "question" => ["required"]
+            "question" => ["required"],
+            'position' => ['required']
         ]);
 
         Question::create([
             "category_id" => $validated["category"],
-            "question" => strtoupper($validated["question"])
+            "question" => strtoupper($validated["question"]),
+            'position_id' => $validated['position']
         ]);
 
         return response()->json([

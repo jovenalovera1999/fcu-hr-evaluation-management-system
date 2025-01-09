@@ -11,9 +11,15 @@ interface Categories {
   category: string;
 }
 
+interface Positions {
+  position_id: number;
+  position: string;
+}
+
 interface Errors {
   category?: string[];
   question?: string[];
+  position?: string[];
 }
 
 const AddQuestion = () => {
@@ -27,9 +33,12 @@ const AddQuestion = () => {
   const [state, setState] = useState({
     loadingSave: false,
     loadingCategories: true,
+    loadingPositions: false,
     categories: [] as Categories[],
+    positions: [] as Positions[],
     category: "",
     question: "",
+    position: "",
     errors: {} as Errors,
     toastMessage: "",
     toastMessageSuccess: false,
@@ -113,6 +122,32 @@ const AddQuestion = () => {
       });
   };
 
+  const handleLoadPositions = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingPositions: true,
+    }));
+
+    axiosInstance
+      .get("/position/index")
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            positions: res.data.positions,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error, null);
+      })
+      .finally(() => {
+        setState((prevState) => ({ ...prevState, loadingPositions: false }));
+      });
+  };
+
   useEffect(() => {
     document.title = "ADD QUESTION | FCU HR EMS";
 
@@ -126,6 +161,7 @@ const AddQuestion = () => {
       errorHandler(401, navigate);
     } else {
       handleLoadCategories();
+      handleLoadPositions();
     }
   }, []);
 
@@ -182,6 +218,29 @@ const AddQuestion = () => {
                 <p className="text-danger">{state.errors.question[0]}</p>
               )}
             </div>
+
+            <div className="col-md-6 mb-3">
+              <label htmlFor="position">POSITION</label>
+              <select
+                className={`${state.errors.position ? "is-invalid" : ""}`}
+                name="position"
+                id="position"
+              >
+                <option value="">N/A</option>
+                {state.loadingPositions ? (
+                  <option value="">LOADING...</option>
+                ) : (
+                  state.positions.map((position) => (
+                    <option
+                      value={position.position_id}
+                      key={position.position_id}
+                    >
+                      {position.position}
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
           </div>
           <div className="d-flex justify-content-end">
             <button type="submit" className="btn btn-theme">
@@ -196,7 +255,9 @@ const AddQuestion = () => {
   return (
     <Layout
       content={
-        state.loadingSave || (!state.loadingSave && state.loadingCategories) ? (
+        state.loadingSave ||
+        state.loadingPositions ||
+        (!state.loadingSave && state.loadingCategories) ? (
           <Spinner />
         ) : (
           content

@@ -155,7 +155,17 @@ const Response = () => {
 
   const handleLoadQuestionsByCategories = async (categoryId: number) => {
     axiosInstance
-      .get(`/question/loadQuestionsByCategory/${categoryId}`)
+      .get(
+        `/question/loadQuestionsByCategory/${categoryId}/${
+          parsedUser.position != "admin".toUpperCase() ||
+          parsedUser.position != "staff".toUpperCase() ||
+          parsedUser.position != "dean".toUpperCase() ||
+          parsedUser.position != "full-time".toUpperCase() ||
+          parsedUser.position != "part-time".toUpperCase()
+            ? "student".toUpperCase()
+            : parsedUser.position
+        }`
+      )
       .then((res) => {
         if (res.data.status === 200) {
           setState((prevState) => ({

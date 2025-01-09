@@ -22,15 +22,22 @@ interface Categories {
   category: string;
 }
 
+interface Positions {
+  position_id: number;
+  position: string;
+}
+
 interface Questions {
   question_id: number;
   category: string;
   question: string;
+  position: string;
 }
 
 interface Errors {
   category?: string[];
   question?: string[];
+  position?: string[];
 }
 
 const Questions = () => {
@@ -44,12 +51,15 @@ const Questions = () => {
   const [state, setState] = useState({
     loadingCategories: true,
     loadingQuestions: true,
+    loadingPositions: false,
     loadingQuestion: false,
     categories: [] as Categories[],
     questions: [] as Questions[],
+    positions: [] as Positions[],
     question_id: 0,
     question: "",
     category: "",
+    position: "",
     errors: {} as Errors,
     showAddQuestionModal: false,
     showEditQuestionModal: false,
@@ -58,6 +68,17 @@ const Questions = () => {
     toastBody: "",
     showToast: false,
   });
+
+  const handleResetQuestionFields = () => {
+    setState((prevState) => ({
+      ...prevState,
+      question_id: 0,
+      question: "",
+      category: "",
+      position: "",
+      errors: {} as Errors,
+    }));
+  };
 
   const handleInput = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -107,6 +128,32 @@ const Questions = () => {
       });
   };
 
+  const handleLoadPositions = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingPositions: true,
+    }));
+
+    axiosInstance
+      .get("/position/index")
+      .then((res) => {
+        if (res.data.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            positions: res.data.positions,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.data.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error, null);
+      })
+      .finally(() => {
+        setState((prevState) => ({ ...prevState, loadingPositions: false }));
+      });
+  };
+
   const handleStoreQuestion = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -121,18 +168,18 @@ const Questions = () => {
         handleLoadQuestions();
 
         if (res.data.status === 200) {
+          handleResetQuestionFields();
+
           setState((prevState) => ({
             ...prevState,
-            question_id: 0,
-            category: "",
-            question: "",
-            errors: {} as Errors,
             loadingQuestion: false,
             showAddQuestionModal: false,
             toastSuccess: true,
             toastBody: "QUESTION SUCCESSFULLY SAVED.",
             showToast: true,
           }));
+
+          handleLoadQuestions();
         } else {
           console.error("Unexpected status error: ", res.data.status);
         }
@@ -160,8 +207,6 @@ const Questions = () => {
   const handleCloseAddQuestionModal = () => {
     setState((prevState) => ({
       ...prevState,
-      question_id: 0,
-      errors: {} as Errors,
       showAddQuestionModal: false,
     }));
   };
@@ -189,6 +234,7 @@ const Questions = () => {
     } else {
       handleLoadQuestions();
       handleLoadCategories();
+      handleLoadPositions();
     }
   }, []);
 
@@ -215,6 +261,7 @@ const Questions = () => {
               <th>NO.</th>
               <th>CATEGORY</th>
               <th>QUESTION</th>
+              <th>QUESTION FOR</th>
             </tr>
           </thead>
           <tbody>
@@ -223,6 +270,7 @@ const Questions = () => {
                 <td>{index + 1}</td>
                 <td>{question.category}</td>
                 <td>{question.question}</td>
+                <td>{question.position}</td>
               </tr>
             ))}
           </tbody>
@@ -272,6 +320,35 @@ const Questions = () => {
             />
             {state.errors.question && (
               <p className="text-danger">{state.errors.question[0]}</p>
+            )}
+          </div>
+          <div className="mb-3">
+            <label htmlFor="position">QUESTION FOR</label>
+            <select
+              className={`form-select ${
+                state.errors.position ? "is-invalid" : ""
+              }`}
+              name="position"
+              id="position"
+              value={state.position}
+              onChange={handleInput}
+            >
+              <option value="">N/A</option>
+              {state.loadingPositions ? (
+                <option value="">LOADING...</option>
+              ) : (
+                state.positions.map((position) => (
+                  <option
+                    value={position.position_id}
+                    key={position.position_id}
+                  >
+                    {position.position}
+                  </option>
+                ))
+              )}
+            </select>
+            {state.errors.position && (
+              <p className="text-danger">{state.errors.position[0]}</p>
             )}
           </div>
         </ModalBody>

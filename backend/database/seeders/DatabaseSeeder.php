@@ -42,7 +42,8 @@ class DatabaseSeeder extends Seeder
             ["position" => "STAFF"],
             ["position" => "DEAN"],
             ["position" => "FULL-TIME FACULTY"],
-            ["position" => "PART-TIME FACULTY"]
+            ["position" => "PART-TIME FACULTY"],
+            ['position' => 'STUDENT']
         ]);
 
         Department::factory()->createMany([
@@ -143,25 +144,25 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Question::factory()->createMany([
-            ["category_id" => 1, "question" => strtoupper("How effectively does the teacher deliver course material?")],
-            ["category_id" => 1, "question" => strtoupper("How well does the teacher explain complex concepts?")],
-            ["category_id" => 1, "question" => strtoupper("How organized and prepared is the teacher for each class?")],
-            ["category_id" => 1, "question" => strtoupper("How well does the teacher engage students in the learning process?")],
-            ["category_id" => 2, "question" => strtoupper("How clear is the teacher in communicating instructions and expectations?")],
-            ["category_id" => 2, "question" => strtoupper("How effectively does the teacher respond to student questions and concerns?")],
-            ["category_id" => 2, "question" => strtoupper("How well does the teacher encourage open communication and participation?")],
-            ["category_id" => 3, "question" => strtoupper("How well does the teacher maintain a positive and respectful classroom environment?")],
-            ["category_id" => 3, "question" => strtoupper("How effectively does the teacher manage classroom time and activities?")],
-            ["category_id" => 3, "question" => strtoupper("How fair and consistent is the teacher in enforcing rules and discipline?")],
-            ["category_id" => 4, "question" => strtoupper("How knowledgeable does the teacher appear about the subject matter?")],
-            ["category_id" => 4, "question" => strtoupper("How well does the teacher incorporate current developments and examples in the subject area?")],
-            ["category_id" => 4, "question" => strtoupper("How effectively does the teacher answer student questions related to the subject?")],
-            ["category_id" => 5, "question" => strtoupper("How approachable is the teacher outside of class for additional help?")],
-            ["category_id" => 5, "question" => strtoupper("How effectively does the teacher provide feedback on assignments and assessments?")],
-            ["category_id" => 5, "question" => strtoupper("How well does the teacher support student learning and development?")],
-            ["category_id" => 6, "question" => strtoupper("How punctual and reliable is the teacher in starting and ending classes on time?")],
-            ["category_id" => 6, "question" => strtoupper("How respectful and fair is the teacher towards all students?")],
-            ["category_id" => 6, "question" => strtoupper("How effectively does the teacher adhere to the course syllabus and schedule?")]
+            ["category_id" => 1, "question" => strtoupper("How effectively does the teacher deliver course material?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 1, "question" => strtoupper("How well does the teacher explain complex concepts?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 1, "question" => strtoupper("How organized and prepared is the teacher for each class?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 1, "question" => strtoupper("How well does the teacher engage students in the learning process?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 2, "question" => strtoupper("How clear is the teacher in communicating instructions and expectations?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 2, "question" => strtoupper("How effectively does the teacher respond to student questions and concerns?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 2, "question" => strtoupper("How well does the teacher encourage open communication and participation?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 3, "question" => strtoupper("How well does the teacher maintain a positive and respectful classroom environment?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 3, "question" => strtoupper("How effectively does the teacher manage classroom time and activities?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 3, "question" => strtoupper("How fair and consistent is the teacher in enforcing rules and discipline?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 4, "question" => strtoupper("How knowledgeable does the teacher appear about the subject matter?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 4, "question" => strtoupper("How well does the teacher incorporate current developments and examples in the subject area?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 4, "question" => strtoupper("How effectively does the teacher answer student questions related to the subject?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 5, "question" => strtoupper("How approachable is the teacher outside of class for additional help?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 5, "question" => strtoupper("How effectively does the teacher provide feedback on assignments and assessments?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 5, "question" => strtoupper("How well does the teacher support student learning and development?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 6, "question" => strtoupper("How punctual and reliable is the teacher in starting and ending classes on time?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 6, "question" => strtoupper("How respectful and fair is the teacher towards all students?"), 'position_id' => rand(1, 6)],
+            ["category_id" => 6, "question" => strtoupper("How effectively does the teacher adhere to the course syllabus and schedule?"), 'position_id' => rand(1, 6)]
         ]);
 
         Semester::factory()->createMany([
@@ -200,25 +201,25 @@ class DatabaseSeeder extends Seeder
 
         $user->createToken("AdminToken")->plainTextToken;
 
-        Employee::factory(100)->create()->each(function ($employee) {
-            $user = User::create([
-                "employee_id" => $employee->employee_id,
-                "username" => $employee->first_name,
-                "password" => bcrypt($employee->last_name)
-            ]);
+        // Employee::factory(100)->create()->each(function ($employee) {
+        //     $user = User::create([
+        //         "employee_id" => $employee->employee_id,
+        //         "username" => $employee->first_name,
+        //         "password" => bcrypt($employee->last_name)
+        //     ]);
 
-            $user->createToken("EmployeeToken")->plainTextToken;
-        });
+        //     $user->createToken("EmployeeToken")->plainTextToken;
+        // });
 
-        Student::factory(200)->create()->each(function ($student) {
-            $user = User::create([
-                "student_id" => $student->student_id,
-                "username" => $student->student_no,
-                "password" => bcrypt($student->last_name),
-                "is_student" => 1
-            ]);
+        // Student::factory(200)->create()->each(function ($student) {
+        //     $user = User::create([
+        //         "student_id" => $student->student_id,
+        //         "username" => $student->student_no,
+        //         "password" => bcrypt($student->last_name),
+        //         "is_student" => 1
+        //     ]);
 
-            $user->createToken("StudentToken")->plainTextToken;
-        });
+        //     $user->createToken("StudentToken")->plainTextToken;
+        // });
     }
 }

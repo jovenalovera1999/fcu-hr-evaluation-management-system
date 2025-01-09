@@ -92,7 +92,9 @@ class EvaluationController extends Controller
             ->where("tbl_students.is_deleted", false)
             ->get();
 
-        $questions = Question::where("tbl_questions.is_deleted", false)
+        $questions = Question::leftJoin('tbl_positions', 'tbl_questions.position_id', '=', 'tbl_positions.position_id')
+            ->where('tbl_positions.position', strtoupper('student'))
+            ->where("tbl_questions.is_deleted", false)
             ->get();
 
         foreach ($students as $student) {
@@ -131,7 +133,9 @@ class EvaluationController extends Controller
             "selectedEmployees.min" => "Select an employee at least 1."
         ]);
 
-        $questions = Question::where("tbl_questions.is_deleted", false)
+        $questions = Question::leftJoin('tbl_positions', 'tbl_questions.position_id', '=', 'tbl_positions.position_id')
+            ->where('tbl_positions.position', strtoupper('student'))
+            ->where("tbl_questions.is_deleted", false)
             ->get();
 
         foreach ($validated["selectedStudents"] as $studentId) {
@@ -175,7 +179,9 @@ class EvaluationController extends Controller
             ->where("tbl_employees.is_deleted", false)
             ->get();
 
-        $questions = Question::where("tbl_questions.is_deleted", false)
+        $questions = Question::leftJoin('tbl_positions', 'tbl_questions.position_id', '=', 'tbl_positions.position_id')
+            ->where('tbl_positions.position', '!=', strtoupper('student'))
+            ->where("tbl_questions.is_deleted", false)
             ->get();
 
         foreach ($employees as $employee) {
