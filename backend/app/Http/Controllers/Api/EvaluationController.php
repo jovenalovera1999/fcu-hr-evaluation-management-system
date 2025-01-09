@@ -20,7 +20,15 @@ class EvaluationController extends Controller
         $employees = "";
 
         if ($studentId) {
-            $employees = Evaluation::select("tbl_evaluations.evaluation_id", "tbl_employees.first_name", "tbl_employees.middle_name", "tbl_employees.last_name", "tbl_employees.suffix_name", "tbl_departments.department", "tbl_positions.position")
+            $employees = Evaluation::select(
+                "tbl_evaluations.evaluation_id",
+                "tbl_employees.first_name",
+                "tbl_employees.middle_name",
+                "tbl_employees.last_name",
+                "tbl_employees.suffix_name",
+                "tbl_departments.department",
+                "tbl_positions.position"
+            )
                 ->leftJoin("tbl_employees", "tbl_evaluations.employee_to_evaluate_id", "=", "tbl_employees.employee_id")
                 ->leftJoin("tbl_students", "tbl_evaluations.student_id", "=", "tbl_students.student_id")
                 ->leftJoin("tbl_departments", "tbl_employees.department_id", "=", "tbl_departments.department_id")
@@ -32,14 +40,23 @@ class EvaluationController extends Controller
                 ->get();
         } else if ($employeeId) {
             $employees =
-                Evaluation::select("tbl_evaluations.evaluation_id", "tbl_employees.first_name", "tbl_employees.middle_name", "tbl_employees.last_name", "tbl_employees.suffix_name", "tbl_departments.department", "tbl_positions.position")
-                ->leftJoin("tbl_employees", "tbl_evaluations.employee_to_evaluate_id", "=", "tbl_employees.employee_id")
-                ->leftJoin("tbl_departments", "tbl_employees.department_id", "=", "tbl_departments.department_id")
-                ->leftJoin("tbl_positions", "tbl_employees.position_id", "=", "tbl_positions.position_id")
+                Evaluation::select(
+                    "tbl_evaluations.evaluation_id",
+                    "evaluate.first_name",
+                    "evaluate.middle_name",
+                    "evaluate.last_name",
+                    "evaluate.suffix_name",
+                    "tbl_departments.department",
+                    "tbl_positions.position"
+                )
+                ->leftJoin("tbl_employees as evaluate", "tbl_evaluations.employee_to_evaluate_id", "=", "evaluate.employee_id")
+                ->leftJoin('tbl_employees as response', 'tbl_evaluations.employee_to_response_id', '=', 'response.employee_id')
+                ->leftJoin("tbl_departments", "evaluate.department_id", "=", "tbl_departments.department_id")
+                ->leftJoin("tbl_positions", "evaluate.position_id", "=", "tbl_positions.position_id")
                 ->where("tbl_evaluations.is_student", false)
                 ->where("tbl_evaluations.is_cancelled", false)
                 ->where("tbl_evaluations.is_completed", false)
-                ->where("tbl_employees.employee_id", $employeeId)
+                ->where("response.employee_id", $employeeId)
                 ->get();
         }
 
