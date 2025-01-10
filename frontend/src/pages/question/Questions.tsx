@@ -4,6 +4,7 @@ import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import {
   Button,
+  ButtonGroup,
   FormControl,
   FormLabel,
   FormSelect,
@@ -15,7 +16,7 @@ import {
   Table,
 } from "react-bootstrap";
 import AlertToastMessage from "../../components/AlertToastMessage";
-import { useNavigate } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 
 interface Categories {
   category_id: number;
@@ -29,8 +30,10 @@ interface Positions {
 
 interface Questions {
   question_id: number;
+  category_id: number;
   category: string;
   question: string;
+  position_id: number;
   position: string;
 }
 
@@ -197,6 +200,90 @@ const Questions = () => {
       });
   };
 
+  const handleUpdateQuestion = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setState((prevState) => ({
+      ...prevState,
+      loadingQuestion: true,
+    }));
+
+    axiosInstance
+      .put(`/question/updateQuestion/${state.question_id}`, state)
+      .then((res) => {
+        if (res.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            toastSuccess: true,
+            toastBody: res.data.message,
+            showToast: true,
+          }));
+
+          handleLoadQuestions();
+        } else {
+          console.error("Unexpected error status: ", res.status);
+        }
+      })
+      .catch((error) => {
+        if (error.response.status === 422) {
+          setState((prevState) => ({
+            ...prevState,
+            errors: error.response.data.errors,
+          }));
+        } else {
+          errorHandler(error, null);
+        }
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingQuestion: false,
+        }));
+      });
+  };
+
+  const handleDestroyQuestion = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setState((prevState) => ({
+      ...prevState,
+      loadingQuestion: true,
+    }));
+
+    axiosInstance
+      .put(`/question/destroyQuestion/${state.question_id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            toastSuccess: true,
+            toastBody: res.data.message,
+            showToast: true,
+          }));
+
+          handleLoadQuestions();
+        } else {
+          console.error("Unexpected error status: ", res.status);
+        }
+      })
+      .catch((error) => {
+        if (error.response.status === 422) {
+          setState((prevState) => ({
+            ...prevState,
+            errors: error.response.data.errors,
+          }));
+        } else {
+          errorHandler(error, null);
+        }
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingQuestion: false,
+        }));
+      });
+  };
+
   const handleOpenAddQuestionModal = () => {
     setState((prevState) => ({
       ...prevState,
@@ -204,10 +291,45 @@ const Questions = () => {
     }));
   };
 
+  const handleOpenEditQuestionModal = () => {
+    setState((prevState) => ({
+      ...prevState,
+      showEditQuestionModal: true,
+    }));
+  };
+
+  const handleOpenDeleteQuestionModal = (question: Questions) => {
+    handleResetQuestionFields();
+
+    setState((prevState) => ({
+      ...prevState,
+      category: question.category_id.toString(),
+      showDeleteQuestionModal: true,
+    }));
+  };
+
   const handleCloseAddQuestionModal = () => {
     setState((prevState) => ({
       ...prevState,
       showAddQuestionModal: false,
+    }));
+  };
+
+  const handleCloseEditQuestionModal = () => {
+    handleResetQuestionFields();
+
+    setState((prevState) => ({
+      ...prevState,
+      showEditQuestionModal: false,
+    }));
+  };
+
+  const handleCloseDeleteQuestionModal = () => {
+    handleResetQuestionFields();
+
+    setState((prevState) => ({
+      ...prevState,
+      showDeleteQuestionModal: false,
     }));
   };
 
@@ -262,6 +384,7 @@ const Questions = () => {
               <th>CATEGORY</th>
               <th>QUESTION</th>
               <th>QUESTION FOR</th>
+              <th>ACTION</th>
             </tr>
           </thead>
           <tbody>
@@ -271,6 +394,16 @@ const Questions = () => {
                 <td>{question.category}</td>
                 <td>{question.question}</td>
                 <td>{question.position}</td>
+                <td>
+                  <ButtonGroup>
+                    <Button
+                      className="btn-theme"
+                      onClick={handleOpenEditQuestionModal}
+                    >
+                      EDIT
+                    </Button>
+                  </ButtonGroup>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -381,6 +514,117 @@ const Questions = () => {
             )}
           </Button>
         </ModalFooter>
+      </Modal>
+
+      <Modal
+        show={state.showEditQuestionModal}
+        onHide={handleCloseEditQuestionModal}
+        backdrop="static"
+      >
+        <Form onSubmit={handleUpdateQuestion}>
+          <ModalHeader>EDIT QUESTION</ModalHeader>
+          <ModalBody>
+            <div className="mb-3">
+              <FormLabel htmlFor="category">CATEGORY</FormLabel>
+              <FormSelect
+                className={`${state.errors.category ? "is-invalid" : ""}`}
+                name="category"
+                id="category"
+                value={state.category}
+                onChange={handleInput}
+                autoFocus
+              >
+                <option value="" key={1}>
+                  N/A
+                </option>
+                {state.categories.map((category) => (
+                  <option
+                    value={category.category_id}
+                    key={category.category_id}
+                  >
+                    {category.category}
+                  </option>
+                ))}
+              </FormSelect>
+              {state.errors.category && (
+                <p className="text-danger">{state.errors.category[0]}</p>
+              )}
+            </div>
+            <div className="mb-3">
+              <FormLabel htmlFor="question">QUESTION</FormLabel>
+              <FormControl
+                as="textarea"
+                className={`${state.errors.question ? "is-invalid" : ""}`}
+                rows={4}
+                name="question"
+                id="question"
+                value={state.question}
+                onChange={handleInput}
+              />
+              {state.errors.question && (
+                <p className="text-danger">{state.errors.question[0]}</p>
+              )}
+            </div>
+            <div className="mb-3">
+              <label htmlFor="position">QUESTION FOR</label>
+              <select
+                className={`form-select ${
+                  state.errors.position ? "is-invalid" : ""
+                }`}
+                name="position"
+                id="position"
+                value={state.position}
+                onChange={handleInput}
+              >
+                <option value="">N/A</option>
+                {state.loadingPositions ? (
+                  <option value="">LOADING...</option>
+                ) : (
+                  state.positions.map((position) => (
+                    <option
+                      value={position.position_id}
+                      key={position.position_id}
+                    >
+                      {position.position}
+                    </option>
+                  ))
+                )}
+              </select>
+              {state.errors.position && (
+                <p className="text-danger">{state.errors.position[0]}</p>
+              )}
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              className="btn-theme"
+              onClick={handleCloseEditQuestionModal}
+              disabled={state.loadingQuestion}
+            >
+              CLOSE
+            </Button>
+            <Button
+              type="submit"
+              className="btn-theme"
+              disabled={state.loadingQuestion}
+            >
+              {state.loadingQuestion ? (
+                <>
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    role="status"
+                    size="sm"
+                    className="spinner-theme"
+                  />{" "}
+                  UPDATING...
+                </>
+              ) : (
+                "SAVE"
+              )}
+            </Button>
+          </ModalFooter>
+        </Form>
       </Modal>
     </>
   );

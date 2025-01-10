@@ -91,6 +91,8 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::get("/index", "index");
         Route::get('/loadQuestionsByCategory/{categoryId}/{position}', 'loadQuestionsByCategory');
         Route::post("/store", "store");
+        Route::put('/updateQuestion/{questionId}', 'updateQuestion');
+        Route::put('/destroyQuestion/{questionId}', 'destroyQuestion');
     });
 
     Route::controller(EvaluationController::class)->prefix("evaluation")->group(function () {

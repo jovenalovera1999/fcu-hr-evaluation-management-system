@@ -54,4 +54,38 @@ class QuestionController extends Controller
             "status" => 200
         ]);
     }
+
+    public function updateQuestion(Request $request, $questionId)
+    {
+        $requestValidated = $request->validate([
+            "category" => ["required"],
+            "question" => ["required"],
+            'position' => ['required']
+        ]);
+
+        $question = Question::find($questionId);
+
+        $question->update([
+            'category_id' => $requestValidated['category'],
+            'question' => strtoupper($requestValidated['question']),
+            'position_id' => $requestValidated['question']
+        ]);
+
+        return response()->json([
+            'message' => 'QUESTION SUCCESSFULLY UPDATED.'
+        ], 200);
+    }
+
+    public function destroyQuestion($questionId)
+    {
+        $question = Question::find($questionId);
+
+        $question = $question->update([
+            'is_deleted' => true
+        ]);
+
+        return response()->json([
+            'message' => 'QUESTION SUCCESSFULLY DELETED.'
+        ], 200);
+    }
 }

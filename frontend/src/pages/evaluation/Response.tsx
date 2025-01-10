@@ -157,11 +157,7 @@ const Response = () => {
     axiosInstance
       .get(
         `/question/loadQuestionsByCategory/${categoryId}/${
-          parsedUser.position != "admin".toUpperCase() ||
-          parsedUser.position != "staff".toUpperCase() ||
-          parsedUser.position != "dean".toUpperCase() ||
-          parsedUser.position != "full-time".toUpperCase() ||
-          parsedUser.position != "part-time".toUpperCase()
+          parsedUser.position === "student".toUpperCase()
             ? "student".toUpperCase()
             : parsedUser.position
         }`
