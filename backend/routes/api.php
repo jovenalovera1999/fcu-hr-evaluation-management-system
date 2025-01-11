@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AcademicYearController;
 use App\Http\Controllers\Api\AdminDashboard;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\EmployeeController;
@@ -121,6 +122,10 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::controller(SemesterController::class)->prefix("semester")->group(function () {
         Route::get("/load/semesters/by/academic_year/{academicYearId}", "loadSemestersByAcademicYear");
+    });
+
+    Route::controller(CommentController::class)->prefix('comment')->group(function () {
+        Route::get('/loadCommentsByEmployeeAndSemester/{employeeId}/{semesterId}', 'loadCommentsByEmployeeAndSemester');
     });
 });
 

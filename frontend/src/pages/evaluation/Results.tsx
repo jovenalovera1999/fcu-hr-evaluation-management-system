@@ -274,6 +274,41 @@ const Results = () => {
       });
   };
 
+  const handleLoadCommentsByEmployee = async (
+    employeeId: number,
+    semesterId: number
+  ) => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingComments: true,
+      comments: [] as Comments[],
+    }));
+
+    axiosInstance
+      .get(
+        `/comment/loadCommentsByEmployeeAndSemester/${employeeId}/${semesterId}`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            comments: res.data.comments,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error, null);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingComments: false,
+        }));
+      });
+  };
+
   const handleOpenResultModal = (employee: Employees) => {
     setState((prevState) => ({
       ...prevState,
@@ -317,6 +352,11 @@ const Results = () => {
     };
 
     handleLoadCategories();
+
+    handleLoadCommentsByEmployee(
+      employee.employee_id,
+      parseInt(state.semester)
+    );
 
     setState((prevState) => ({
       ...prevState,
@@ -563,6 +603,7 @@ const Results = () => {
               ))}
               <Row>
                 <Table responsive hover>
+                  <caption>LIST OF COMMENTS</caption>
                   <thead>
                     <tr>
                       <th>NO.</th>

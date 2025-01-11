@@ -70,6 +70,13 @@ class ResponseController extends Controller
             ->where("tbl_evaluations.is_completed", true)
             ->where("tbl_questions.is_deleted", false)
             ->groupBy("tbl_questions.question_id", "tbl_questions.question")
+            ->havingRaw("
+                SUM(CASE WHEN tbl_responses.poor = TRUE THEN 1 ELSE 0 END) > 0 OR
+                SUM(CASE WHEN tbl_responses.unsatisfactory = TRUE THEN 1 ELSE 0 END) > 0 OR
+                SUM(CASE WHEN tbl_responses.satisfactory = TRUE THEN 1 ELSE 0 END) > 0 OR
+                SUM(CASE WHEN tbl_responses.very_satisfactory = TRUE THEN 1 ELSE 0 END) > 0 OR
+                SUM(CASE WHEN tbl_responses.outstanding = TRUE THEN 1 ELSE 0 END) > 0
+            ")
             ->get();
 
         return response()->json([
