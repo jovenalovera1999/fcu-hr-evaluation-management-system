@@ -13,6 +13,7 @@ class Comment extends Model
     protected $primaryKey = 'comment_id';
     protected $fillable = [
         'evaluation_id',
-        'comment'
+        'comment',
+        'is_deleted'
     ];
 }

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Employees from "./pages/employee/Employees";
 import Students from "./pages/student/Students";
 import SendAnEvaluationToStudents from "./pages/evaluation/SendAnEvaluationToStudents";
@@ -12,41 +12,27 @@ import Categories from "./pages/category/Categories";
 import Results from "./pages/evaluation/Results";
 import Questions from "./pages/question/Questions";
 
-const App = () => {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/dashboard/admin" element={<Admin />} />
-        <Route path="/" element={<Login />} />
+const router = createBrowserRouter([
+  { path: "/", element: <Login /> },
+  { path: "/dashboard/admin", element: <Admin /> },
+  { path: "/employee/list", element: <Employees /> },
+  { path: "/student/list", element: <Students /> },
+  { path: "/question/list", element: <Questions /> },
+  { path: "/evaluation/to/students", element: <SendAnEvaluationToStudents /> },
+  {
+    path: "/evaluation/to/employees",
+    element: <SendAnEvaluationToEmployees />,
+  },
+  {
+    path: "/evaluation/to/irregular/students",
+    element: <SendAnEvaluationToIrregularStudents />,
+  },
+  { path: "/evaluation/list", element: <Evaluations /> },
+  { path: "/evaluation/response/:evaluation_id", element: <Response /> },
+  { path: "/evaluation/results", element: <Results /> },
+  { path: "/category/list", element: <Categories /> },
+]);
 
-        <Route path="/employee/list" element={<Employees />} />
-        <Route path="/student/list" element={<Students />} />
-
-        <Route path="/question/list" element={<Questions />} />
-
-        <Route
-          path="/evaluation/to/students"
-          element={<SendAnEvaluationToStudents />}
-        />
-        <Route
-          path="/evaluation/to/employees"
-          element={<SendAnEvaluationToEmployees />}
-        />
-        <Route
-          path="/evaluation/to/irregular/students"
-          element={<SendAnEvaluationToIrregularStudents />}
-        />
-        <Route path="/evaluation/list" element={<Evaluations />} />
-        <Route
-          path="/evaluation/response/:evaluation_id"
-          element={<Response />}
-        />
-        <Route path="/evaluation/results" element={<Results />} />
-
-        <Route path="/category/list" element={<Categories />} />
-      </Routes>
-    </Router>
-  );
-};
+const App = () => <RouterProvider router={router} />;
 
 export default App;

@@ -52,6 +52,11 @@ interface Questions {
   totalOutstanding: string;
 }
 
+interface Comments {
+  comment_id: number;
+  comment: string;
+}
+
 const Results = () => {
   const navigate = useNavigate();
 
@@ -61,12 +66,14 @@ const Results = () => {
     loadingEmployees: false,
     loadingCategories: false,
     loadingQuestions: false,
+    loadingComments: false,
     loadingResult: false,
     academicYears: [] as AcademicYears[],
     semesters: [] as Semesters[],
     employees: [] as Employees[],
     categories: [] as Categories[],
     questions: {} as { [key: number]: Questions[] },
+    comments: [] as Comments[],
     academic_year: "",
     semester: "",
     category: "",
@@ -555,7 +562,35 @@ const Results = () => {
                 </Row>
               ))}
               <Row>
-                <Button className="btn-theme">COMMENTS</Button>
+                <Table responsive hover>
+                  <thead>
+                    <tr>
+                      <th>NO.</th>
+                      <th>COMMENTS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {state.loadingComments ? (
+                      <tr className="align-middle">
+                        <td colSpan={2}>
+                          <Spinner
+                            as="span"
+                            animation="border"
+                            role="status"
+                            className="spinner-theme"
+                          />
+                        </td>
+                      </tr>
+                    ) : (
+                      state.comments.map((comment, index) => (
+                        <tr className="align-middle" key={comment.comment_id}>
+                          <td>{index + 1}</td>
+                          <td>{comment.comment}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </Table>
               </Row>
             </>
           )}

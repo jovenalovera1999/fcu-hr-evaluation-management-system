@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Evaluation;
 use App\Models\Question;
 use App\Models\Response;
@@ -118,6 +119,10 @@ class ResponseController extends Controller
 
     public function update(Request $request, $evaluationId)
     {
+        $requestValidated = $request->validate([
+            'comment' => ['nullable']
+        ]);
+
         foreach ($request->answers as $question_id => $answer) {
             $response = Response::where("tbl_responses.evaluation_id", $evaluationId)
                 ->where("tbl_responses.question_id", $question_id)
@@ -153,6 +158,13 @@ class ResponseController extends Controller
         }
 
         $evaluation = Evaluation::find($evaluationId);
+
+        if ($requestValidated['comment']) {
+            Comment::create([
+                'evaluation_id' => $evaluation->evaluation_id,
+                'comment' => strtoupper($requestValidated['comment'])
+            ]);
+        }
 
         $evaluation->update([
             "is_completed" => true

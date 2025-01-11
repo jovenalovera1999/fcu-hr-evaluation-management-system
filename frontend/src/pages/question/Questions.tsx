@@ -291,9 +291,15 @@ const Questions = () => {
     }));
   };
 
-  const handleOpenEditQuestionModal = () => {
+  const handleOpenEditQuestionModal = (question: Questions) => {
+    handleResetQuestionFields();
+
     setState((prevState) => ({
       ...prevState,
+      question_id: question.question_id,
+      category: question.category_id.toString(),
+      question: question.question,
+      position: question.position_id.toString(),
       showEditQuestionModal: true,
     }));
   };
@@ -303,7 +309,10 @@ const Questions = () => {
 
     setState((prevState) => ({
       ...prevState,
+      question_id: question.question_id,
       category: question.category_id.toString(),
+      question: question.question,
+      position: question.position_id.toString(),
       showDeleteQuestionModal: true,
     }));
   };
@@ -398,9 +407,15 @@ const Questions = () => {
                   <ButtonGroup>
                     <Button
                       className="btn-theme"
-                      onClick={handleOpenEditQuestionModal}
+                      onClick={() => handleOpenEditQuestionModal(question)}
                     >
                       EDIT
+                    </Button>
+                    <Button
+                      className="btn-theme"
+                      onClick={() => handleOpenDeleteQuestionModal(question)}
+                    >
+                      DELETE
                     </Button>
                   </ButtonGroup>
                 </td>
@@ -621,6 +636,117 @@ const Questions = () => {
                 </>
               ) : (
                 "SAVE"
+              )}
+            </Button>
+          </ModalFooter>
+        </Form>
+      </Modal>
+
+      <Modal
+        show={state.showDeleteQuestionModal}
+        onHide={handleCloseDeleteQuestionModal}
+        backdrop="static"
+      >
+        <Form onSubmit={handleDestroyQuestion}>
+          <ModalHeader>DELETE QUESTION</ModalHeader>
+          <ModalBody>
+            <div className="mb-3">
+              <FormLabel htmlFor="category">CATEGORY</FormLabel>
+              <FormSelect
+                className={`${state.errors.category ? "is-invalid" : ""}`}
+                name="category"
+                id="category"
+                value={state.category}
+                onChange={handleInput}
+                autoFocus
+              >
+                <option value="" key={1}>
+                  N/A
+                </option>
+                {state.categories.map((category) => (
+                  <option
+                    value={category.category_id}
+                    key={category.category_id}
+                  >
+                    {category.category}
+                  </option>
+                ))}
+              </FormSelect>
+              {state.errors.category && (
+                <p className="text-danger">{state.errors.category[0]}</p>
+              )}
+            </div>
+            <div className="mb-3">
+              <FormLabel htmlFor="question">QUESTION</FormLabel>
+              <FormControl
+                as="textarea"
+                className={`${state.errors.question ? "is-invalid" : ""}`}
+                rows={4}
+                name="question"
+                id="question"
+                value={state.question}
+                onChange={handleInput}
+              />
+              {state.errors.question && (
+                <p className="text-danger">{state.errors.question[0]}</p>
+              )}
+            </div>
+            <div className="mb-3">
+              <label htmlFor="position">QUESTION FOR</label>
+              <select
+                className={`form-select ${
+                  state.errors.position ? "is-invalid" : ""
+                }`}
+                name="position"
+                id="position"
+                value={state.position}
+                onChange={handleInput}
+              >
+                <option value="">N/A</option>
+                {state.loadingPositions ? (
+                  <option value="">LOADING...</option>
+                ) : (
+                  state.positions.map((position) => (
+                    <option
+                      value={position.position_id}
+                      key={position.position_id}
+                    >
+                      {position.position}
+                    </option>
+                  ))
+                )}
+              </select>
+              {state.errors.position && (
+                <p className="text-danger">{state.errors.position[0]}</p>
+              )}
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              className="btn-theme"
+              onClick={handleCloseDeleteQuestionModal}
+              disabled={state.loadingQuestion}
+            >
+              CLOSE
+            </Button>
+            <Button
+              type="submit"
+              className="btn-theme"
+              disabled={state.loadingQuestion}
+            >
+              {state.loadingQuestion ? (
+                <>
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    role="status"
+                    size="sm"
+                    className="spinner-theme"
+                  />{" "}
+                  DELETING...
+                </>
+              ) : (
+                "DELETE"
               )}
             </Button>
           </ModalFooter>

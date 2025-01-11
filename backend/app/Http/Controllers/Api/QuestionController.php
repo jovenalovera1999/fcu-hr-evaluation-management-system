@@ -68,7 +68,7 @@ class QuestionController extends Controller
         $question->update([
             'category_id' => $requestValidated['category'],
             'question' => strtoupper($requestValidated['question']),
-            'position_id' => $requestValidated['question']
+            'position_id' => $requestValidated['position']
         ]);
 
         return response()->json([
