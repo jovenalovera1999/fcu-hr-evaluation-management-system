@@ -165,9 +165,7 @@ const Response = () => {
     axiosInstance
       .get(
         `/question/loadQuestionsByCategory/${categoryId}/${
-          parsedUser.position === "student".toUpperCase()
-            ? "student".toUpperCase()
-            : parsedUser.position
+          parsedUser.is_student ? "student".toUpperCase() : parsedUser.position
         }`
       )
       .then((res) => {
