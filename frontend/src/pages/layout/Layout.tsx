@@ -15,6 +15,7 @@ import {
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import AlertToastMessage from "../../components/AlertToastMessage";
+import BackToTop from "../../components/BackToTop";
 
 interface ContentProps {
   content: React.ReactNode;
@@ -273,6 +274,7 @@ const Layout = ({ content }: ContentProps) => {
           <main className="content px-3 py-2">
             <Container fluid>
               <div className="mb-3">{content}</div>
+              <BackToTop />
             </Container>
           </main>
         </div>

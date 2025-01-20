@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import InnerCompanyLogo from "../assets/img/inner_company_logo.png";
 
 interface SidebarProps {
@@ -32,29 +32,54 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
             {parsedUser && parsedUser.position === "ADMIN" ? (
               <>
                 <li className="sidebar-item">
-                  <Link to={"/dashboard/admin"} className="sidebar-link">
+                  <NavLink
+                    to={"/dashboard/admin"}
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                  >
                     DASHBOARD
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="sidebar-item">
-                  <Link to={"/employee/list"} className="sidebar-link">
+                  <NavLink
+                    to={"/employee/list"}
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                  >
                     EMPLOYEES
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="sidebar-item">
-                  <Link to={"/student/list"} className="sidebar-link">
+                  <NavLink
+                    to={"/student/list"}
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                  >
                     STUDENTS
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="sidebar-item">
-                  <Link to={"/question/list"} className="sidebar-link">
+                  <NavLink
+                    to={"/question/list"}
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                  >
                     QUESTIONS
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="sidebar-item">
-                  <Link to={"/category/list"} className="sidebar-link">
+                  <NavLink
+                    to={"/category/list"}
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                  >
                     CATEGORIES
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="sidebar-item">
                   <Link
@@ -73,32 +98,46 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                     data-bs-parent="#sidebar"
                   >
                     <li className="sidebar-item">
-                      <Link to={"/evaluation/list"} className="sidebar-link">
+                      <NavLink
+                        to={"/evaluation/list"}
+                        className={({ isActive }) =>
+                          `sidebar-link ${isActive ? "active" : ""}`
+                        }
+                      >
                         LIST
-                      </Link>
+                      </NavLink>
                     </li>
                     <li className="sidebar-item">
-                      <Link
+                      <NavLink
                         to={"/evaluation/to/students"}
-                        className="sidebar-link"
+                        className={({ isActive }) =>
+                          `sidebar-link ${isActive ? "active" : ""}`
+                        }
                       >
                         SEND AN EVALUATION TO STUDENTS
-                      </Link>
+                      </NavLink>
                     </li>
                     <li className="sidebar-item">
-                      <Link
+                      <NavLink
                         to={"/evaluation/to/employees"}
-                        className="sidebar-link"
+                        className={({ isActive }) =>
+                          `sidebar-link ${isActive ? "active" : ""}`
+                        }
                       >
                         SEND AN EVALUATION TO TEACHERS/EMPLOYEES/
                         <br />
                         STAFFS
-                      </Link>
+                      </NavLink>
                     </li>
                     <li className="sidebar-item">
-                      <Link to={"/evaluation/results"} className="sidebar-link">
+                      <NavLink
+                        to={"/evaluation/results"}
+                        className={({ isActive }) =>
+                          `sidebar-link ${isActive ? "active" : ""}`
+                        }
+                      >
                         RESULTS
-                      </Link>
+                      </NavLink>
                     </li>
                   </ul>
                 </li>
@@ -106,9 +145,14 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
             ) : (
               <>
                 <li className="sidebar-item">
-                  <Link to={"/evaluation/list"} className="sidebar-link">
+                  <NavLink
+                    to={"/evaluation/list"}
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                  >
                     EVALUATION
-                  </Link>
+                  </NavLink>
                 </li>
               </>
             )}

@@ -259,7 +259,7 @@ const Admin = () => {
   const statisticsComponents = (
     <>
       <Row>
-        <Col className="g-2">
+        <Col md={3} className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
@@ -270,7 +270,7 @@ const Admin = () => {
             </p>
           </div>
         </Col>
-        <Col className="g-2">
+        <Col md={3} className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
@@ -281,7 +281,7 @@ const Admin = () => {
             </p>
           </div>
         </Col>
-        <Col className="g-2">
+        <Col md={3} className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
@@ -292,7 +292,7 @@ const Admin = () => {
             </p>
           </div>
         </Col>
-        <Col className="g-2">
+        <Col md={3} className="g-2">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
@@ -305,7 +305,7 @@ const Admin = () => {
         </Col>
       </Row>
       <Row className="mb-3">
-        <Col className="g-2 mx-auto">
+        <Col md={2} className="g-2 mx-auto">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
@@ -316,7 +316,7 @@ const Admin = () => {
             </p>
           </div>
         </Col>
-        <Col className="g-2 mx-auto">
+        <Col md={2} className="g-2 mx-auto">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
@@ -327,7 +327,7 @@ const Admin = () => {
             </p>
           </div>
         </Col>
-        <Col className="g-2 mx-auto">
+        <Col md={2} className="g-2 mx-auto">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
@@ -338,7 +338,7 @@ const Admin = () => {
             </p>
           </div>
         </Col>
-        <Col className="g-2 mx-auto">
+        <Col md={2} className="g-2 mx-auto">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
@@ -349,7 +349,7 @@ const Admin = () => {
             </p>
           </div>
         </Col>
-        <Col className="g-2 mx-auto">
+        <Col md={2} className="g-2 mx-auto">
           <div
             className="card shadow bg-theme h-100 ps-2 pt-2 pe-2"
             style={{ minHeight: "120px" }}
@@ -362,10 +362,10 @@ const Admin = () => {
         </Col>
       </Row>
       <Row>
-        <Col sm={5} className="g-2">
+        <Col md={5} className="g-2">
           <Pie options={optionsPieChart} data={dataPieChart} />
         </Col>
-        <Col sm={7} className="g-2">
+        <Col md={7} className="g-2">
           <Bar options={optionsBarChart} data={dataBarChart} />
         </Col>
       </Row>
@@ -375,7 +375,7 @@ const Admin = () => {
   const content = (
     <>
       <Row className="mb-2">
-        <Col sm={3}>
+        <Col md={3}>
           <div className="mb-3">
             <FormLabel htmlFor="academic_year">ACADEMIC YEAR</FormLabel>
             <FormSelect
@@ -396,7 +396,7 @@ const Admin = () => {
             </FormSelect>
           </div>
         </Col>
-        <Col sm={3}>
+        <Col md={3}>
           <div className="mb-3">
             <FormLabel htmlFor="semester">SEMESTER</FormLabel>
             <FormSelect

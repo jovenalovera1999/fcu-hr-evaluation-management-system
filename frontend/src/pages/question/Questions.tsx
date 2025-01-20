@@ -388,7 +388,7 @@ const Questions = () => {
         <Table hover size="sm" responsive="sm">
           <caption>LIST OF QUESTIONS</caption>
           <thead>
-            <tr>
+            <tr className="align-middle">
               <th>NO.</th>
               <th>CATEGORY</th>
               <th>QUESTION</th>
@@ -398,7 +398,7 @@ const Questions = () => {
           </thead>
           <tbody>
             {state.questions.map((question, index) => (
-              <tr key={question.question_id}>
+              <tr key={question.question_id} className="align-middle">
                 <td>{index + 1}</td>
                 <td>{question.category}</td>
                 <td>{question.question}</td>

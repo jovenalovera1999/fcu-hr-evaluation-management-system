@@ -494,7 +494,7 @@ const Employees = () => {
             </Button>
           </div>
         </div>
-        <Col sm={3}>
+        <Col md={3}>
           <div className="mb-3">
             <FormLabel htmlFor="employee_department">DEPARTMENT</FormLabel>
             <FormSelect
@@ -659,7 +659,7 @@ const Employees = () => {
         <ModalHeader>ADD EMPLOYEE</ModalHeader>
         <ModalBody>
           <Row>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
                 <FormControl
@@ -676,7 +676,7 @@ const Employees = () => {
                 )}
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
                 <FormControl
@@ -692,7 +692,7 @@ const Employees = () => {
                 )}
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
                 <FormControl
@@ -708,7 +708,7 @@ const Employees = () => {
                 )}
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
                 <FormControl
@@ -726,7 +726,7 @@ const Employees = () => {
             </Col>
           </Row>
           <Row>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="position">POSITION</FormLabel>
                 <FormSelect
@@ -753,7 +753,7 @@ const Employees = () => {
                 )}
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
                 <FormSelect
@@ -782,7 +782,7 @@ const Employees = () => {
             </Col>
           </Row>
           <Row>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="username">USERNAME</FormLabel>
                 <FormControl
@@ -798,7 +798,7 @@ const Employees = () => {
                 )}
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="password">PASSWORD</FormLabel>
                 <FormControl
@@ -814,7 +814,7 @@ const Employees = () => {
                 )}
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="password_confirmation">
                   CONFIRM PASSWORD
@@ -878,7 +878,7 @@ const Employees = () => {
         <ModalHeader>EDIT EMPLOYEE</ModalHeader>
         <ModalBody>
           <Row>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
                 <FormControl
@@ -895,7 +895,7 @@ const Employees = () => {
                 )}
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
                 <FormControl
@@ -911,7 +911,7 @@ const Employees = () => {
                 )}
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
                 <FormControl
@@ -927,7 +927,7 @@ const Employees = () => {
                 )}
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
                 <FormControl
@@ -945,7 +945,7 @@ const Employees = () => {
             </Col>
           </Row>
           <Row>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="position">POSITION</FormLabel>
                 <FormSelect
@@ -972,7 +972,7 @@ const Employees = () => {
                 )}
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
                 <FormSelect
@@ -1001,7 +1001,7 @@ const Employees = () => {
             </Col>
           </Row>
           <Row>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="username">USERNAME</FormLabel>
                 <FormControl
@@ -1061,7 +1061,7 @@ const Employees = () => {
         </ModalHeader>
         <ModalBody>
           <Row>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
                 <FormControl
@@ -1073,7 +1073,7 @@ const Employees = () => {
                 />
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
                 <FormControl
@@ -1085,7 +1085,7 @@ const Employees = () => {
                 />
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
                 <FormControl
@@ -1097,7 +1097,7 @@ const Employees = () => {
                 />
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
                 <FormControl
@@ -1111,7 +1111,7 @@ const Employees = () => {
             </Col>
           </Row>
           <Row>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="position">POSITION</FormLabel>
                 <FormControl
@@ -1122,7 +1122,7 @@ const Employees = () => {
                 />
               </div>
             </Col>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
                 <FormControl
@@ -1135,7 +1135,7 @@ const Employees = () => {
             </Col>
           </Row>
           <Row>
-            <Col sm={3}>
+            <Col md={3}>
               <div className="mb-3">
                 <FormLabel htmlFor="username">USERNAME</FormLabel>
                 <FormControl

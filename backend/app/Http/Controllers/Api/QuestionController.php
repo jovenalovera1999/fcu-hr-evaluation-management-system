@@ -14,6 +14,7 @@ class QuestionController extends Controller
             ->leftJoin('tbl_positions', 'tbl_questions.position_id', '=', 'tbl_positions.position_id')
             ->where("tbl_questions.is_deleted", false)
             ->orderBy("tbl_categories.category", "asc")
+            ->orderBy('tbl_positions.position', 'asc')
             ->get();
 
         return response()->json([
