@@ -15,12 +15,11 @@ class QuestionController extends Controller
             ->where("tbl_questions.is_deleted", false)
             ->orderBy("tbl_categories.category", "asc")
             ->orderBy('tbl_positions.position', 'asc')
-            ->get();
+            ->paginate(10);
 
         return response()->json([
-            "questions" => $questions,
-            "status" => 200
-        ]);
+            "questions" => $questions
+        ], 200);
     }
 
     public function loadQuestionsByCategory($categoryId, $position)

@@ -5,6 +5,7 @@ import errorHandler from "../../handler/errorHandler";
 import {
   Button,
   ButtonGroup,
+  Col,
   FormControl,
   FormLabel,
   FormSelect,
@@ -57,8 +58,10 @@ const Questions = () => {
     loadingPositions: false,
     loadingQuestion: false,
     categories: [] as Categories[],
-    questions: [] as Questions[],
     positions: [] as Positions[],
+    questions: [] as Questions[],
+    questionsCurrentPage: 1,
+    questionsLastPage: 1,
     question_id: 0,
     question: "",
     category: "",
@@ -93,7 +96,20 @@ const Questions = () => {
     }));
   };
 
+  const handleQuestionsPageChange = (page: number) => {
+    setState((prevState) => ({
+      ...prevState,
+      questionsCurrentPage: page,
+    }));
+  };
+
   const handleLoadCategories = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingCategories: true,
+      categories: [] as Categories[],
+    }));
+
     axiosInstance
       .get("/category/index")
       .then((res) => {
@@ -101,7 +117,6 @@ const Questions = () => {
           setState((prevState) => ({
             ...prevState,
             categories: res.data.categories,
-            loadingCategories: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -109,25 +124,38 @@ const Questions = () => {
       })
       .catch((error) => {
         errorHandler(error, navigate);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingCategories: false,
+        }));
       });
   };
 
   const handleLoadQuestions = async () => {
     axiosInstance
-      .get("/question/index")
+      .get(`/question/index?page=${state.questionsCurrentPage}`)
       .then((res) => {
-        if (res.data.status === 200) {
+        if (res.status === 200) {
           setState((prevState) => ({
             ...prevState,
-            questions: res.data.questions,
-            loadingQuestions: false,
+            questions: res.data.questions.data,
+            questionsCurrentPage: res.data.questions.current_page,
+            questionsLastPage: res.data.questions.last_page,
           }));
         } else {
-          console.error("Unexpected status error: ", res.data.status);
+          console.error("Unexpected status error: ", res.status);
         }
       })
       .catch((error) => {
         errorHandler(error, navigate);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingQuestions: false,
+        }));
       });
   };
 
@@ -135,6 +163,7 @@ const Questions = () => {
     setState((prevState) => ({
       ...prevState,
       loadingPositions: true,
+      positions: [] as Positions[],
     }));
 
     axiosInstance
@@ -367,7 +396,7 @@ const Questions = () => {
       handleLoadCategories();
       handleLoadPositions();
     }
-  }, []);
+  }, [state.questionsCurrentPage]);
 
   const content = (
     <>
@@ -385,7 +414,63 @@ const Questions = () => {
             </Button>
           </div>
         </div>
-        <Table hover size="sm" responsive="sm">
+        <div className="d-flex justify-content-between align-items-center">
+          <Col md={3}>
+            <div className="mb-3">
+              <FormLabel htmlFor="category">CATEGORY</FormLabel>
+              <FormSelect name="category" id="category">
+                <option value="">N/A</option>
+                {state.loadingCategories ? (
+                  <option value="">LOADING...</option>
+                ) : (
+                  state.categories.map((category, index) => (
+                    <option value={category.category_id} key={index}>
+                      {category.category}
+                    </option>
+                  ))
+                )}
+              </FormSelect>
+            </div>
+          </Col>
+          <Col md={3}>
+            <div className="mb-3">
+              <FormLabel htmlFor="position">POSITION</FormLabel>
+              <FormSelect name="position" id="position">
+                <option value="">N/A</option>
+                {state.loadingPositions ? (
+                  <option value="">LOADING...</option>
+                ) : (
+                  state.positions.map((position, index) => (
+                    <option value={position.position_id} key={index}>
+                      {position.position}
+                    </option>
+                  ))
+                )}
+              </FormSelect>
+            </div>
+          </Col>
+          <ButtonGroup>
+            <Button
+              className="btn-theme"
+              disabled={state.questionsCurrentPage <= 1}
+              onClick={() =>
+                handleQuestionsPageChange(state.questionsCurrentPage - 1)
+              }
+            >
+              PREVIOUS
+            </Button>
+            <Button
+              className="btn-theme"
+              disabled={state.questionsCurrentPage >= state.questionsLastPage}
+              onClick={() =>
+                handleQuestionsPageChange(state.questionsCurrentPage + 1)
+              }
+            >
+              NEXT
+            </Button>
+          </ButtonGroup>
+        </div>
+        <Table striped hover size="sm" responsive="sm">
           <caption>LIST OF QUESTIONS</caption>
           <thead>
             <tr className="align-middle">
@@ -398,8 +483,8 @@ const Questions = () => {
           </thead>
           <tbody>
             {state.questions.map((question, index) => (
-              <tr key={question.question_id} className="align-middle">
-                <td>{index + 1}</td>
+              <tr key={index} className="align-middle">
+                <td>{(state.questionsCurrentPage - 1) * 10 + index + 1}</td>
                 <td>{question.category}</td>
                 <td>{question.question}</td>
                 <td>{question.position}</td>

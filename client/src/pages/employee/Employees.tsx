@@ -71,6 +71,8 @@ const Employees = () => {
     departments: [] as Departments[],
     positions: [] as Positions[],
     employees: [] as Employees[],
+    employeesCurrentPage: 1,
+    employeesLastPage: 1,
     employee_department: "",
     employee_id: 0,
     first_name: "",
@@ -124,8 +126,15 @@ const Employees = () => {
         loadingEmployees: true,
       }));
 
-      handleLoadEmployees(parseInt(value));
+      handleLoadEmployeesByDepartment(parseInt(value));
     }
+  };
+
+  const handleEmployeesPageChange = (page: number) => {
+    setState((prevState) => ({
+      ...prevState,
+      employeesCurrentPage: page,
+    }));
   };
 
   const handleLoadPositions = async () => {
@@ -166,15 +175,63 @@ const Employees = () => {
       });
   };
 
-  const handleLoadEmployees = async (departmentId: number) => {
+  const handleLoadEmployees = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingEmployees: true,
+      employees: [] as Employees[],
+    }));
+
     axiosInstance
-      .get(`/employee/index/by/department/${departmentId}`)
+      .get(`/employee/loadEmployees?page=${state.employeesCurrentPage}`)
       .then((res) => {
-        if (res.data.status === 200) {
+        if (res.status === 200) {
           setState((prevState) => ({
             ...prevState,
-            employees: res.data.employees,
-            loadingEmployees: false,
+            employees: res.data.employees.data,
+            employeesCurrentPage: res.data.employees.current_page,
+            employeesLastPage: res.data.employees.last_page,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.status);
+        }
+      })
+      .catch((error) => {
+        if (error.response.status === 422) {
+          setState((prevState) => ({
+            ...prevState,
+            errors: error.response.data.errors,
+          }));
+        } else {
+          errorHandler(error, null);
+        }
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingEmployees: false,
+        }));
+      });
+  };
+
+  const handleLoadEmployeesByDepartment = async (departmentId: number) => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingEmployees: true,
+      employees: [] as Employees[],
+    }));
+
+    axiosInstance
+      .get(
+        `/employee/index/by/department/${departmentId}?page=${state.employeesCurrentPage}`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            employees: res.data.employees.data,
+            employeesCurrentPage: res.data.employees.current_page,
+            employeesLastPage: res.data.employees.last_page,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -182,6 +239,12 @@ const Employees = () => {
       })
       .catch((error) => {
         errorHandler(error, navigate);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingEmployees: false,
+        }));
       });
   };
 
@@ -197,7 +260,7 @@ const Employees = () => {
       .post("/employee/store", state)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadEmployees(parseInt(state.employee_department));
+          handleLoadEmployeesByDepartment(parseInt(state.employee_department));
 
           handleResetNecessaryFields();
 
@@ -238,7 +301,7 @@ const Employees = () => {
       .put(`/employee/update/${state.employee_id}`, state)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadEmployees(parseInt(state.employee_department));
+          handleLoadEmployeesByDepartment(parseInt(state.employee_department));
 
           handleResetNecessaryFields();
 
@@ -324,7 +387,7 @@ const Employees = () => {
       .put(`/employee/delete/${state.employee_id}`)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadEmployees(parseInt(state.employee_department));
+          handleLoadEmployeesByDepartment(parseInt(state.employee_department));
 
           handleResetNecessaryFields();
 
@@ -475,8 +538,9 @@ const Employees = () => {
     } else {
       handleLoadPositions();
       handleLoadDepartments();
+      handleLoadEmployees();
     }
-  }, []);
+  }, [state.employeesCurrentPage]);
 
   const content = (
     <>
@@ -494,27 +558,49 @@ const Employees = () => {
             </Button>
           </div>
         </div>
-        <Col md={3}>
-          <div className="mb-3">
-            <FormLabel htmlFor="employee_department">DEPARTMENT</FormLabel>
-            <FormSelect
-              name="employee_department"
-              id="employee_department"
-              value={state.employee_department}
-              onChange={handleInput}
+        <div className="d-flex justify-content-between align-items-center">
+          <Col md={3}>
+            <div className="mb-3">
+              <FormLabel htmlFor="employee_department">DEPARTMENT</FormLabel>
+              <FormSelect
+                name="employee_department"
+                id="employee_department"
+                value={state.employee_department}
+                onChange={handleInput}
+              >
+                <option value="">N/A</option>
+                {state.departments.map((department) => (
+                  <option
+                    value={department.department_id}
+                    key={department.department_id}
+                  >
+                    {department.department}
+                  </option>
+                ))}
+              </FormSelect>
+            </div>
+          </Col>
+          <ButtonGroup>
+            <Button
+              className="btn-theme"
+              disabled={state.employeesCurrentPage <= 1}
+              onClick={() =>
+                handleEmployeesPageChange(state.employeesCurrentPage - 1)
+              }
             >
-              <option value="">N/A</option>
-              {state.departments.map((department) => (
-                <option
-                  value={department.department_id}
-                  key={department.department_id}
-                >
-                  {department.department}
-                </option>
-              ))}
-            </FormSelect>
-          </div>
-        </Col>
+              PREVIOUS
+            </Button>
+            <Button
+              className="btn-theme"
+              disabled={state.employeesCurrentPage >= state.employeesLastPage}
+              onClick={() =>
+                handleEmployeesPageChange(state.employeesCurrentPage + 1)
+              }
+            >
+              NEXT
+            </Button>
+          </ButtonGroup>
+        </div>
         <Table hover size="sm" responsive="sm">
           <caption>LIST OF EMPLOYEES</caption>
           <thead>
