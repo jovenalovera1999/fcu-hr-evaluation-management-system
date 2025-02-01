@@ -6,8 +6,8 @@ import {
   Button,
   ButtonGroup,
   Col,
+  Form,
   FormControl,
-  FormLabel,
   FormSelect,
   Modal,
   ModalBody,
@@ -121,12 +121,11 @@ const Employees = () => {
     }));
 
     if (name === "employee_department") {
-      setState((prevState) => ({
-        ...prevState,
-        loadingEmployees: true,
-      }));
-
-      handleLoadEmployeesByDepartment(parseInt(value));
+      if (value === "") {
+        handleLoadEmployees();
+      } else {
+        handleLoadEmployeesByDepartment(parseInt(value));
+      }
     }
   };
 
@@ -269,7 +268,6 @@ const Employees = () => {
             toastSuccess: true,
             toastBody: "EMPLOYEE SUCCESSFULLY SAVED.",
             showToast: true,
-            loadingEmployee: false,
             showAddEmployeeModal: false,
           }));
         } else {
@@ -281,11 +279,16 @@ const Employees = () => {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
-            loadingEmployee: false,
           }));
         } else {
           errorHandler(error, navigate);
         }
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingEmployee: false,
+        }));
       });
   };
 
@@ -310,7 +313,6 @@ const Employees = () => {
             toastSuccess: true,
             toastBody: "EMPLOYEE SUCCESSFULLY UPDATED.",
             showToast: true,
-            loadingEmployee: false,
             showEditEmployeeModal: false,
           }));
         } else {
@@ -322,11 +324,16 @@ const Employees = () => {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
-            loadingEmployee: false,
           }));
         } else {
           errorHandler(error, navigate);
         }
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingEmployee: false,
+        }));
       });
   };
 
@@ -396,7 +403,6 @@ const Employees = () => {
             toastSuccess: true,
             toastBody: "EMPLOYEE SUCCESSFULLY UPDATED.",
             showToast: true,
-            loadingEmployee: false,
             showDeleteEmployeeModal: false,
           }));
         } else {
@@ -408,11 +414,16 @@ const Employees = () => {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
-            loadingEmployee: false,
           }));
         } else {
           errorHandler(error, navigate);
         }
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingEmployee: false,
+        }));
       });
   };
 
@@ -552,7 +563,8 @@ const Employees = () => {
       />
       <div className="mx-auto mt-2">
         <div className="mb-3">
-          <div className="d-flex justify-content-end">
+          <div className="d-flex justify-content-between align-items-center">
+            <h3 className="mb-3">EMPLOYEES</h3>
             <Button className="btn-theme" onClick={handleOpenAddEmployeeModal}>
               ADD EMPLOYEE
             </Button>
@@ -560,15 +572,14 @@ const Employees = () => {
         </div>
         <div className="d-flex justify-content-between align-items-center">
           <Col md={3}>
-            <div className="mb-3">
-              <FormLabel htmlFor="employee_department">DEPARTMENT</FormLabel>
+            <Form.Floating className="mb-3">
               <FormSelect
                 name="employee_department"
                 id="employee_department"
                 value={state.employee_department}
                 onChange={handleInput}
               >
-                <option value="">N/A</option>
+                <option value="">ALL DEPARTMENTS</option>
                 {state.departments.map((department) => (
                   <option
                     value={department.department_id}
@@ -578,7 +589,8 @@ const Employees = () => {
                   </option>
                 ))}
               </FormSelect>
-            </div>
+              <label htmlFor="employee_department">DEPARTMENT</label>
+            </Form.Floating>
           </Col>
           <ButtonGroup>
             <Button
@@ -602,7 +614,6 @@ const Employees = () => {
           </ButtonGroup>
         </div>
         <Table hover size="sm" responsive="sm">
-          <caption>LIST OF EMPLOYEES</caption>
           <thead>
             <tr>
               <th>NO.</th>
@@ -632,6 +643,7 @@ const Employees = () => {
                   <td>
                     <ButtonGroup>
                       <Button
+                        type="button"
                         className="btn-theme"
                         size="sm"
                         onClick={() => handleOpenChangePasswordModal(employee)}
@@ -639,6 +651,7 @@ const Employees = () => {
                         CHANGE PASSWORD
                       </Button>
                       <Button
+                        type="button"
                         className="btn-theme"
                         size="sm"
                         onClick={() => handleOpenEditEmployeeModal(employee)}
@@ -646,6 +659,7 @@ const Employees = () => {
                         EDIT
                       </Button>
                       <Button
+                        type="button"
                         className="btn-theme"
                         size="sm"
                         onClick={() => handleOpenDeleteEmployeeModal(employee)}
@@ -669,25 +683,23 @@ const Employees = () => {
       >
         <ModalHeader>CHANGE PASSWORD</ModalHeader>
         <ModalBody>
-          <div className="mb-3">
-            <FormLabel htmlFor="password">NEW PASSWORD</FormLabel>
+          <Form.Floating className="mb-3">
             <FormControl
               type="password"
               name="password"
               className={`${state.errors.password ? "is-invalid" : ""}`}
               id="password"
+              placeholder="PASSWORD"
               value={state.password}
               onChange={handleInput}
               autoFocus
             />
+            <label htmlFor="password">PASSWORD</label>
             {state.errors.password && (
               <p className="text-danger">{state.errors.password[0]}</p>
             )}
-          </div>
-          <div className="mb-3">
-            <FormLabel htmlFor="password_confirmation">
-              PASSWORD CONFIRMATION
-            </FormLabel>
+          </Form.Floating>
+          <Form.Floating className="mb-3">
             <FormControl
               type="password"
               className={`${
@@ -695,18 +707,21 @@ const Employees = () => {
               }`}
               name="password_confirmation"
               id="password_confirmation"
+              placeholder="PASSWORD CONFIRMATION"
               value={state.password_confirmation}
               onChange={handleInput}
             />
+            <label htmlFor="password_confirmation">PASSWORD CONFIRMATION</label>
             {state.errors.password_confirmation && (
               <p className="text-danger">
                 {state.errors.password_confirmation[0]}
               </p>
             )}
-          </div>
+          </Form.Floating>
         </ModalBody>
         <ModalFooter>
           <Button
+            type="button"
             className="btn-theme"
             onClick={handleCloseChangePasswordModal}
             disabled={state.loadingEmployee}
@@ -714,6 +729,7 @@ const Employees = () => {
             CLOSE
           </Button>
           <Button
+            type="submit"
             className="btn-theme"
             onClick={handleUpdateEmployeePassword}
             disabled={state.loadingEmployee}
@@ -746,85 +762,86 @@ const Employees = () => {
         <ModalBody>
           <Row>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
-                <FormControl
+              <Form.Floating className="mb-3">
+                <Form.Control
                   type="text"
                   className={`${state.errors.first_name ? "is-invalid" : ""}`}
                   name="first_name"
                   id="first_name"
+                  placeholder=""
                   value={state.first_name}
                   onChange={handleInput}
                   autoFocus
                 />
+                <label htmlFor="first_name">FIRST NAME</label>
                 {state.errors.first_name && (
                   <p className="text-danger">{state.errors.first_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
-                <FormControl
+              <Form.Floating className="mb-3">
+                <Form.Control
                   type="text"
                   className={`${state.errors.middle_name ? "is-invalid" : ""}`}
                   name="middle_name"
                   id="middle_name"
+                  placeholder=""
                   value={state.middle_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="middle_name">MIDDLE NAME</label>
                 {state.errors.middle_name && (
                   <p className="text-danger">{state.errors.middle_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
-                <FormControl
+              <Form.Floating className="mb-3">
+                <Form.Control
                   type="text"
                   className={`${state.errors.last_name ? "is-invalid" : ""}`}
                   name="last_name"
                   id="last_name"
+                  placeholder=""
                   value={state.last_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="last_name">LAST NAME</label>
                 {state.errors.last_name && (
                   <p className="text-danger">{state.errors.last_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
-                <FormControl
+              <Form.Floating className="mb-3">
+                <Form.Control
                   type="text"
                   className={`${state.errors.suffix_name ? "is-invalid" : ""}`}
                   name="suffix_name"
                   id="suffix_name"
+                  placeholder=""
                   value={state.suffix_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="suffix_name">SUFFIX NAME</label>
                 {state.errors.suffix_name && (
                   <p className="text-danger">{state.errors.suffix_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="position">POSITION</FormLabel>
-                <FormSelect
+              <Form.Floating className="mb-3">
+                <Form.Select
                   className={`${state.errors.position ? "is-invalid" : ""}`}
                   name="position"
                   id="position"
                   value={state.position}
                   onChange={handleInput}
                 >
-                  <option value="" key={1}>
-                    N/A
-                  </option>
+                  <option value="">N/A</option>
                   {state.positions.map((position) => (
                     <option
                       value={position.position_id}
@@ -833,15 +850,15 @@ const Employees = () => {
                       {position.position}
                     </option>
                   ))}
-                </FormSelect>
+                </Form.Select>
+                <label htmlFor="position">POSITION</label>
                 {state.errors.position && (
                   <p className="text-danger">{state.errors.position[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormSelect
                   className={`${state.errors.department ? "is-invalid" : ""}`}
                   name="department"
@@ -861,50 +878,50 @@ const Employees = () => {
                     </option>
                   ))}
                 </FormSelect>
+                <label htmlFor="department">DEPARTMENT</label>
                 {state.errors.department && (
                   <p className="text-danger">{state.errors.department[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="username">USERNAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.username ? "is-invalid" : ""}`}
                   name="username"
                   id="username"
+                  placeholder=""
                   value={state.username}
                   onChange={handleInput}
                 />
+                <label htmlFor="username">USERNAME</label>
                 {state.errors.username && (
                   <p className="text-danger">{state.errors.username[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="password">PASSWORD</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="password"
                   className={`${state.errors.password ? "is-invalid" : ""}`}
                   name="password"
                   id="password"
+                  placeholder=""
                   value={state.password}
                   onChange={handleInput}
                 />
+                <label htmlFor="password">PASSWORD</label>
                 {state.errors.password && (
                   <p className="text-danger">{state.errors.password[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="password_confirmation">
-                  CONFIRM PASSWORD
-                </FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="password"
                   className={`${
@@ -912,20 +929,23 @@ const Employees = () => {
                   }`}
                   name="password_confirmation"
                   id="password_confirmation"
+                  placeholder=""
                   value={state.password_confirmation}
                   onChange={handleInput}
                 />
+                <label htmlFor="password_confirmation">CONFIRM PASSWORD</label>
                 {state.errors.password_confirmation && (
                   <p className="text-danger">
                     {state.errors.password_confirmation[0]}
                   </p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
         </ModalBody>
         <ModalFooter>
           <Button
+            type="button"
             className="btn-theme"
             onClick={handleCloseAddEmployeeModal}
             disabled={state.loadingEmployee}
@@ -933,6 +953,7 @@ const Employees = () => {
             CLOSE
           </Button>
           <Button
+            type="submit"
             className="btn-theme"
             onClick={handleStoreEmployee}
             disabled={state.loadingEmployee}
@@ -965,75 +986,78 @@ const Employees = () => {
         <ModalBody>
           <Row>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.first_name ? "is-invalid" : ""}`}
                   name="first_name"
                   id="first_name"
+                  placeholder=""
                   value={state.first_name}
                   onChange={handleInput}
                   autoFocus
                 />
+                <label htmlFor="first_name">FIRST NAME</label>
                 {state.errors.first_name && (
                   <p className="text-danger">{state.errors.first_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.middle_name ? "is-invalid" : ""}`}
                   name="middle_name"
                   id="middle_name"
+                  placeholder=""
                   value={state.middle_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="middle_name">MIDDLE NAME</label>
                 {state.errors.middle_name && (
                   <p className="text-danger">{state.errors.middle_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.last_name ? "is-invalid" : ""}`}
                   name="last_name"
                   id="last_name"
+                  placeholder=""
                   value={state.last_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="last_name">LAST NAME</label>
                 {state.errors.last_name && (
                   <p className="text-danger">{state.errors.last_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.suffix_name ? "is-invalid" : ""}`}
                   name="suffix_name"
                   id="suffix_name"
+                  placeholder=""
                   value={state.suffix_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="suffix_name">SUFFIX NAME</label>
                 {state.errors.suffix_name && (
                   <p className="text-danger">{state.errors.suffix_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="position">POSITION</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormSelect
                   className={`${state.errors.position ? "is-invalid" : ""}`}
                   name="position"
@@ -1053,14 +1077,14 @@ const Employees = () => {
                     </option>
                   ))}
                 </FormSelect>
+                <label htmlFor="position">POSITION</label>
                 {state.errors.position && (
                   <p className="text-danger">{state.errors.position[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormSelect
                   className={`${state.errors.department ? "is-invalid" : ""}`}
                   name="department"
@@ -1080,33 +1104,36 @@ const Employees = () => {
                     </option>
                   ))}
                 </FormSelect>
+                <label htmlFor="department">DEPARTMENT</label>
                 {state.errors.department && (
                   <p className="text-danger">{state.errors.department[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="username">USERNAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.username ? "is-invalid" : ""}`}
                   name="username"
                   id="username"
+                  placeholder=""
                   value={state.username}
                   onChange={handleInput}
                 />
+                <label htmlFor="username">USERNAME</label>
                 {state.errors.username && (
                   <p className="text-danger">{state.errors.username[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
         </ModalBody>
         <ModalFooter>
           <Button
+            type="button"
             className="btn-theme"
             onClick={handleCloseEditEmployeeModal}
             disabled={state.loadingEmployee}
@@ -1114,6 +1141,7 @@ const Employees = () => {
             CLOSE
           </Button>
           <Button
+            type="submit"
             className="btn-theme"
             onClick={handleUpdateEmployee}
             disabled={state.loadingEmployee}
@@ -1136,6 +1164,8 @@ const Employees = () => {
         </ModalFooter>
       </Modal>
 
+      {/* Delete Employee Modal */}
+
       <Modal
         show={state.showDeleteEmployeeModal}
         onHide={handleCloseDeleteEmployeeModal}
@@ -1148,8 +1178,7 @@ const Employees = () => {
         <ModalBody>
           <Row>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="first_name"
@@ -1157,11 +1186,11 @@ const Employees = () => {
                   value={state.first_name}
                   readOnly
                 />
-              </div>
+                <label htmlFor="first_name">FIRST NAME</label>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="middle_name"
@@ -1169,11 +1198,11 @@ const Employees = () => {
                   value={state.middle_name}
                   readOnly
                 />
-              </div>
+                <label htmlFor="middle_name">MIDDLE NAME</label>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="last_name"
@@ -1181,11 +1210,11 @@ const Employees = () => {
                   value={state.last_name}
                   readOnly
                 />
-              </div>
+                <label htmlFor="last_name">LAST NAME</label>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="suffix_name"
@@ -1193,37 +1222,37 @@ const Employees = () => {
                   value={state.suffix_name}
                   readOnly
                 />
-              </div>
+                <label htmlFor="suffix_name">SUFFIX NAME</label>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="position">POSITION</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   name="position"
                   id="position"
                   value={state.position}
                   readOnly
                 />
-              </div>
+                <label htmlFor="position">POSITION</label>
+              </Form.Floating>
             </Col>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   name="department"
                   id="department"
                   value={state.department}
                   readOnly
                 />
-              </div>
+                <label htmlFor="department">DEPARTMENT</label>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col md={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="username">USERNAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="username"
@@ -1231,12 +1260,14 @@ const Employees = () => {
                   value={state.username}
                   readOnly
                 />
-              </div>
+                <label htmlFor="username">USERNAME</label>
+              </Form.Floating>
             </Col>
           </Row>
         </ModalBody>
         <ModalFooter>
           <Button
+            type="button"
             className="btn-theme"
             onClick={handleCloseDeleteEmployeeModal}
             disabled={state.loadingEmployee}
@@ -1244,6 +1275,7 @@ const Employees = () => {
             CLOSE
           </Button>
           <Button
+            type="submit"
             className="btn-theme"
             onClick={handleDeleteEmployee}
             disabled={state.loadingEmployee}

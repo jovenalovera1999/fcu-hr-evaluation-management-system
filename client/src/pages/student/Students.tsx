@@ -5,6 +5,7 @@ import errorHandler from "../../handler/errorHandler";
 import {
   Button,
   Col,
+  Form,
   FormControl,
   FormLabel,
   FormSelect,
@@ -108,6 +109,26 @@ const Students = () => {
     toastBody: "",
     showToast: false,
   });
+
+  const handleResetNecessaryFields = () => {
+    setState((prevState) => ({
+      ...prevState,
+      student_id: 0,
+      student_no: "",
+      first_name: "",
+      middle_name: "",
+      last_name: "",
+      suffix_name: "",
+      department: "",
+      course: "",
+      year_level: "",
+      section: "",
+      irregular: false,
+      password: "",
+      password_confirmation: "",
+      errors: {} as Errors,
+    }));
+  };
 
   const handleInput = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -255,25 +276,12 @@ const Students = () => {
             parseInt(state.student_department)
           );
 
+          handleResetNecessaryFields();
+
           setState((prevState) => ({
             ...prevState,
             courses: [] as Courses[],
             sections: [] as Sections[],
-            student_id: 0,
-            student_no: "",
-            first_name: "",
-            middle_name: "",
-            last_name: "",
-            suffix_name: "",
-            department: "",
-            course: "",
-            year_level: "",
-            section: "",
-            password: "",
-            password_confirmation: "",
-            irregular: false,
-            errors: {} as Errors,
-            loadingStudent: false,
             showAddStudentModal: false,
             toastSuccess: true,
             toastBody: "STUDENT SUCCESSFULY SAVED.",
@@ -288,11 +296,16 @@ const Students = () => {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
-            loadingStudent: false,
           }));
         } else {
           errorHandler(error, navigate);
         }
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingStudent: false,
+        }));
       });
   };
 
@@ -313,20 +326,10 @@ const Students = () => {
             parseInt(state.student_department)
           );
 
+          handleResetNecessaryFields();
+
           setState((prevState) => ({
             ...prevState,
-            student_id: 0,
-            student_no: "",
-            first_name: "",
-            middle_name: "",
-            last_name: "",
-            suffix_name: "",
-            department: "",
-            course: "",
-            year_level: "",
-            section: "",
-            irregular: false,
-            loadingStudent: false,
             showEditStudentModal: false,
             toastSuccess: true,
             toastBody: "STUDENT SUCCESSFULY UPDATED.",
@@ -341,11 +344,16 @@ const Students = () => {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
-            loadingStudent: false,
           }));
         } else {
           errorHandler(error, navigate);
         }
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingStudent: false,
+        }));
       });
   };
 
@@ -366,20 +374,10 @@ const Students = () => {
             parseInt(state.student_department)
           );
 
+          handleResetNecessaryFields();
+
           setState((prevState) => ({
             ...prevState,
-            student_id: 0,
-            student_no: "",
-            first_name: "",
-            middle_name: "",
-            last_name: "",
-            suffix_name: "",
-            department: "",
-            course: "",
-            year_level: "",
-            section: "",
-            irregular: false,
-            loadingStudent: false,
             showDeleteStudentModal: false,
             toastSuccess: true,
             toastBody: "STUDENT SUCCESSFULY DELETED.",
@@ -391,6 +389,12 @@ const Students = () => {
       })
       .catch((error) => {
         errorHandler(error, navigate);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingStudent: false,
+        }));
       });
   };
 
@@ -565,8 +569,7 @@ const Students = () => {
         </div>
         <Row>
           <Col sm={3}>
-            <div className="mb-3">
-              <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
+            <Form.Floating className="mb-3">
               <FormSelect
                 name="student_department"
                 id="student_department"
@@ -583,11 +586,11 @@ const Students = () => {
                   </option>
                 ))}
               </FormSelect>
-            </div>
+              <label htmlFor="student_department">DEPARTMENT</label>
+            </Form.Floating>
           </Col>
           <Col sm={3}>
-            <div className="mb-3">
-              <FormLabel htmlFor="year_level">YEAR LEVEL</FormLabel>
+            <Form.Floating className="mb-3">
               <FormSelect
                 name="student_year_level"
                 id="student_year_level"
@@ -604,7 +607,8 @@ const Students = () => {
                 <option value="7">7</option>
                 <option value="8">8</option>
               </FormSelect>
-            </div>
+              <label htmlFor="student_year_level">YEAR LEVEL</label>
+            </Form.Floating>
           </Col>
         </Row>
         <Table hover size="sm" responsive="sm">
@@ -680,93 +684,97 @@ const Students = () => {
         <ModalBody>
           <Row>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="student_no">STUDENT NO</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.student_no ? "is-invalid" : ""}`}
                   name="student_no"
                   id="student_no"
+                  placeholder=""
                   value={state.student_no}
                   onChange={handleInput}
                   autoFocus
                 />
+                <label htmlFor="student_no">STUDENT NO</label>
                 {state.errors.student_no && (
                   <p className="text-danger">{state.errors.student_no[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.first_name ? "is-invalid" : ""}`}
                   name="first_name"
                   id="first_name"
+                  placeholder=""
                   value={state.first_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="first_name">FIRST NAME</label>
                 {state.errors.first_name && (
                   <p className="text-danger">{state.errors.first_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.middle_name ? "is-invalid" : ""}`}
                   name="middle_name"
                   id="middle_name"
+                  placeholder=""
                   value={state.middle_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="middle_name">MIDDLE NAME</label>
                 {state.errors.middle_name && (
                   <p className="text-danger">{state.errors.middle_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.last_name ? "is-invalid" : ""}`}
                   name="last_name"
                   id="last_name"
+                  placeholder=""
                   value={state.last_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="last_name">LAST NAME</label>
                 {state.errors.last_name && (
                   <p className="text-danger">{state.errors.last_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.suffix_name ? "is-invalid" : ""}`}
                   name="suffix_name"
                   id="suffix_name"
+                  placeholder=""
                   value={state.suffix_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="suffix_name">SUFFIX NAME</label>
                 {state.errors.suffix_name && (
                   <p className="text-danger">{state.errors.suffix_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormSelect
                   name="department"
                   id="department"
@@ -784,14 +792,14 @@ const Students = () => {
                     </option>
                   ))}
                 </FormSelect>
+                <label htmlFor="department">DEPARTMENT</label>
                 {state.errors.department && (
                   <p className="text-danger">{state.errors.department[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="course">COURSE</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormSelect
                   name="course"
                   id="course"
@@ -810,14 +818,14 @@ const Students = () => {
                     ))
                   )}
                 </FormSelect>
+                <label htmlFor="course">COURSE</label>
                 {state.errors.course && (
                   <p className="text-danger">{state.errors.course[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="year_level">YEAR LEVEL</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormSelect
                   name="year_level"
                   id="year_level"
@@ -835,14 +843,14 @@ const Students = () => {
                   <option value="7">7</option>
                   <option value="8">8</option>
                 </FormSelect>
+                <label htmlFor="year_level">YEAR LEVEL</label>
                 {state.errors.year_level && (
                   <p className="text-danger">{state.errors.year_level[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="section">SECTION</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormSelect
                   name="section"
                   id="section"
@@ -864,10 +872,11 @@ const Students = () => {
                     ))
                   )}
                 </FormSelect>
+                <label htmlFor="section">SECTION</label>
                 {state.errors.section && (
                   <p className="text-danger">{state.errors.section[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
@@ -891,45 +900,48 @@ const Students = () => {
           </Row>
           <Row>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="password">PASSWORD</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="password"
                   className={`${state.errors.password ? "is-invalid" : ""}`}
                   name="password"
                   id="password"
+                  placeholder=""
                   value={state.password}
                   onChange={handleInput}
                 />
+                <label htmlFor="password">PASSWORD</label>
                 {state.errors.password && (
                   <p className="text-danger">{state.errors.password[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <FormLabel htmlFor="password_confirmation">
-                CONFIRM PASSWORD
-              </FormLabel>
-              <FormControl
-                type="password"
-                className={`${
-                  state.errors.password_confirmation ? "is-invalid" : ""
-                }`}
-                name="password_confirmation"
-                id="password_confirmation"
-                value={state.password_confirmation}
-                onChange={handleInput}
-              />
-              {state.errors.password_confirmation && (
-                <p className="text-danger">
-                  {state.errors.password_confirmation}
-                </p>
-              )}
+              <Form.Floating className="mb-3">
+                <FormControl
+                  type="password"
+                  className={`${
+                    state.errors.password_confirmation ? "is-invalid" : ""
+                  }`}
+                  name="password_confirmation"
+                  id="password_confirmation"
+                  placeholder=""
+                  value={state.password_confirmation}
+                  onChange={handleInput}
+                />
+                <label htmlFor="password_confirmation">CONFIRM PASSWORD</label>
+                {state.errors.password_confirmation && (
+                  <p className="text-danger">
+                    {state.errors.password_confirmation}
+                  </p>
+                )}
+              </Form.Floating>
             </Col>
           </Row>
         </ModalBody>
         <ModalFooter>
           <Button
+            type="button"
             className="btn-theme"
             onClick={handleCloseAddStudentModal}
             disabled={state.loadingStudent}
@@ -937,6 +949,7 @@ const Students = () => {
             CLOSE
           </Button>
           <Button
+            type="submit"
             className="btn-theme"
             onClick={handleStoreStudent}
             disabled={state.loadingStudent}
@@ -969,93 +982,97 @@ const Students = () => {
         <ModalBody>
           <Row>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="student_no">STUDENT NO</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.student_no ? "is-invalid" : ""}`}
                   name="student_no"
                   id="student_no"
+                  placeholder=""
                   value={state.student_no}
                   onChange={handleInput}
                   autoFocus
                 />
+                <label htmlFor="student_no">STUDENT NO</label>
                 {state.errors.student_no && (
                   <p className="text-danger">{state.errors.student_no[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.first_name ? "is-invalid" : ""}`}
                   name="first_name"
                   id="first_name"
+                  placeholder=""
                   value={state.first_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="first_name">FIRST NAME</label>
                 {state.errors.first_name && (
                   <p className="text-danger">{state.errors.first_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.middle_name ? "is-invalid" : ""}`}
                   name="middle_name"
                   id="middle_name"
+                  placeholder=""
                   value={state.middle_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="middle_name">MIDDLE NAME</label>
                 {state.errors.middle_name && (
                   <p className="text-danger">{state.errors.middle_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.last_name ? "is-invalid" : ""}`}
                   name="last_name"
                   id="last_name"
+                  placeholder=""
                   value={state.last_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="last_name">LAST NAME</label>
                 {state.errors.last_name && (
                   <p className="text-danger">{state.errors.last_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   className={`${state.errors.suffix_name ? "is-invalid" : ""}`}
                   name="suffix_name"
                   id="suffix_name"
+                  placeholder=""
                   value={state.suffix_name}
                   onChange={handleInput}
                 />
+                <label htmlFor="suffix_name">SUFFIX NAME</label>
                 {state.errors.suffix_name && (
                   <p className="text-danger">{state.errors.suffix_name[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormSelect
                   name="department"
                   id="department"
@@ -1073,14 +1090,14 @@ const Students = () => {
                     </option>
                   ))}
                 </FormSelect>
+                <label htmlFor="department">DEPARTMENT</label>
                 {state.errors.department && (
                   <p className="text-danger">{state.errors.department[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="course">COURSE</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormSelect
                   name="course"
                   id="course"
@@ -1099,14 +1116,14 @@ const Students = () => {
                     ))
                   )}
                 </FormSelect>
+                <label htmlFor="course">COURSE</label>
                 {state.errors.course && (
                   <p className="text-danger">{state.errors.course[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="year_level">YEAR LEVEL</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormSelect
                   name="year_level"
                   id="year_level"
@@ -1124,14 +1141,14 @@ const Students = () => {
                   <option value="7">7</option>
                   <option value="8">8</option>
                 </FormSelect>
+                <label htmlFor="year_level">YEAR LEVEL</label>
                 {state.errors.year_level && (
                   <p className="text-danger">{state.errors.year_level[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="section">SECTION</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormSelect
                   name="section"
                   id="section"
@@ -1153,10 +1170,11 @@ const Students = () => {
                     ))
                   )}
                 </FormSelect>
+                <label htmlFor="section">SECTION</label>
                 {state.errors.section && (
                   <p className="text-danger">{state.errors.section[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
@@ -1182,6 +1200,7 @@ const Students = () => {
         </ModalBody>
         <ModalFooter>
           <Button
+            type="button"
             className="btn-theme"
             onClick={handleCloseEditAndDeleteStudentModal}
             disabled={state.loadingStudent}
@@ -1189,6 +1208,7 @@ const Students = () => {
             CLOSE
           </Button>
           <Button
+            type="submit"
             className="btn-theme"
             onClick={handleUpdateStudent}
             disabled={state.loadingStudent}
@@ -1221,8 +1241,7 @@ const Students = () => {
         <ModalBody>
           <Row>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="student_no">STUDENT NO</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="student_no"
@@ -1230,13 +1249,13 @@ const Students = () => {
                   value={state.student_no}
                   readOnly
                 />
-              </div>
+                <label htmlFor="student_no">STUDENT NO</label>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="first_name">FIRST NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="first_name"
@@ -1244,11 +1263,11 @@ const Students = () => {
                   value={state.first_name}
                   readOnly
                 />
-              </div>
+                <label htmlFor="first_name">FIRST NAME</label>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="middle_name">MIDDLE NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="middle_name"
@@ -1256,11 +1275,11 @@ const Students = () => {
                   value={state.middle_name}
                   readOnly
                 />
-              </div>
+                <label htmlFor="middle_name">MIDDLE NAME</label>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="last_name">LAST NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="last_name"
@@ -1268,11 +1287,11 @@ const Students = () => {
                   value={state.last_name}
                   readOnly
                 />
-              </div>
+                <label htmlFor="last_name">LAST NAME</label>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="suffix_name">SUFFIX NAME</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="suffix_name"
@@ -1280,13 +1299,13 @@ const Students = () => {
                   value={state.suffix_name}
                   readOnly
                 />
-              </div>
+                <label htmlFor="suffix_name">SUFFIX NAME</label>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="department">DEPARTMENT</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="department"
@@ -1294,11 +1313,11 @@ const Students = () => {
                   value={state.department}
                   readOnly
                 />
-              </div>
+                <label htmlFor="department">DEPARTMENT</label>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="course">COURSE</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   type="text"
                   name="course"
@@ -1306,29 +1325,30 @@ const Students = () => {
                   value={state.course}
                   readOnly
                 />
-              </div>
+                <label htmlFor="course">COURSE</label>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="year_level">YEAR LEVEL</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   name="year_level"
                   id="year_level"
                   value={state.year_level}
                   readOnly
                 />
-              </div>
+                <label htmlFor="year_level">YEAR LEVEL</label>
+              </Form.Floating>
             </Col>
             <Col sm={3}>
-              <div className="mb-3">
-                <FormLabel htmlFor="section">SECTION</FormLabel>
+              <Form.Floating className="mb-3">
                 <FormControl
                   name="section"
                   id="section"
                   value={state.section}
                   readOnly
                 />
-              </div>
+                <label htmlFor="section">SECTION</label>
+              </Form.Floating>
             </Col>
           </Row>
           <Row>
@@ -1354,6 +1374,7 @@ const Students = () => {
         </ModalBody>
         <ModalFooter>
           <Button
+            type="button"
             className="btn-theme"
             onClick={handleCloseEditAndDeleteStudentModal}
             disabled={state.loadingStudent}
@@ -1361,6 +1382,7 @@ const Students = () => {
             CLOSE
           </Button>
           <Button
+            type="submit"
             className="btn-theme"
             onClick={handleDeleteStudent}
             disabled={state.loadingStudent}

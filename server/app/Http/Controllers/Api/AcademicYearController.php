@@ -10,7 +10,7 @@ class AcademicYearController extends Controller
 {
     public function index()
     {
-        $academicYears = AcademicYear::orderBy('academic_year', 'desc')
+        $academicYears = AcademicYear::orderBy('tbl_academic_years.academic_year', 'desc')
             ->get();
 
         return response()->json([

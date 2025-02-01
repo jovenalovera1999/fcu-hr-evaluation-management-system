@@ -470,7 +470,7 @@ const Questions = () => {
             </Button>
           </ButtonGroup>
         </div>
-        <Table striped hover size="sm" responsive="sm">
+        <Table hover size="sm" responsive="sm">
           <caption>LIST OF QUESTIONS</caption>
           <thead>
             <tr className="align-middle">

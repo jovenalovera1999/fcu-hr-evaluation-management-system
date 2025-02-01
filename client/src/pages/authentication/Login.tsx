@@ -9,6 +9,7 @@ import {
   CardBody,
   CardImg,
   CardTitle,
+  Form,
   FormControl,
   FormLabel,
   Row,
@@ -163,35 +164,33 @@ const Login = () => {
               </CardTitle>
             </Row>
             <CardBody>
-              <div className="mb-3">
-                <FormLabel htmlFor="username">USERNAME</FormLabel>
-                <FormControl
+              <Form.Floating className="mb-3">
+                <Form.Control
                   type="text"
                   className={`${state.errors.username ? "is-invalid" : ""}`}
                   name="username"
                   id="username"
-                  value={state.username}
+                  placeholder="USERNAME"
                   onChange={handleInput}
-                  autoFocus
+                  value={state.username}
                 />
-                {state.errors.username && (
-                  <p className="text-danger">{state.errors.username[0]}</p>
-                )}
-              </div>
-              <div className="mb-3">
-                <FormLabel htmlFor="password">PASSWORD</FormLabel>
-                <FormControl
+                <label htmlFor="username">USERNAME</label>
+              </Form.Floating>
+              <Form.Floating className="mb-3">
+                <Form.Control
                   type="password"
                   className={`${state.errors.password ? "is-invalid" : ""}`}
                   name="password"
                   id="password"
-                  value={state.password}
+                  placeholder="PASSWORD"
                   onChange={handleInput}
+                  value={state.password}
                 />
+                <label htmlFor="password">PASSWORD</label>
                 {state.errors.password && (
                   <p className="text-danger">{state.errors.password[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
               <div className="d-flex justify-content-center">
                 <Button
                   type="submit"

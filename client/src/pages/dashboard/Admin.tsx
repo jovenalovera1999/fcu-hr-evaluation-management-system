@@ -16,7 +16,7 @@ import { Bar, Pie } from "react-chartjs-2";
 import Spinner from "../../components/Spinner";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
-import { Col, FormLabel, FormSelect, Row } from "react-bootstrap";
+import { Col, Form, FormLabel, FormSelect, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 interface AcademicYears {
@@ -376,9 +376,8 @@ const Admin = () => {
     <>
       <Row className="mb-2">
         <Col md={3}>
-          <div className="mb-3">
-            <FormLabel htmlFor="academic_year">ACADEMIC YEAR</FormLabel>
-            <FormSelect
+          <Form.Floating className="mb-3">
+            <Form.Select
               name="academic_year"
               id="academic_year"
               value={state.academic_year}
@@ -393,13 +392,13 @@ const Admin = () => {
                   {academicYear.academic_year}
                 </option>
               ))}
-            </FormSelect>
-          </div>
+            </Form.Select>
+            <label htmlFor="academic_year">ACADEMIC YEAR</label>
+          </Form.Floating>
         </Col>
         <Col md={3}>
-          <div className="mb-3">
-            <FormLabel htmlFor="semester">SEMESTER</FormLabel>
-            <FormSelect
+          <Form.Floating className="mb-3">
+            <Form.Select
               name="semester"
               id="semester"
               value={state.semester}
@@ -415,8 +414,9 @@ const Admin = () => {
                   </option>
                 ))
               )}
-            </FormSelect>
-          </div>
+            </Form.Select>
+            <label htmlFor="semester">SEMESTER</label>
+          </Form.Floating>
         </Col>
       </Row>
       {state.loadingStatistics ? <Spinner /> : statisticsComponents}

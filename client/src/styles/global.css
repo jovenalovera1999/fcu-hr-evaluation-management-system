@@ -11,6 +11,7 @@ html {
 }
 
 body {
+  background-color: white !important;
   font-family: 'Poppins', sans-serif;
   margin: 0;
 }
@@ -144,12 +145,12 @@ a.sidebar-link:hover {
 .custom-btn:active {
   border: none;
   outline: none;
-  box-shadow: none !important;
+  box-shadow: 0 0 0 0 transparent !important;
 }
 
 .btn {
   border-radius: 4px;
-  box-shadow: 0px 1px 0px 0px;
+  box-shadow: 0 0 0 0 transparent !important;
 }
 
 .btn-theme,
@@ -167,24 +168,27 @@ a.sidebar-link:hover {
 }
 
 .form-control,
-.form-select,
-.form-check-input {
-  border-radius: 4px;
+.form-select {
+  border-radius: 4px !important;
+  box-sizing: border-box !important;
+  box-shadow: 0 0 0 0 transparent !important;
 }
 
-.form-control:hover,
+.form-check-input {
+  box-shadow: 0 0 0 0 transparent !important;
+}
+
 .form-select:hover,
 .form-check-input:hover {
-  border-color: #0c1e7d !important;
-  box-shadow: 0 0 0 0 transparent !important;
-  transition: all 0.3s ease;
+  cursor: pointer !important;
 }
 
 .form-control:focus,
-.form-select:focus,
+.form-select:focus, 
 .form-check-input:focus {
+  border: 2px solid #0c1e7d !important;
   border-color: #0c1e7d !important;
-  box-shadow: 0 0 0 0 transparent !important;
+  padding-left: 11px;
 }
 
 .spinner-theme {
