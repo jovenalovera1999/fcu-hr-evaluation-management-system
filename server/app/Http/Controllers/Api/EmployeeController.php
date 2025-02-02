@@ -29,8 +29,9 @@ class EmployeeController extends Controller
         ], 200);
     }
 
-    public function indexByDepartment($departmentId)
+    public function indexByDepartment(Request $request)
     {
+        $departmentId = $request->input('department');
         $employees = Employee::leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
             ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
             ->leftJoin('tbl_users', 'tbl_employees.employee_id', '=', 'tbl_users.employee_id')
@@ -41,6 +42,24 @@ class EmployeeController extends Controller
             ->orderBy('tbl_employees.middle_name', 'asc')
             ->orderBy('tbl_employees.suffix_name', 'asc')
             ->paginate(10);
+
+        return response()->json([
+            'employees' => $employees,
+        ], 200);
+    }
+
+    public function loadByDepartmentForEvaluation($departmentId)
+    {
+        $employees = Employee::leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
+            ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
+            ->leftJoin('tbl_users', 'tbl_employees.employee_id', '=', 'tbl_users.employee_id')
+            ->where('tbl_departments.department_id', $departmentId)
+            ->where('tbl_employees.is_deleted', false)
+            ->orderBy('tbl_employees.last_name', 'asc')
+            ->orderBy('tbl_employees.first_name', 'asc')
+            ->orderBy('tbl_employees.middle_name', 'asc')
+            ->orderBy('tbl_employees.suffix_name', 'asc')
+            ->get();
 
         return response()->json([
             'employees' => $employees,

@@ -7,12 +7,7 @@ import {
   ButtonGroup,
   Col,
   Form,
-  FormControl,
-  FormSelect,
   Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
   Row,
   Spinner,
   Table,
@@ -121,11 +116,7 @@ const Employees = () => {
     }));
 
     if (name === "employee_department") {
-      if (value === "") {
-        handleLoadEmployees();
-      } else {
-        handleLoadEmployeesByDepartment(parseInt(value));
-      }
+      handleEmployeesPageChange(1);
     }
   };
 
@@ -182,7 +173,11 @@ const Employees = () => {
     }));
 
     axiosInstance
-      .get(`/employee/loadEmployees?page=${state.employeesCurrentPage}`)
+      .get(
+        state.employee_department
+          ? `/employee/index/by/department?page=${state.employeesCurrentPage}&department=${state.employee_department}`
+          : `/employee/loadEmployees?page=${state.employeesCurrentPage}`
+      )
       .then((res) => {
         if (res.status === 200) {
           setState((prevState) => ({
@@ -213,40 +208,6 @@ const Employees = () => {
       });
   };
 
-  const handleLoadEmployeesByDepartment = async (departmentId: number) => {
-    setState((prevState) => ({
-      ...prevState,
-      loadingEmployees: true,
-      employees: [] as Employees[],
-    }));
-
-    axiosInstance
-      .get(
-        `/employee/index/by/department/${departmentId}?page=${state.employeesCurrentPage}`
-      )
-      .then((res) => {
-        if (res.status === 200) {
-          setState((prevState) => ({
-            ...prevState,
-            employees: res.data.employees.data,
-            employeesCurrentPage: res.data.employees.current_page,
-            employeesLastPage: res.data.employees.last_page,
-          }));
-        } else {
-          console.error("Unexpected status error: ", res.data.status);
-        }
-      })
-      .catch((error) => {
-        errorHandler(error, navigate);
-      })
-      .finally(() => {
-        setState((prevState) => ({
-          ...prevState,
-          loadingEmployees: false,
-        }));
-      });
-  };
-
   const handleStoreEmployee = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -259,7 +220,7 @@ const Employees = () => {
       .post("/employee/store", state)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadEmployeesByDepartment(parseInt(state.employee_department));
+          handleLoadEmployees();
 
           handleResetNecessaryFields();
 
@@ -304,7 +265,7 @@ const Employees = () => {
       .put(`/employee/update/${state.employee_id}`, state)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadEmployeesByDepartment(parseInt(state.employee_department));
+          handleLoadEmployees();
 
           handleResetNecessaryFields();
 
@@ -394,7 +355,7 @@ const Employees = () => {
       .put(`/employee/delete/${state.employee_id}`)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadEmployeesByDepartment(parseInt(state.employee_department));
+          handleLoadEmployees();
 
           handleResetNecessaryFields();
 
@@ -551,7 +512,7 @@ const Employees = () => {
       handleLoadDepartments();
       handleLoadEmployees();
     }
-  }, [state.employeesCurrentPage]);
+  }, [state.employee_department, state.employeesCurrentPage]);
 
   const content = (
     <>
@@ -572,25 +533,27 @@ const Employees = () => {
         </div>
         <div className="d-flex justify-content-between align-items-center">
           <Col md={3}>
-            <Form.Floating className="mb-3">
-              <FormSelect
-                name="employee_department"
-                id="employee_department"
-                value={state.employee_department}
-                onChange={handleInput}
-              >
-                <option value="">ALL DEPARTMENTS</option>
-                {state.departments.map((department) => (
-                  <option
-                    value={department.department_id}
-                    key={department.department_id}
-                  >
-                    {department.department}
-                  </option>
-                ))}
-              </FormSelect>
-              <label htmlFor="employee_department">DEPARTMENT</label>
-            </Form.Floating>
+            <form method="get">
+              <Form.Floating className="mb-3">
+                <Form.Select
+                  name="employee_department"
+                  id="employee_department"
+                  value={state.employee_department}
+                  onChange={handleInput}
+                >
+                  <option value="">ALL DEPARTMENTS</option>
+                  {state.departments.map((department) => (
+                    <option
+                      value={department.department_id}
+                      key={department.department_id}
+                    >
+                      {department.department}
+                    </option>
+                  ))}
+                </Form.Select>
+                <label htmlFor="employee_department">DEPARTMENT</label>
+              </Form.Floating>
+            </form>
           </Col>
           <ButtonGroup>
             <Button
@@ -636,8 +599,8 @@ const Employees = () => {
               </tr>
             ) : (
               state.employees.map((employee, index) => (
-                <tr key={employee.employee_id} className="align-middle">
-                  <td>{index + 1}</td>
+                <tr key={index} className="align-middle">
+                  <td>{(state.employeesCurrentPage - 1) * 10 + index + 1}</td>
                   <td>{handleEmployeeFullName(employee)}</td>
                   <td>{employee.position}</td>
                   <td>
@@ -681,10 +644,10 @@ const Employees = () => {
         onHide={handleCloseChangePasswordModal}
         backdrop="static"
       >
-        <ModalHeader>CHANGE PASSWORD</ModalHeader>
-        <ModalBody>
+        <Modal.Header>CHANGE PASSWORD</Modal.Header>
+        <Modal.Body>
           <Form.Floating className="mb-3">
-            <FormControl
+            <Form.Control
               type="password"
               name="password"
               className={`${state.errors.password ? "is-invalid" : ""}`}
@@ -700,7 +663,7 @@ const Employees = () => {
             )}
           </Form.Floating>
           <Form.Floating className="mb-3">
-            <FormControl
+            <Form.Control
               type="password"
               className={`${
                 state.errors.password_confirmation ? "is-invalid" : ""
@@ -718,8 +681,8 @@ const Employees = () => {
               </p>
             )}
           </Form.Floating>
-        </ModalBody>
-        <ModalFooter>
+        </Modal.Body>
+        <Modal.Footer>
           <Button
             type="button"
             className="btn-theme"
@@ -749,7 +712,7 @@ const Employees = () => {
               "SAVE"
             )}
           </Button>
-        </ModalFooter>
+        </Modal.Footer>
       </Modal>
 
       <Modal
@@ -758,8 +721,8 @@ const Employees = () => {
         fullscreen={true}
         backdrop="static"
       >
-        <ModalHeader>ADD EMPLOYEE</ModalHeader>
-        <ModalBody>
+        <Modal.Header>ADD EMPLOYEE</Modal.Header>
+        <Modal.Body>
           <Row>
             <Col md={3}>
               <Form.Floating className="mb-3">
@@ -859,7 +822,7 @@ const Employees = () => {
             </Col>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormSelect
+                <Form.Select
                   className={`${state.errors.department ? "is-invalid" : ""}`}
                   name="department"
                   id="department"
@@ -877,7 +840,7 @@ const Employees = () => {
                       {department.department}
                     </option>
                   ))}
-                </FormSelect>
+                </Form.Select>
                 <label htmlFor="department">DEPARTMENT</label>
                 {state.errors.department && (
                   <p className="text-danger">{state.errors.department[0]}</p>
@@ -888,7 +851,7 @@ const Employees = () => {
           <Row>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="text"
                   className={`${state.errors.username ? "is-invalid" : ""}`}
                   name="username"
@@ -905,7 +868,7 @@ const Employees = () => {
             </Col>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="password"
                   className={`${state.errors.password ? "is-invalid" : ""}`}
                   name="password"
@@ -922,7 +885,7 @@ const Employees = () => {
             </Col>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="password"
                   className={`${
                     state.errors.password_confirmation ? "is-invalid" : ""
@@ -942,8 +905,8 @@ const Employees = () => {
               </Form.Floating>
             </Col>
           </Row>
-        </ModalBody>
-        <ModalFooter>
+        </Modal.Body>
+        <Modal.Footer>
           <Button
             type="button"
             className="btn-theme"
@@ -973,7 +936,7 @@ const Employees = () => {
               "SAVE"
             )}
           </Button>
-        </ModalFooter>
+        </Modal.Footer>
       </Modal>
 
       <Modal
@@ -982,12 +945,12 @@ const Employees = () => {
         fullscreen={true}
         backdrop="static"
       >
-        <ModalHeader>EDIT EMPLOYEE</ModalHeader>
-        <ModalBody>
+        <Modal.Header>EDIT EMPLOYEE</Modal.Header>
+        <Modal.Body>
           <Row>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="text"
                   className={`${state.errors.first_name ? "is-invalid" : ""}`}
                   name="first_name"
@@ -1005,7 +968,7 @@ const Employees = () => {
             </Col>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="text"
                   className={`${state.errors.middle_name ? "is-invalid" : ""}`}
                   name="middle_name"
@@ -1022,7 +985,7 @@ const Employees = () => {
             </Col>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="text"
                   className={`${state.errors.last_name ? "is-invalid" : ""}`}
                   name="last_name"
@@ -1039,7 +1002,7 @@ const Employees = () => {
             </Col>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="text"
                   className={`${state.errors.suffix_name ? "is-invalid" : ""}`}
                   name="suffix_name"
@@ -1058,7 +1021,7 @@ const Employees = () => {
           <Row>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormSelect
+                <Form.Select
                   className={`${state.errors.position ? "is-invalid" : ""}`}
                   name="position"
                   id="position"
@@ -1076,7 +1039,7 @@ const Employees = () => {
                       {position.position}
                     </option>
                   ))}
-                </FormSelect>
+                </Form.Select>
                 <label htmlFor="position">POSITION</label>
                 {state.errors.position && (
                   <p className="text-danger">{state.errors.position[0]}</p>
@@ -1085,7 +1048,7 @@ const Employees = () => {
             </Col>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormSelect
+                <Form.Select
                   className={`${state.errors.department ? "is-invalid" : ""}`}
                   name="department"
                   id="department"
@@ -1103,7 +1066,7 @@ const Employees = () => {
                       {department.department}
                     </option>
                   ))}
-                </FormSelect>
+                </Form.Select>
                 <label htmlFor="department">DEPARTMENT</label>
                 {state.errors.department && (
                   <p className="text-danger">{state.errors.department[0]}</p>
@@ -1114,7 +1077,7 @@ const Employees = () => {
           <Row>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="text"
                   className={`${state.errors.username ? "is-invalid" : ""}`}
                   name="username"
@@ -1130,8 +1093,8 @@ const Employees = () => {
               </Form.Floating>
             </Col>
           </Row>
-        </ModalBody>
-        <ModalFooter>
+        </Modal.Body>
+        <Modal.Footer>
           <Button
             type="button"
             className="btn-theme"
@@ -1161,7 +1124,7 @@ const Employees = () => {
               "SAVE"
             )}
           </Button>
-        </ModalFooter>
+        </Modal.Footer>
       </Modal>
 
       {/* Delete Employee Modal */}
@@ -1172,14 +1135,14 @@ const Employees = () => {
         fullscreen={true}
         backdrop="static"
       >
-        <ModalHeader>
+        <Modal.Header>
           ARE YOU SURE YOU WANT TO DELETE THIS EMPLOYEE?
-        </ModalHeader>
-        <ModalBody>
+        </Modal.Header>
+        <Modal.Body>
           <Row>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="text"
                   name="first_name"
                   id="first_name"
@@ -1191,7 +1154,7 @@ const Employees = () => {
             </Col>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="text"
                   name="middle_name"
                   id="middle_name"
@@ -1203,7 +1166,7 @@ const Employees = () => {
             </Col>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="text"
                   name="last_name"
                   id="last_name"
@@ -1215,7 +1178,7 @@ const Employees = () => {
             </Col>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="text"
                   name="suffix_name"
                   id="suffix_name"
@@ -1229,7 +1192,7 @@ const Employees = () => {
           <Row>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   name="position"
                   id="position"
                   value={state.position}
@@ -1240,7 +1203,7 @@ const Employees = () => {
             </Col>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   name="department"
                   id="department"
                   value={state.department}
@@ -1253,7 +1216,7 @@ const Employees = () => {
           <Row>
             <Col md={3}>
               <Form.Floating className="mb-3">
-                <FormControl
+                <Form.Control
                   type="text"
                   name="username"
                   id="username"
@@ -1264,8 +1227,8 @@ const Employees = () => {
               </Form.Floating>
             </Col>
           </Row>
-        </ModalBody>
-        <ModalFooter>
+        </Modal.Body>
+        <Modal.Footer>
           <Button
             type="button"
             className="btn-theme"
@@ -1295,7 +1258,7 @@ const Employees = () => {
               "YES"
             )}
           </Button>
-        </ModalFooter>
+        </Modal.Footer>
       </Modal>
     </>
   );

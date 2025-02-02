@@ -10,8 +10,6 @@ import {
   CardImg,
   CardTitle,
   Form,
-  FormControl,
-  FormLabel,
   Row,
   Spinner,
 } from "react-bootstrap";
@@ -170,9 +168,10 @@ const Login = () => {
                   className={`${state.errors.username ? "is-invalid" : ""}`}
                   name="username"
                   id="username"
-                  placeholder="USERNAME"
+                  placeholder=""
                   onChange={handleInput}
                   value={state.username}
+                  autoFocus
                 />
                 <label htmlFor="username">USERNAME</label>
               </Form.Floating>
@@ -182,7 +181,7 @@ const Login = () => {
                   className={`${state.errors.password ? "is-invalid" : ""}`}
                   name="password"
                   id="password"
-                  placeholder="PASSWORD"
+                  placeholder=""
                   onChange={handleInput}
                   value={state.password}
                 />

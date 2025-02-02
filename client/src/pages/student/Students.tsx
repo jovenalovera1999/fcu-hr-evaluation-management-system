@@ -4,10 +4,10 @@ import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import {
   Button,
+  ButtonGroup,
   Col,
   Form,
   FormControl,
-  FormLabel,
   FormSelect,
   Modal,
   ModalBody,
@@ -88,6 +88,8 @@ const Students = () => {
     sections: [] as Sections[],
     student_department: "",
     student_year_level: "",
+    studentsCurrentPage: 1,
+    studentsLastPage: 1,
     student_id: 0,
     student_no: "",
     first_name: "",
@@ -178,6 +180,13 @@ const Students = () => {
     }
   };
 
+  const handleStudentsPageChange = (page: number) => {
+    setState((prevState) => ({
+      ...prevState,
+      studentsCurrentPage: page,
+    }));
+  };
+
   const handleLoadDepartments = async () => {
     axiosInstance
       .get("/department/index")
@@ -232,6 +241,38 @@ const Students = () => {
       })
       .catch((error) => {
         errorHandler(error, navigate);
+      });
+  };
+
+  const handleLoadAllStudents = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingStudents: true,
+      students: [] as Students[],
+    }));
+
+    axiosInstance
+      .get(`/student/loadAllStudents?page=${state.studentsCurrentPage}`)
+      .then((res) => {
+        if (res.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            students: res.data.students.data,
+            studentsCurrentPage: res.data.students.current_page,
+            studentsLastPage: res.data.students.last_page,
+          }));
+        } else {
+          console.error("Unexpected status error: ", res.status);
+        }
+      })
+      .catch((error) => {
+        errorHandler(error, null);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingStudents: false,
+        }));
       });
   };
 
@@ -518,8 +559,9 @@ const Students = () => {
       errorHandler(401, navigate);
     } else {
       handleLoadDepartments();
+      handleLoadAllStudents();
     }
-  }, []);
+  }, [state.studentsCurrentPage]);
 
   useEffect(() => {
     const loadCourses = async () => {
@@ -568,48 +610,72 @@ const Students = () => {
           </div>
         </div>
         <Row>
-          <Col sm={3}>
-            <Form.Floating className="mb-3">
-              <FormSelect
-                name="student_department"
-                id="student_department"
-                value={state.student_department}
-                onChange={handleInput}
+          <div className="d-flex justify-content-between align-items-center">
+            <Col sm={3}>
+              <Form.Floating className="mb-3">
+                <FormSelect
+                  name="student_department"
+                  id="student_department"
+                  value={state.student_department}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.departments.map((department) => (
+                    <option
+                      value={department.department_id}
+                      key={department.department_id}
+                    >
+                      {department.department}
+                    </option>
+                  ))}
+                </FormSelect>
+                <label htmlFor="student_department">DEPARTMENT</label>
+              </Form.Floating>
+            </Col>
+            <Col sm={3}>
+              <Form.Floating className="mb-3">
+                <FormSelect
+                  name="student_year_level"
+                  id="student_year_level"
+                  value={state.student_year_level}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                </FormSelect>
+                <label htmlFor="student_year_level">YEAR LEVEL</label>
+              </Form.Floating>
+            </Col>
+            <ButtonGroup>
+              <Button
+                type="button"
+                className="btn-theme"
+                disabled={state.studentsCurrentPage <= 1}
+                onClick={() =>
+                  handleStudentsPageChange(state.studentsCurrentPage - 1)
+                }
               >
-                <option value="">N/A</option>
-                {state.departments.map((department) => (
-                  <option
-                    value={department.department_id}
-                    key={department.department_id}
-                  >
-                    {department.department}
-                  </option>
-                ))}
-              </FormSelect>
-              <label htmlFor="student_department">DEPARTMENT</label>
-            </Form.Floating>
-          </Col>
-          <Col sm={3}>
-            <Form.Floating className="mb-3">
-              <FormSelect
-                name="student_year_level"
-                id="student_year_level"
-                value={state.student_year_level}
-                onChange={handleInput}
+                PREVIOUS
+              </Button>
+              <Button
+                type="button"
+                className="btn-theme"
+                disabled={state.studentsCurrentPage >= state.studentsLastPage}
+                onClick={() =>
+                  handleStudentsPageChange(state.studentsCurrentPage + 1)
+                }
               >
-                <option value="">N/A</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-              </FormSelect>
-              <label htmlFor="student_year_level">YEAR LEVEL</label>
-            </Form.Floating>
-          </Col>
+                NEXT
+              </Button>
+            </ButtonGroup>
+          </div>
         </Row>
         <Table hover size="sm" responsive="sm">
           <caption>LIST OF STUDENTS</caption>
@@ -637,8 +703,8 @@ const Students = () => {
               </tr>
             ) : (
               state.students.map((student, index) => (
-                <tr key={student.student_id} className="align-middle">
-                  <td>{index + 1}</td>
+                <tr key={index} className="align-middle">
+                  <td>{(state.studentsCurrentPage - 1) * 10 + index + 1}</td>
                   <td>{student.student_no}</td>
                   <td>{handleStudentFullName(student)}</td>
                   <td>{handleDepartmentAndCourse(student)}</td>

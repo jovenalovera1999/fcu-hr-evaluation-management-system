@@ -45,7 +45,8 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::controller(EmployeeController::class)->prefix("employee")->group(function () {
         Route::get('/loadEmployees', 'loadEmployees');
-        Route::get("/index/by/department/{departmentId}", "indexByDepartment");
+        Route::get("/index/by/department", "indexByDepartment");
+        Route::get('/loadEmployeesByDepartmentForEvaluation/{departmentId}', 'loadByDepartmentForEvaluation');
         Route::get("/load/by/academic_year/and/semester/{academicYearId}/{semesterId}", "loadEmployeesByAcademicYearAndSemester");
         Route::get("/get/employee/{employeeId}", "getEmployee");
         Route::post("/store", "store");
@@ -71,6 +72,7 @@ Route::middleware("auth:sanctum")->group(function () {
     });
 
     Route::controller(StudentController::class)->prefix("student")->group(function () {
+        Route::get('/loadAllStudents', 'loadAllStudents');
         Route::get("/load/students/by/year_level/and/department/{yearLevel}/{departmentId}", "loadStudentsByYearLevelAndDepartment");
         Route::get("/load/irregular/students/by/page", "loadIrregularStudentsByPage");
         Route::get("/load/irregular/students/by/page/and/search", "loadIrregularStudentsByPageAndSearch");

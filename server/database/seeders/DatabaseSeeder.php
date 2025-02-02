@@ -201,25 +201,25 @@ class DatabaseSeeder extends Seeder
 
         $user->createToken("AdminToken")->plainTextToken;
 
-        // Employee::factory(100)->create()->each(function ($employee) {
-        //     $user = User::create([
-        //         "employee_id" => $employee->employee_id,
-        //         "username" => $employee->first_name,
-        //         "password" => bcrypt($employee->last_name)
-        //     ]);
+        Employee::factory(100)->create()->each(function ($employee) {
+            $user = User::create([
+                "employee_id" => $employee->employee_id,
+                "username" => $employee->first_name,
+                "password" => bcrypt($employee->last_name)
+            ]);
 
-        //     $user->createToken("EmployeeToken")->plainTextToken;
-        // });
+            $user->createToken("EmployeeToken")->plainTextToken;
+        });
 
-        // Student::factory(200)->create()->each(function ($student) {
-        //     $user = User::create([
-        //         "student_id" => $student->student_id,
-        //         "username" => $student->student_no,
-        //         "password" => bcrypt($student->last_name),
-        //         "is_student" => 1
-        //     ]);
+        Student::factory(200)->create()->each(function ($student) {
+            $user = User::create([
+                "student_id" => $student->student_id,
+                "username" => $student->student_no,
+                "password" => bcrypt($student->last_name),
+                "is_student" => 1
+            ]);
 
-        //     $user->createToken("StudentToken")->plainTextToken;
-        // });
+            $user->createToken("StudentToken")->plainTextToken;
+        });
     }
 }

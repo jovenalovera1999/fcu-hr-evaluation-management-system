@@ -315,9 +315,9 @@ const SendAnEvaluationToStudents = () => {
 
   const handleLoadEmployees = async (departmentId: number) => {
     axiosInstance
-      .get(`/employee/index/by/department/${departmentId}`)
+      .get(`/employee/loadEmployeesByDepartmentForEvaluation/${departmentId}`)
       .then((res) => {
-        if (res.data.status === 200) {
+        if (res.status === 200) {
           setState((prevState) => ({
             ...prevState,
             employees: res.data.employees,
