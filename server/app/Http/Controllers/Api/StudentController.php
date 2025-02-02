@@ -165,8 +165,11 @@ class StudentController extends Controller
         ], 200);
     }
 
-    public function loadStudentsByYearLevelAndDepartment($yearLevel, $departmentId)
+    public function loadStudentsByYearLevelAndDepartment(Request $request)
     {
+        $departmentId = $request->input('student_department');
+        $yearLevel = $request->input('student_year_level');
+
         $students = Student::leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
             ->leftJoin('tbl_departments', 'tbl_students.department_id', '=', 'tbl_departments.department_id')
             ->leftJoin('tbl_sections', 'tbl_students.section_id', '=', 'tbl_sections.section_id')
@@ -181,12 +184,11 @@ class StudentController extends Controller
             ->orderBy('tbl_courses.course', 'asc')
             ->orderBy('tbl_sections.section', 'asc')
             ->orderBy('tbl_students.student_no', 'asc')
-            ->get();
+            ->paginate(10);
 
         return response()->json([
-            'students' => $students,
-            'status' => 200
-        ]);
+            'students' => $students
+        ], 200);
     }
 
     public function getStudent($studentId)

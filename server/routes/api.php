@@ -73,7 +73,7 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::controller(StudentController::class)->prefix("student")->group(function () {
         Route::get('/loadAllStudents', 'loadAllStudents');
-        Route::get("/load/students/by/year_level/and/department/{yearLevel}/{departmentId}", "loadStudentsByYearLevelAndDepartment");
+        Route::get("/load/students/by/year_level/and/department", "loadStudentsByYearLevelAndDepartment");
         Route::get("/load/irregular/students/by/page", "loadIrregularStudentsByPage");
         Route::get("/load/irregular/students/by/page/and/search", "loadIrregularStudentsByPageAndSearch");
         Route::get("/load/irregular/student/ids", "loadIrregularStudentIds");

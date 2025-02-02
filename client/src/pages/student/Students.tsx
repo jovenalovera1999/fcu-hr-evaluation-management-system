@@ -145,22 +145,17 @@ const Students = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
 
-    const yearLevel =
-      name === "student_year_level"
-        ? parseInt(value)
-        : parseInt(state.student_year_level);
-    const departmentId =
-      name === "student_department"
-        ? parseInt(value)
-        : parseInt(state.student_department);
+    // const yearLevel =
+    //   name === "student_year_level"
+    //     ? parseInt(value)
+    //     : parseInt(state.student_year_level);
+    // const departmentId =
+    //   name === "student_department"
+    //     ? parseInt(value)
+    //     : parseInt(state.student_department);
 
-    if (yearLevel && departmentId) {
-      setState((prevState) => ({
-        ...prevState,
-        loadingStudents: true,
-      }));
-
-      handleLoadStudents(yearLevel, departmentId);
+    if (state.student_year_level && state.student_department) {
+      handleStudentsPageChange(1);
     }
 
     if (name === "department") {
@@ -244,15 +239,19 @@ const Students = () => {
       });
   };
 
-  const handleLoadAllStudents = async () => {
+  const handleLoadStudents = async () => {
     setState((prevState) => ({
       ...prevState,
-      loadingStudents: true,
       students: [] as Students[],
+      loadingStudents: true,
     }));
 
     axiosInstance
-      .get(`/student/loadAllStudents?page=${state.studentsCurrentPage}`)
+      .get(
+        state.student_year_level && state.student_department
+          ? `/student/load/students/by/year_level/and/department?page=${state.studentsCurrentPage}&student_year_level=${state.student_year_level}&student_department=${state.student_department}`
+          : `/student/loadAllStudents?page=${state.studentsCurrentPage}`
+      )
       .then((res) => {
         if (res.status === 200) {
           setState((prevState) => ({
@@ -262,41 +261,17 @@ const Students = () => {
             studentsLastPage: res.data.students.last_page,
           }));
         } else {
-          console.error("Unexpected status error: ", res.status);
+          console.error("Unexpected status error: ", res.data.status);
         }
       })
       .catch((error) => {
-        errorHandler(error, null);
+        errorHandler(error, navigate);
       })
       .finally(() => {
         setState((prevState) => ({
           ...prevState,
           loadingStudents: false,
         }));
-      });
-  };
-
-  const handleLoadStudents = async (
-    yearLevel: number,
-    departmentId: number
-  ) => {
-    axiosInstance
-      .get(
-        `/student/load/students/by/year_level/and/department/${yearLevel}/${departmentId}`
-      )
-      .then((res) => {
-        if (res.data.status === 200) {
-          setState((prevState) => ({
-            ...prevState,
-            students: res.data.students,
-            loadingStudents: false,
-          }));
-        } else {
-          console.error("Unexpected status error: ", res.data.status);
-        }
-      })
-      .catch((error) => {
-        errorHandler(error, navigate);
       });
   };
 
@@ -312,10 +287,7 @@ const Students = () => {
       .post("/student/store", state)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadStudents(
-            parseInt(state.student_year_level),
-            parseInt(state.student_department)
-          );
+          handleLoadStudents();
 
           handleResetNecessaryFields();
 
@@ -362,10 +334,7 @@ const Students = () => {
       .put(`/student/update/${state.student_id}`, state)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadStudents(
-            parseInt(state.student_year_level),
-            parseInt(state.student_department)
-          );
+          handleLoadStudents();
 
           handleResetNecessaryFields();
 
@@ -410,10 +379,7 @@ const Students = () => {
       .put(`/student/delete/${state.student_id}`)
       .then((res) => {
         if (res.data.status === 200) {
-          handleLoadStudents(
-            parseInt(state.student_year_level),
-            parseInt(state.student_department)
-          );
+          handleLoadStudents();
 
           handleResetNecessaryFields();
 
@@ -559,9 +525,13 @@ const Students = () => {
       errorHandler(401, navigate);
     } else {
       handleLoadDepartments();
-      handleLoadAllStudents();
+      handleLoadStudents();
     }
-  }, [state.studentsCurrentPage]);
+  }, [
+    state.student_department,
+    state.student_year_level,
+    state.studentsCurrentPage,
+  ]);
 
   useEffect(() => {
     const loadCourses = async () => {

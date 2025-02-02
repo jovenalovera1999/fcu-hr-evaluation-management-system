@@ -533,27 +533,25 @@ const Employees = () => {
         </div>
         <div className="d-flex justify-content-between align-items-center">
           <Col md={3}>
-            <form method="get">
-              <Form.Floating className="mb-3">
-                <Form.Select
-                  name="employee_department"
-                  id="employee_department"
-                  value={state.employee_department}
-                  onChange={handleInput}
-                >
-                  <option value="">ALL DEPARTMENTS</option>
-                  {state.departments.map((department) => (
-                    <option
-                      value={department.department_id}
-                      key={department.department_id}
-                    >
-                      {department.department}
-                    </option>
-                  ))}
-                </Form.Select>
-                <label htmlFor="employee_department">DEPARTMENT</label>
-              </Form.Floating>
-            </form>
+            <Form.Floating className="mb-3">
+              <Form.Select
+                name="employee_department"
+                id="employee_department"
+                value={state.employee_department}
+                onChange={handleInput}
+              >
+                <option value="">ALL DEPARTMENTS</option>
+                {state.departments.map((department) => (
+                  <option
+                    value={department.department_id}
+                    key={department.department_id}
+                  >
+                    {department.department}
+                  </option>
+                ))}
+              </Form.Select>
+              <label htmlFor="employee_department">DEPARTMENT</label>
+            </Form.Floating>
           </Col>
           <ButtonGroup>
             <Button
