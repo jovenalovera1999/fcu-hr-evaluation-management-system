@@ -6,9 +6,7 @@ import {
   Button,
   ButtonGroup,
   Col,
-  FormControl,
-  FormLabel,
-  FormSelect,
+  Form,
   Modal,
   ModalBody,
   ModalFooter,
@@ -17,7 +15,7 @@ import {
   Table,
 } from "react-bootstrap";
 import AlertToastMessage from "../../components/AlertToastMessage";
-import { Form, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface Categories {
   category_id: number;
@@ -66,6 +64,8 @@ const Questions = () => {
     question: "",
     category: "",
     position: "",
+    selected_category: "",
+    selected_position: "",
     errors: {} as Errors,
     showAddQuestionModal: false,
     showEditQuestionModal: false,
@@ -94,6 +94,8 @@ const Questions = () => {
       ...prevState,
       [name]: value,
     }));
+
+    handleQuestionsPageChange(1);
   };
 
   const handleQuestionsPageChange = (page: number) => {
@@ -134,8 +136,18 @@ const Questions = () => {
   };
 
   const handleLoadQuestions = async () => {
+    let apiRoute = `/question/loadQuestions?page=${state.questionsCurrentPage}`;
+
+    if (state.selected_category && state.selected_position) {
+      apiRoute = `/question/loadQuestions?page=${state.questionsCurrentPage}&categoryId=${state.selected_category}&positionId=${state.selected_position}`;
+    } else if (state.selected_position) {
+      apiRoute = `/question/loadQuestions?page=${state.questionsCurrentPage}&positionId=${state.selected_position}`;
+    } else if (state.selected_category) {
+      apiRoute = `/question/loadQuestions?page=${state.questionsCurrentPage}&categoryId=${state.selected_category}`;
+    }
+
     axiosInstance
-      .get(`/question/index?page=${state.questionsCurrentPage}`)
+      .get(apiRoute)
       .then((res) => {
         if (res.status === 200) {
           setState((prevState) => ({
@@ -396,7 +408,11 @@ const Questions = () => {
       handleLoadCategories();
       handleLoadPositions();
     }
-  }, [state.questionsCurrentPage]);
+  }, [
+    state.selected_category,
+    state.selected_position,
+    state.questionsCurrentPage,
+  ]);
 
   const content = (
     <>
@@ -407,7 +423,10 @@ const Questions = () => {
         onClose={handleCloseToast}
       />
       <div className="mx-auto mt-2">
-        <div className="d-flex justify-content-end">
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="mb-3">
+            <h3>QUESTIONS</h3>
+          </div>
           <div className="mb-3">
             <Button className="btn-theme" onClick={handleOpenAddQuestionModal}>
               ADD QUESTION
@@ -416,9 +435,13 @@ const Questions = () => {
         </div>
         <div className="d-flex justify-content-between align-items-center">
           <Col md={3}>
-            <div className="mb-3">
-              <FormLabel htmlFor="category">CATEGORY</FormLabel>
-              <FormSelect name="category" id="category">
+            <Form.Floating className="mb-3">
+              <Form.Select
+                name="selected_category"
+                id="selected_category"
+                value={state.selected_category}
+                onChange={handleInput}
+              >
                 <option value="">N/A</option>
                 {state.loadingCategories ? (
                   <option value="">LOADING...</option>
@@ -429,13 +452,18 @@ const Questions = () => {
                     </option>
                   ))
                 )}
-              </FormSelect>
-            </div>
+              </Form.Select>
+              <label htmlFor="selected_category">CATEGORY</label>
+            </Form.Floating>
           </Col>
           <Col md={3}>
-            <div className="mb-3">
-              <FormLabel htmlFor="position">POSITION</FormLabel>
-              <FormSelect name="position" id="position">
+            <Form.Floating className="mb-3">
+              <Form.Select
+                name="selected_position"
+                id="selected_position"
+                value={state.selected_position}
+                onChange={handleInput}
+              >
                 <option value="">N/A</option>
                 {state.loadingPositions ? (
                   <option value="">LOADING...</option>
@@ -446,8 +474,9 @@ const Questions = () => {
                     </option>
                   ))
                 )}
-              </FormSelect>
-            </div>
+              </Form.Select>
+              <label htmlFor="position">POSITION</label>
+            </Form.Floating>
           </Col>
           <ButtonGroup>
             <Button
@@ -517,9 +546,8 @@ const Questions = () => {
       >
         <ModalHeader>ADD QUESTION</ModalHeader>
         <ModalBody>
-          <div className="mb-3">
-            <FormLabel htmlFor="category">CATEGORY</FormLabel>
-            <FormSelect
+          <Form.Floating className="mb-3">
+            <Form.Select
               className={`${state.errors.category ? "is-invalid" : ""}`}
               name="category"
               id="category"
@@ -535,29 +563,30 @@ const Questions = () => {
                   {category.category}
                 </option>
               ))}
-            </FormSelect>
+            </Form.Select>
+            <label htmlFor="category">CATEGORY</label>
             {state.errors.category && (
               <p className="text-danger">{state.errors.category[0]}</p>
             )}
-          </div>
-          <div className="mb-3">
-            <FormLabel htmlFor="question">QUESTION</FormLabel>
-            <FormControl
+          </Form.Floating>
+          <Form.Floating className="mb-3">
+            <Form.Control
               as="textarea"
               className={`${state.errors.question ? "is-invalid" : ""}`}
-              rows={4}
+              style={{ height: "100px" }}
               name="question"
               id="question"
+              placeholder=""
               value={state.question}
               onChange={handleInput}
             />
+            <label htmlFor="question">QUESTION</label>
             {state.errors.question && (
               <p className="text-danger">{state.errors.question[0]}</p>
             )}
-          </div>
-          <div className="mb-3">
-            <label htmlFor="position">QUESTION FOR</label>
-            <select
+          </Form.Floating>
+          <Form.Floating className="mb-3">
+            <Form.Select
               className={`form-select ${
                 state.errors.position ? "is-invalid" : ""
               }`}
@@ -579,11 +608,12 @@ const Questions = () => {
                   </option>
                 ))
               )}
-            </select>
+            </Form.Select>
+            <label htmlFor="position">QUESTION FOR</label>
             {state.errors.position && (
               <p className="text-danger">{state.errors.position[0]}</p>
             )}
-          </div>
+          </Form.Floating>
         </ModalBody>
         <ModalFooter>
           <Button
@@ -625,8 +655,8 @@ const Questions = () => {
           <ModalHeader>EDIT QUESTION</ModalHeader>
           <ModalBody>
             <div className="mb-3">
-              <FormLabel htmlFor="category">CATEGORY</FormLabel>
-              <FormSelect
+              <Form.Label htmlFor="category">CATEGORY</Form.Label>
+              <Form.Select
                 className={`${state.errors.category ? "is-invalid" : ""}`}
                 name="category"
                 id="category"
@@ -645,14 +675,14 @@ const Questions = () => {
                     {category.category}
                   </option>
                 ))}
-              </FormSelect>
+              </Form.Select>
               {state.errors.category && (
                 <p className="text-danger">{state.errors.category[0]}</p>
               )}
             </div>
             <div className="mb-3">
-              <FormLabel htmlFor="question">QUESTION</FormLabel>
-              <FormControl
+              <Form.Label htmlFor="question">QUESTION</Form.Label>
+              <Form.Control
                 as="textarea"
                 className={`${state.errors.question ? "is-invalid" : ""}`}
                 rows={4}
@@ -736,8 +766,8 @@ const Questions = () => {
           <ModalHeader>DELETE QUESTION</ModalHeader>
           <ModalBody>
             <div className="mb-3">
-              <FormLabel htmlFor="category">CATEGORY</FormLabel>
-              <FormSelect
+              <Form.Label htmlFor="category">CATEGORY</Form.Label>
+              <Form.Select
                 className={`${state.errors.category ? "is-invalid" : ""}`}
                 name="category"
                 id="category"
@@ -756,14 +786,14 @@ const Questions = () => {
                     {category.category}
                   </option>
                 ))}
-              </FormSelect>
+              </Form.Select>
               {state.errors.category && (
                 <p className="text-danger">{state.errors.category[0]}</p>
               )}
             </div>
             <div className="mb-3">
-              <FormLabel htmlFor="question">QUESTION</FormLabel>
-              <FormControl
+              <Form.Label htmlFor="question">QUESTION</Form.Label>
+              <Form.Control
                 as="textarea"
                 className={`${state.errors.question ? "is-invalid" : ""}`}
                 rows={4}
