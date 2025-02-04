@@ -50,9 +50,9 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::get("/load/by/academic_year/and/semester/{academicYearId}/{semesterId}", "loadEmployeesByAcademicYearAndSemester");
         Route::get("/get/employee/{employeeId}", "getEmployee");
         Route::post("/store", "store");
-        Route::put("/update/{employeeId}", "updateEmployee");
-        Route::put("/update/password/{employeeId}", "updatePassword");
-        Route::put("/delete/{employeeId}", "deleteEmployee");
+        Route::put("/updateEmployee", "updateEmployee");
+        Route::put("/updatePassword", "updatePassword");
+        Route::put("/deleteEmployee", "deleteEmployee");
     });
 
     Route::controller(AcademicYearController::class)->prefix("academic_year")->group(function () {

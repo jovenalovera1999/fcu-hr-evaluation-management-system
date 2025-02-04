@@ -144,8 +144,10 @@ class EmployeeController extends Controller
         ]);
     }
 
-    public function updateEmployee(Request $request, $employeeId)
+    public function updateEmployee(Request $request)
     {
+        $employeeId = $request->input('employeeId');
+
         $validated = $request->validate([
             'first_name' => ['required', 'max:55'],
             'middle_name' => ['nullable', 'max:55'],
@@ -175,12 +177,14 @@ class EmployeeController extends Controller
         ]);
 
         return response()->json([
-            'status' => 200
-        ]);
+            'message' => 'EMPLOYEE SUCCESSFULLY UPDATED.'
+        ], 200);
     }
 
-    public function updatePassword(Request $request, $employeeId)
+    public function updatePassword(Request $request)
     {
+        $employeeId = $request->input('employeeId');
+
         $validated = $request->validate([
             'password' => ['required', 'max:15', 'confirmed'],
             'password_confirmation' => ['required']
@@ -194,13 +198,16 @@ class EmployeeController extends Controller
         ]);
 
         return response()->json([
-            'status' => 200
-        ]);
+            'message' => 'EMPLOYEE PASSWORD SUCCESSFULLY UPDATED.'
+        ], 200);
     }
 
-    public function deleteEmployee($employeeId)
+    public function deleteEmployee(Request $request)
     {
+        $employeeId = $request->input('employeeId');
+
         $employee = Employee::find($employeeId);
+
         $user = User::where('tbl_users.employee_id', $employeeId)
             ->first();
 
@@ -213,7 +220,7 @@ class EmployeeController extends Controller
         ]);
 
         return response()->json([
-            'status' => 200
-        ]);
+            'message' => 'EMPLOYEE SUCCESSFULLY DELETED.'
+        ], 200);
     }
 }

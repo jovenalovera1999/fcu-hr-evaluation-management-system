@@ -59,7 +59,7 @@ const Employees = () => {
   const navigate = useNavigate();
 
   const [state, setState] = useState({
-    loadingDepartments: true,
+    loadingDepartments: false,
     loadingPositions: true,
     loadingEmployees: false,
     loadingEmployee: false,
@@ -147,6 +147,12 @@ const Employees = () => {
   };
 
   const handleLoadDepartments = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingDepartments: true,
+      departments: [] as Departments[],
+    }));
+
     axiosInstance
       .get("/department/index")
       .then((res) => {
@@ -154,14 +160,19 @@ const Employees = () => {
           setState((prevState) => ({
             ...prevState,
             departments: res.data.departments,
-            loadingDepartments: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, null);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingDepartments: false,
+        }));
       });
   };
 
@@ -262,9 +273,9 @@ const Employees = () => {
     }));
 
     axiosInstance
-      .put(`/employee/update/${state.employee_id}`, state)
+      .put(`/employee/updateEmployee?employeeId=${state.employee_id}`, state)
       .then((res) => {
-        if (res.data.status === 200) {
+        if (res.status === 200) {
           handleLoadEmployees();
 
           handleResetNecessaryFields();
@@ -272,7 +283,7 @@ const Employees = () => {
           setState((prevState) => ({
             ...prevState,
             toastSuccess: true,
-            toastBody: "EMPLOYEE SUCCESSFULLY UPDATED.",
+            toastBody: res.data.message,
             showToast: true,
             showEditEmployeeModal: false,
           }));
@@ -307,27 +318,20 @@ const Employees = () => {
     }));
 
     axiosInstance
-      .put(`/employee/update/password/${state.employee_id}`, state)
+      .put(`/employee/updatePassword?employeeId=${state.employee_id}`, state)
       .then((res) => {
-        if (res.data.status === 200) {
+        if (res.status === 200) {
           handleResetNecessaryFields();
 
           setState((prevState) => ({
             ...prevState,
             toastSuccess: true,
-            toastBody: "EMPLOYEE PASSWORD SUCCESSFULLY UPDATED.",
+            toastBody: res.data.message,
             showToast: true,
-            loadingEmployee: false,
             showChangePasswordModal: false,
           }));
         } else {
-          setState((prevState) => ({
-            ...prevState,
-            toastSuccess: false,
-            toastBody: "FAILED TO UPDATE EMPLOYEE PASSWORD.",
-            showToast: true,
-            loadingEmployee: false,
-          }));
+          console.error("Unexpected status error: ", res.data);
         }
       })
       .catch((error) => {
@@ -335,11 +339,16 @@ const Employees = () => {
           setState((prevState) => ({
             ...prevState,
             errors: error.response.data.errors,
-            loadingEmployee: false,
           }));
         } else {
           errorHandler(error, navigate);
         }
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingEmployee: false,
+        }));
       });
   };
 
@@ -352,9 +361,9 @@ const Employees = () => {
     }));
 
     axiosInstance
-      .put(`/employee/delete/${state.employee_id}`)
+      .put(`/employee/deleteEmployee?employeeId=${state.employee_id}`)
       .then((res) => {
-        if (res.data.status === 200) {
+        if (res.status === 200) {
           handleLoadEmployees();
 
           handleResetNecessaryFields();
@@ -362,7 +371,7 @@ const Employees = () => {
           setState((prevState) => ({
             ...prevState,
             toastSuccess: true,
-            toastBody: "EMPLOYEE SUCCESSFULLY UPDATED.",
+            toastBody: res.data.message,
             showToast: true,
             showDeleteEmployeeModal: false,
           }));
@@ -512,6 +521,10 @@ const Employees = () => {
       handleLoadDepartments();
       handleLoadEmployees();
     }
+  }, []);
+
+  useEffect(() => {
+    handleLoadEmployees();
   }, [state.employee_department, state.employeesCurrentPage]);
 
   const content = (
@@ -541,14 +554,15 @@ const Employees = () => {
                 onChange={handleInput}
               >
                 <option value="">ALL DEPARTMENTS</option>
-                {state.departments.map((department) => (
-                  <option
-                    value={department.department_id}
-                    key={department.department_id}
-                  >
-                    {department.department}
-                  </option>
-                ))}
+                {state.loadingDepartments ? (
+                  <option value="">LOADING...</option>
+                ) : (
+                  state.departments.map((department, index) => (
+                    <option value={department.department_id} key={index}>
+                      {department.department}
+                    </option>
+                  ))
+                )}
               </Form.Select>
               <label htmlFor="employee_department">DEPARTMENT</label>
             </Form.Floating>
@@ -802,15 +816,16 @@ const Employees = () => {
                   value={state.position}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
-                  {state.positions.map((position) => (
-                    <option
-                      value={position.position_id}
-                      key={position.position_id}
-                    >
-                      {position.position}
-                    </option>
-                  ))}
+                  <option value="">SELECT POSITION</option>
+                  {state.loadingPositions ? (
+                    <option value="">LOADING...</option>
+                  ) : (
+                    state.positions.map((position, index) => (
+                      <option value={position.position_id} key={index}>
+                        {position.position}
+                      </option>
+                    ))
+                  )}
                 </Form.Select>
                 <label htmlFor="position">POSITION</label>
                 {state.errors.position && (
@@ -827,17 +842,16 @@ const Employees = () => {
                   value={state.department}
                   onChange={handleInput}
                 >
-                  <option value="" key={1}>
-                    N/A
-                  </option>
-                  {state.departments.map((department) => (
-                    <option
-                      value={department.department_id}
-                      key={department.department_id}
-                    >
-                      {department.department}
-                    </option>
-                  ))}
+                  <option value="">SELECT DEPARTMENT</option>
+                  {state.loadingDepartments ? (
+                    <option value="">LOADING...</option>
+                  ) : (
+                    state.departments.map((department, index) => (
+                      <option value={department.department_id} key={index}>
+                        {department.department}
+                      </option>
+                    ))
+                  )}
                 </Form.Select>
                 <label htmlFor="department">DEPARTMENT</label>
                 {state.errors.department && (
@@ -1026,17 +1040,16 @@ const Employees = () => {
                   value={state.position}
                   onChange={handleInput}
                 >
-                  <option value="" key={1}>
-                    N/A
-                  </option>
-                  {state.positions.map((position) => (
-                    <option
-                      value={position.position_id}
-                      key={position.position_id}
-                    >
-                      {position.position}
-                    </option>
-                  ))}
+                  <option value="">SELECT POSITION</option>
+                  {state.loadingPositions ? (
+                    <option value="">LOADING...</option>
+                  ) : (
+                    state.positions.map((position, index) => (
+                      <option value={position.position_id} key={index}>
+                        {position.position}
+                      </option>
+                    ))
+                  )}
                 </Form.Select>
                 <label htmlFor="position">POSITION</label>
                 {state.errors.position && (
@@ -1053,17 +1066,16 @@ const Employees = () => {
                   value={state.department}
                   onChange={handleInput}
                 >
-                  <option value="" key={1}>
-                    N/A
-                  </option>
-                  {state.departments.map((department) => (
-                    <option
-                      value={department.department_id}
-                      key={department.department_id}
-                    >
-                      {department.department}
-                    </option>
-                  ))}
+                  <option value="">SELECT DEPARTMENT</option>
+                  {state.loadingDepartments ? (
+                    <option value="">LOADING...</option>
+                  ) : (
+                    state.departments.map((department, index) => (
+                      <option value={department.department_id} key={index}>
+                        {department.department}
+                      </option>
+                    ))
+                  )}
                 </Form.Select>
                 <label htmlFor="department">DEPARTMENT</label>
                 {state.errors.department && (
@@ -1261,27 +1273,7 @@ const Employees = () => {
     </>
   );
 
-  return (
-    <Layout
-      content={
-        state.loadingPositions || state.loadingDepartments ? (
-          <div
-            className="d-flex justify-content-center align-items-center"
-            style={{ minHeight: "80vh" }}
-          >
-            <Spinner
-              as="span"
-              animation="border"
-              role="status"
-              className="spinner-theme"
-            />
-          </div>
-        ) : (
-          content
-        )
-      }
-    />
-  );
+  return <Layout content={content} />;
 };
 
 export default Employees;

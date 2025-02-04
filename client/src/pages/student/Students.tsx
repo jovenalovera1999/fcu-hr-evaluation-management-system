@@ -589,7 +589,7 @@ const Students = () => {
                   value={state.student_department}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
+                  <option value="">ALL DEPARTMENTS</option>
                   {state.departments.map((department) => (
                     <option
                       value={department.department_id}
@@ -610,7 +610,7 @@ const Students = () => {
                   value={state.student_year_level}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
+                  <option value="">ALL YEAR LEVELS</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
                   <option value="3">3</option>
