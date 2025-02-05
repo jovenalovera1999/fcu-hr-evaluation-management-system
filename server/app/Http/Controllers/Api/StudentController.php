@@ -146,19 +146,63 @@ class StudentController extends Controller
         ]);
     }
 
-    public function loadAllStudents()
+    public function loadStudents(Request $request)
     {
-        $students = Student::leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
-            ->leftJoin('tbl_departments', 'tbl_students.department_id', '=', 'tbl_departments.department_id')
-            ->leftJoin('tbl_sections', 'tbl_students.section_id', '=', 'tbl_sections.section_id')
-            ->orderBy('tbl_students.last_name', 'asc')
-            ->orderBy('tbl_students.first_name', 'asc')
-            ->orderBy('tbl_students.middle_name', 'asc')
-            ->orderBy('tbl_students.suffix_name', 'asc')
-            ->orderBy('tbl_courses.course', 'asc')
-            ->orderBy('tbl_sections.section', 'asc')
-            ->orderBy('tbl_students.student_no', 'asc')
-            ->paginate(10);
+        $students = '';
+
+        if ($request->has('departmentId') && $request->has('yearLevel')) {
+            $students = Student::leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
+                ->leftJoin('tbl_departments', 'tbl_students.department_id', '=', 'tbl_departments.department_id')
+                ->leftJoin('tbl_sections', 'tbl_students.section_id', '=', 'tbl_sections.section_id')
+                ->where('tbl_students.department_id', $request->input('departmentId'))
+                ->where('tbl_students.year_level', $request->input('yearLevel'))
+                ->orderBy('tbl_students.last_name', 'asc')
+                ->orderBy('tbl_students.first_name', 'asc')
+                ->orderBy('tbl_students.middle_name', 'asc')
+                ->orderBy('tbl_students.suffix_name', 'asc')
+                ->orderBy('tbl_courses.course', 'asc')
+                ->orderBy('tbl_sections.section', 'asc')
+                ->orderBy('tbl_students.student_no', 'asc')
+                ->paginate(10);
+        } else if ($request->has('yearLevel')) {
+            $students = Student::leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
+                ->leftJoin('tbl_departments', 'tbl_students.department_id', '=', 'tbl_departments.department_id')
+                ->leftJoin('tbl_sections', 'tbl_students.section_id', '=', 'tbl_sections.section_id')
+                ->where('tbl_students.year_level', $request->input('yearLevel'))
+                ->orderBy('tbl_students.last_name', 'asc')
+                ->orderBy('tbl_students.first_name', 'asc')
+                ->orderBy('tbl_students.middle_name', 'asc')
+                ->orderBy('tbl_students.suffix_name', 'asc')
+                ->orderBy('tbl_courses.course', 'asc')
+                ->orderBy('tbl_sections.section', 'asc')
+                ->orderBy('tbl_students.student_no', 'asc')
+                ->paginate(10);
+        } else if ($request->has('departmentId')) {
+            $students = Student::leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
+                ->leftJoin('tbl_departments', 'tbl_students.department_id', '=', 'tbl_departments.department_id')
+                ->leftJoin('tbl_sections', 'tbl_students.section_id', '=', 'tbl_sections.section_id')
+                ->where('tbl_students.department_id', $request->input('departmentId'))
+                ->orderBy('tbl_students.last_name', 'asc')
+                ->orderBy('tbl_students.first_name', 'asc')
+                ->orderBy('tbl_students.middle_name', 'asc')
+                ->orderBy('tbl_students.suffix_name', 'asc')
+                ->orderBy('tbl_courses.course', 'asc')
+                ->orderBy('tbl_sections.section', 'asc')
+                ->orderBy('tbl_students.student_no', 'asc')
+                ->paginate(10);
+        } else {
+            $students = Student::leftJoin('tbl_courses', 'tbl_students.course_id', '=', 'tbl_courses.course_id')
+                ->leftJoin('tbl_departments', 'tbl_students.department_id', '=', 'tbl_departments.department_id')
+                ->leftJoin('tbl_sections', 'tbl_students.section_id', '=', 'tbl_sections.section_id')
+                ->orderBy('tbl_students.last_name', 'asc')
+                ->orderBy('tbl_students.first_name', 'asc')
+                ->orderBy('tbl_students.middle_name', 'asc')
+                ->orderBy('tbl_students.suffix_name', 'asc')
+                ->orderBy('tbl_courses.course', 'asc')
+                ->orderBy('tbl_sections.section', 'asc')
+                ->orderBy('tbl_students.student_no', 'asc')
+                ->paginate(10);
+        }
 
         return response()->json([
             'students' => $students

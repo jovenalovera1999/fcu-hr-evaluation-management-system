@@ -408,6 +408,10 @@ const Questions = () => {
       handleLoadCategories();
       handleLoadPositions();
     }
+  }, []);
+
+  useEffect(() => {
+    handleLoadQuestions();
   }, [
     state.selected_category,
     state.selected_position,

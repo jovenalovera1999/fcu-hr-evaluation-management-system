@@ -154,9 +154,7 @@ const Students = () => {
     //     ? parseInt(value)
     //     : parseInt(state.student_department);
 
-    if (state.student_year_level && state.student_department) {
-      handleStudentsPageChange(1);
-    }
+    handleStudentsPageChange(1);
 
     if (name === "department") {
       setState((prevState) => ({
@@ -246,12 +244,18 @@ const Students = () => {
       loadingStudents: true,
     }));
 
+    let apiRoute = `/student/loadStudents?page=${state.studentsCurrentPage}`;
+
+    if (state.student_department && state.student_year_level) {
+      apiRoute = `/student/loadStudents?page=${state.studentsCurrentPage}&departmentId=${state.student_department}&yearLevel=${state.student_year_level}`;
+    } else if (state.student_year_level) {
+      apiRoute = `/student/loadStudents?page=${state.studentsCurrentPage}&yearLevel=${state.student_year_level}`;
+    } else if (state.student_department) {
+      apiRoute = `/student/loadStudents?page=${state.studentsCurrentPage}&departmentId=${state.student_department}`;
+    }
+
     axiosInstance
-      .get(
-        state.student_year_level && state.student_department
-          ? `/student/load/students/by/year_level/and/department?page=${state.studentsCurrentPage}&student_year_level=${state.student_year_level}&student_department=${state.student_department}`
-          : `/student/loadAllStudents?page=${state.studentsCurrentPage}`
-      )
+      .get(apiRoute)
       .then((res) => {
         if (res.status === 200) {
           setState((prevState) => ({
@@ -527,11 +531,7 @@ const Students = () => {
       handleLoadDepartments();
       handleLoadStudents();
     }
-  }, [
-    state.student_department,
-    state.student_year_level,
-    state.studentsCurrentPage,
-  ]);
+  }, []);
 
   useEffect(() => {
     const loadCourses = async () => {
@@ -562,6 +562,14 @@ const Students = () => {
 
     loadSections();
   }, [state.course]);
+
+  useEffect(() => {
+    handleLoadStudents();
+  }, [
+    state.student_department,
+    state.student_year_level,
+    state.studentsCurrentPage,
+  ]);
 
   const content = (
     <>

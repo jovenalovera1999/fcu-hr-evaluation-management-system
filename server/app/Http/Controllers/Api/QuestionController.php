@@ -12,7 +12,7 @@ class QuestionController extends Controller
     {
         $questions = '';
 
-        if ($request->input('categoryId') && $request->input('positionId')) {
+        if ($request->has('categoryId') && $request->has('positionId')) {
             $categoryId = $request->input('categoryId');
             $positionId = $request->input('positionId');
 
@@ -24,7 +24,7 @@ class QuestionController extends Controller
                 ->orderBy('tbl_categories.category', 'asc')
                 ->orderBy('tbl_positions.position', 'asc')
                 ->paginate(10);
-        } else if ($request->input('positionId')) {
+        } else if ($request->has('positionId')) {
             $positionId = $request->input('positionId');
 
             $questions = Question::leftJoin('tbl_categories', 'tbl_questions.category_id', '=', 'tbl_categories.category_id')
@@ -34,7 +34,7 @@ class QuestionController extends Controller
                 ->orderBy('tbl_categories.category', 'asc')
                 ->orderBy('tbl_positions.position', 'asc')
                 ->paginate(10);
-        } else if ($request->input('categoryId')) {
+        } else if ($request->has('categoryId')) {
             $categoryId = $request->input('categoryId');
 
             $questions = Question::leftJoin('tbl_categories', 'tbl_questions.category_id', '=', 'tbl_categories.category_id')

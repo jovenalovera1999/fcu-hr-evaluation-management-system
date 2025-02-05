@@ -273,7 +273,7 @@ const Employees = () => {
     }));
 
     axiosInstance
-      .put(`/employee/updateEmployee?employeeId=${state.employee_id}`, state)
+      .put(`/employee/updateEmployee/${state.employee_id}`, state)
       .then((res) => {
         if (res.status === 200) {
           handleLoadEmployees();
@@ -318,7 +318,7 @@ const Employees = () => {
     }));
 
     axiosInstance
-      .put(`/employee/updatePassword?employeeId=${state.employee_id}`, state)
+      .put(`/employee/updatePassword/${state.employee_id}`, state)
       .then((res) => {
         if (res.status === 200) {
           handleResetNecessaryFields();
@@ -361,7 +361,7 @@ const Employees = () => {
     }));
 
     axiosInstance
-      .put(`/employee/deleteEmployee?employeeId=${state.employee_id}`)
+      .put(`/employee/deleteEmployee/${state.employee_id}`)
       .then((res) => {
         if (res.status === 200) {
           handleLoadEmployees();

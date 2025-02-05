@@ -144,10 +144,8 @@ class EmployeeController extends Controller
         ]);
     }
 
-    public function updateEmployee(Request $request)
+    public function updateEmployee(Request $request, $employeeId)
     {
-        $employeeId = $request->input('employeeId');
-
         $validated = $request->validate([
             'first_name' => ['required', 'max:55'],
             'middle_name' => ['nullable', 'max:55'],
@@ -181,10 +179,8 @@ class EmployeeController extends Controller
         ], 200);
     }
 
-    public function updatePassword(Request $request)
+    public function updatePassword(Request $request, $employeeId)
     {
-        $employeeId = $request->input('employeeId');
-
         $validated = $request->validate([
             'password' => ['required', 'max:15', 'confirmed'],
             'password_confirmation' => ['required']
@@ -202,10 +198,8 @@ class EmployeeController extends Controller
         ], 200);
     }
 
-    public function deleteEmployee(Request $request)
+    public function deleteEmployee($employeeId)
     {
-        $employeeId = $request->input('employeeId');
-
         $employee = Employee::find($employeeId);
 
         $user = User::where('tbl_users.employee_id', $employeeId)
