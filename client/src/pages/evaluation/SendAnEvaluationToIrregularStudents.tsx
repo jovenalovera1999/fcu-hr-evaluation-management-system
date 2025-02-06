@@ -372,14 +372,19 @@ const SendAnEvaluationToIrregularStudents = () => {
   };
 
   const handleLoadEmployees = async (departmentId: number) => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingEmployees: true,
+      employees: [] as Employees[],
+    }));
+
     axiosInstance
-      .get(`/employee/index/by/department/${departmentId}`)
+      .get(`/employee/loadEmployeesByDepartment?departmentId=${departmentId}`)
       .then((res) => {
-        if (res.data.status === 200) {
+        if (res.status === 200) {
           setState((prevState) => ({
             ...prevState,
             employees: res.data.employees,
-            loadingEmployees: false,
           }));
         } else {
           console.error("Unexpected status error: ", res.data.status);
@@ -387,6 +392,12 @@ const SendAnEvaluationToIrregularStudents = () => {
       })
       .catch((error) => {
         errorHandler(error, navigate);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingEmployees: false,
+        }));
       });
   };
 

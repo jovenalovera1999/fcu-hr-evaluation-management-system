@@ -136,6 +136,12 @@ const Questions = () => {
   };
 
   const handleLoadQuestions = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingQuestions: true,
+      questions: [] as Questions[],
+    }));
+
     let apiRoute = `/question/loadQuestions?page=${state.questionsCurrentPage}`;
 
     if (state.selected_category && state.selected_position) {
@@ -515,30 +521,42 @@ const Questions = () => {
             </tr>
           </thead>
           <tbody>
-            {state.questions.map((question, index) => (
-              <tr key={index} className="align-middle">
-                <td>{(state.questionsCurrentPage - 1) * 10 + index + 1}</td>
-                <td>{question.category}</td>
-                <td>{question.question}</td>
-                <td>{question.position}</td>
-                <td>
-                  <ButtonGroup>
-                    <Button
-                      className="btn-theme"
-                      onClick={() => handleOpenEditQuestionModal(question)}
-                    >
-                      EDIT
-                    </Button>
-                    <Button
-                      className="btn-theme"
-                      onClick={() => handleOpenDeleteQuestionModal(question)}
-                    >
-                      DELETE
-                    </Button>
-                  </ButtonGroup>
+            {state.loadingQuestions ? (
+              <tr className="align-middle">
+                <td colSpan={5} className="text-center">
+                  <Spinner
+                    as={"span"}
+                    role="status"
+                    className="spinner-theme"
+                  />
                 </td>
               </tr>
-            ))}
+            ) : (
+              state.questions.map((question, index) => (
+                <tr key={index} className="align-middle">
+                  <td>{(state.questionsCurrentPage - 1) * 10 + index + 1}</td>
+                  <td>{question.category}</td>
+                  <td>{question.question}</td>
+                  <td>{question.position}</td>
+                  <td>
+                    <ButtonGroup>
+                      <Button
+                        className="btn-theme"
+                        onClick={() => handleOpenEditQuestionModal(question)}
+                      >
+                        EDIT
+                      </Button>
+                      <Button
+                        className="btn-theme"
+                        onClick={() => handleOpenDeleteQuestionModal(question)}
+                      >
+                        DELETE
+                      </Button>
+                    </ButtonGroup>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </Table>
       </div>
@@ -877,23 +895,24 @@ const Questions = () => {
   return (
     <Layout
       content={
-        state.loadingCategories || state.loadingQuestions ? (
-          <>
-            <div
-              className="d-flex justify-content-center align-items-center"
-              style={{ minHeight: "80vh" }}
-            >
-              <Spinner
-                as="span"
-                animation="border"
-                role="status"
-                className="spinner-theme"
-              />
-            </div>
-          </>
-        ) : (
-          content
-        )
+        content
+        // state.loadingCategories || state.loadingQuestions ? (
+        //   <>
+        //     <div
+        //       className="d-flex justify-content-center align-items-center"
+        //       style={{ minHeight: "80vh" }}
+        //     >
+        //       <Spinner
+        //         as="span"
+        //         animation="border"
+        //         role="status"
+        //         className="spinner-theme"
+        //       />
+        //     </div>
+        //   </>
+        // ) : (
+        //   content
+        // )
       }
     />
   );
