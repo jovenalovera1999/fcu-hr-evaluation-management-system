@@ -183,12 +183,14 @@ const Employees = () => {
       employees: [] as Employees[],
     }));
 
+    let apiRoute = `/employee/loadEmployees?page=${state.employeesCurrentPage}`;
+
+    if (state.employee_department) {
+      apiRoute = `/employee/loadEmployees?page=${state.employeesCurrentPage}&departmentId=${state.employee_department}`;
+    }
+
     axiosInstance
-      .get(
-        state.employee_department
-          ? `/employee/index/by/department?page=${state.employeesCurrentPage}&department=${state.employee_department}`
-          : `/employee/loadEmployees?page=${state.employeesCurrentPage}`
-      )
+      .get(apiRoute)
       .then((res) => {
         if (res.status === 200) {
           setState((prevState) => ({
@@ -711,13 +713,7 @@ const Employees = () => {
           >
             {state.loadingEmployee ? (
               <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  role="status"
-                  size="sm"
-                  className="spinner-theme"
-                />{" "}
+                <Spinner as="span" animation="border" role="status" size="sm" />{" "}
                 UPDATING...
               </>
             ) : (
@@ -935,13 +931,7 @@ const Employees = () => {
           >
             {state.loadingEmployee ? (
               <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  role="status"
-                  size="sm"
-                  className="spinner-theme"
-                />{" "}
+                <Spinner as="span" animation="border" role="status" size="sm" />{" "}
                 SAVING...
               </>
             ) : (
@@ -1121,13 +1111,7 @@ const Employees = () => {
           >
             {state.loadingEmployee ? (
               <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  role="status"
-                  size="sm"
-                  className="spinner-theme"
-                />{" "}
+                <Spinner as="span" animation="border" role="status" size="sm" />{" "}
                 UPDATING...
               </>
             ) : (
@@ -1255,13 +1239,7 @@ const Employees = () => {
           >
             {state.loadingEmployee ? (
               <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  role="status"
-                  size="sm"
-                  className="spinner-theme"
-                />{" "}
+                <Spinner as="span" animation="border" role="status" size="sm" />{" "}
                 DELETING...
               </>
             ) : (

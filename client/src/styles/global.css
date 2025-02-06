@@ -36,7 +36,7 @@ li {
 
 .navbar {
   position: -webkit-sticky;
-  background-color: #0c1e7d;
+  background-color: #0c27ad;
   box-shadow: 0 2px 4px rgba(12, 30, 125, 0.1);
 }
 
@@ -55,7 +55,7 @@ li {
   transition: all 0.35s ease-in-out;
   box-shadow: 0 0 35px 0 rgba(12, 30, 125, 0.5);
   z-index: 1000;
-  background-color: #0c1e7d;
+  background-color: #0c27ad;
 }
 
 /* Sidebar collapse */
@@ -140,20 +140,30 @@ a.sidebar-link:hover {
 
 /* Custom or theme section */
 
-.custom-btn,
-.custom-btn:focus,
-.custom-btn:active {
-  border: none;
-  outline: none;
-  box-shadow: 0 0 0 0 transparent !important;
-}
-
 .btn {
+  background-color: #0c27ad !important;
+  border-color: #0c27ad !important;
   border-radius: 4px;
   box-shadow: 0 0 0 0 transparent !important;
+  transition: all 0.3s ease-in-out !important;
 }
 
-.btn-theme,
+.btn:hover {
+  background-color: #0c1e7d !important;
+  border-color: #0c1e7d !important;
+}
+
+.btn-group .btn:first-child {
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+}
+
+.btn-group .btn:last-child {
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+}
+
+/* .btn-theme,
 .btn-theme:active,
 .btn-theme:visited {
   border-color: #0c1e7d !important;
@@ -165,7 +175,7 @@ a.sidebar-link:hover {
   background-color: #0c1e7d !important;
   color: #fff !important;
   transition: all 0.3s ease;
-}
+} */
 
 .form-control,
 .form-select {
@@ -186,18 +196,24 @@ a.sidebar-link:hover {
 .form-control:focus,
 .form-select:focus, 
 .form-check-input:focus {
-  border: 2px solid #0c1e7d !important;
-  border-color: #0c1e7d !important;
+  border: 2px solid #0c27ad !important;
+  border-color: #0c27ad !important;
   padding-left: 11px;
 }
 
 .spinner-theme {
-  color: #0c1e7d;
+  color: #0c27ad;
 }
 
 .bg-theme {
-  background-color: #0c1e7d;
+  background-color: #0c27ad;
   color: #fff;
+}
+
+.sidebar-toggler-btn,
+.sidebar-toggler-btn:hover {
+  background-color: #0c27ad !important;
+  border-color: #0c27ad !important;
 }
 
 .sidebar-link:hover {
@@ -210,7 +226,7 @@ a.sidebar-link:hover {
 }
 
 .dropdown-item-theme {
-  background-color: #0c1e7d !important;
+  background-color: #0c27ad !important;
   color: #fff !important;
 }
 
@@ -221,7 +237,7 @@ a.sidebar-link:hover {
 }
 
 option {
-  background-color: #0c1e7d;
+  background-color: #0c27ad;
   color: #fff;
 }
 
@@ -231,14 +247,14 @@ option:hover {
 }
 
 .radio {
-  color: #0c1e7d;
+  color: #0c27ad;
 }
 
 .back-to-top {
   position: fixed;
   visibility: hidden;
   opacity: 0;
-  background-color: #0c1e7d;
+  background-color: #0c27ad;
   right: 15px;
   bottom: 15px;
   z-index: 1000;

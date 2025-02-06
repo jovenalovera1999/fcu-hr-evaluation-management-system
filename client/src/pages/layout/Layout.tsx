@@ -231,7 +231,7 @@ const Layout = ({ content }: ContentProps) => {
             <div className="d-flex justify-content-between align-items-end w-100">
               <div>
                 <button
-                  className="btn custom-btn"
+                  className="btn sidebar-toggler-btn"
                   type="button"
                   onClick={handleSidebar}
                 >
