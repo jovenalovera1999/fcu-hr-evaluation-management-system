@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Employees from "./pages/employee/Employees";
 import Students from "./pages/student/Students";
-import SendAnEvaluationToStudents from "./pages/evaluation/SendAnEvaluationToStudents";
+import SendAnEvaluationToStudents from "./pages/evaluation/SendAnEvaluationToRegularStudents";
 import Evaluations from "./pages/evaluation/Evaluations";
 import Login from "./pages/authentication/Login";
 import Response from "./pages/evaluation/Response";

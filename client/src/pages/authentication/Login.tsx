@@ -2,7 +2,7 @@ import axios from "axios";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CompanyLogo from "../../assets/img/company_logo.png";
-import AlertToastMessage from "../../components/AlertToastMessage";
+import ToastMessage from "../../components/ToastMessage";
 import {
   Button,
   Card,
@@ -137,7 +137,7 @@ const Login = () => {
 
   const content = (
     <>
-      <AlertToastMessage
+      <ToastMessage
         success={state.toastSuccess}
         body={state.toastBody}
         showToast={state.showToast}

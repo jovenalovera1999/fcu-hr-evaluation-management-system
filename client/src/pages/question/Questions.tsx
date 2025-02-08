@@ -14,7 +14,7 @@ import {
   Spinner,
   Table,
 } from "react-bootstrap";
-import AlertToastMessage from "../../components/AlertToastMessage";
+import ToastMessage from "../../components/ToastMessage";
 import { useNavigate } from "react-router-dom";
 
 interface Categories {
@@ -426,7 +426,7 @@ const Questions = () => {
 
   const content = (
     <>
-      <AlertToastMessage
+      <ToastMessage
         success={state.toastSuccess}
         body={state.toastBody}
         showToast={state.showToast}

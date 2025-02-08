@@ -16,7 +16,7 @@ import { Bar, Pie } from "react-chartjs-2";
 import Spinner from "../../components/Spinner";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
-import { Col, Form, FormLabel, FormSelect, Row } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 interface AcademicYears {

@@ -5,6 +5,7 @@ import Spinner from "../../components/Spinner";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import { useNavigate } from "react-router-dom";
+import { Col, Form, Row, Table } from "react-bootstrap";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -84,7 +85,7 @@ const SendAnEvaluationToEmployees = () => {
         loadingEmployees: true,
       }));
 
-      handleLoadEmployees(parseInt(value));
+      handleLoadEmployees();
     }
   };
 
@@ -260,15 +261,22 @@ const SendAnEvaluationToEmployees = () => {
       });
   };
 
-  const handleLoadEmployees = async (departmentId: number) => {
+  const handleLoadEmployees = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingEmployees: true,
+      employees: [] as Employees[],
+    }));
+
     axiosInstance
-      .get(`/employee/index/by/department/${departmentId}`)
+      .get(
+        `/employee/loadEmployeesByDepartment?departmentId=${state.employees_department}`
+      )
       .then((res) => {
-        if (res.data.status === 200) {
+        if (res.status === 200) {
           setState((prevState) => ({
             ...prevState,
             employees: res.data.employees,
-            loadingEmployees: false,
           }));
         } else {
           console.error("Unexpected error status: ", res.data.status);
@@ -276,6 +284,12 @@ const SendAnEvaluationToEmployees = () => {
       })
       .catch((error) => {
         errorHandler(error, navigate);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingEmployees: false,
+        }));
       });
   };
 
@@ -314,12 +328,16 @@ const SendAnEvaluationToEmployees = () => {
     }
   }, []);
 
+  useEffect(() => {
+    handleLoadEmployees();
+  }, [state.employees_department]);
+
   const content = (
     <>
       <ToastMessage
-        message={state.toastMessage}
+        body={state.toastMessage}
         success={state.toastMessageSuccess}
-        visible={state.toastMessageVisible}
+        showToast={state.toastMessageVisible}
         onClose={handleCloseToastMessage}
       />
       <form onSubmit={handleSendEvaluation}>
@@ -327,9 +345,8 @@ const SendAnEvaluationToEmployees = () => {
           <h4>SEND AN EVALUATION TO EMPLOYEES/TEACHERS/STAFFS</h4>
           <div className="row">
             <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="academic_year">ACADEMIC YEAR</label>
-                <select
+              <Form.Floating className="mb-3">
+                <Form.Select
                   name="academic_year"
                   id="academic_year"
                   className={`form-select ${
@@ -338,24 +355,21 @@ const SendAnEvaluationToEmployees = () => {
                   value={state.academic_year}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
-                  {state.academic_years.map((academic_year) => (
-                    <option
-                      value={academic_year.academic_year_id}
-                      key={academic_year.academic_year_id}
-                    >
+                  <option value="">SELECT ACADEMIC YEAR</option>
+                  {state.academic_years.map((academic_year, index) => (
+                    <option value={academic_year.academic_year_id} key={index}>
                       {academic_year.academic_year}
                     </option>
                   ))}
-                </select>
+                </Form.Select>
+                <label htmlFor="academic_year">ACADEMIC YEAR</label>
                 {state.errors.academic_year && (
                   <p className="text-danger">{state.errors.academic_year[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </div>
-            <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="semester">SEMESTER</label>
+            <Col md={3}>
+              <Form.Floating className="mb-3">
                 <select
                   name="semester"
                   id="semester"
@@ -365,26 +379,23 @@ const SendAnEvaluationToEmployees = () => {
                   value={state.semester}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
+                  <option value="">SELECT SEMESTER</option>
                   {state.loadingSemesters ? (
                     <option value="">LOADING...</option>
                   ) : (
-                    state.semesters.map((semester) => (
-                      <option
-                        value={semester.semester_id}
-                        key={semester.semester_id}
-                      >
+                    state.semesters.map((semester, index) => (
+                      <option value={semester.semester_id} key={index}>
                         {semester.semester}
                       </option>
                     ))
                   )}
                 </select>
-              </div>
-            </div>
-            <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="department">DEPARTMENT</label>
-                <select
+                <label htmlFor="semester">SEMESTER</label>
+              </Form.Floating>
+            </Col>
+            <Col md={3}>
+              <Form.Floating className="mb-3">
+                <Form.Select
                   name="department"
                   id="department"
                   className={`form-select ${
@@ -393,7 +404,7 @@ const SendAnEvaluationToEmployees = () => {
                   value={state.errors.department}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
+                  <option value="">SELECT DEPARTMENT</option>
                   {state.departments.map((department) => (
                     <option
                       value={department.department_id}
@@ -402,53 +413,56 @@ const SendAnEvaluationToEmployees = () => {
                       {department.department}
                     </option>
                   ))}
-                </select>
+                </Form.Select>
+                <label htmlFor="department">DEPARTMENT</label>
                 {state.errors.department && (
                   <p className="text-danger">{state.errors.department[0]}</p>
                 )}
-              </div>
-            </div>
+              </Form.Floating>
+            </Col>
           </div>
           <hr />
-          <div className="row mt-3">
-            <div className="col-sm-4">
-              <label htmlFor="employees_department">
-                EMPLOYEE'S/TEACHER'S/STAFF'S DEPARTMENT
-              </label>
-              <select
-                name="employees_department"
-                id="employees_department"
-                className={`form-select ${
-                  state.errors.employees_department ? "is-invalid" : ""
-                }`}
-                value={state.employees_department}
-                onChange={handleInput}
-              >
-                <option value="">N/A</option>
-                {state.departments.map((department) => (
-                  <option
-                    value={department.department_id}
-                    key={department.department_id}
-                  >
-                    {department.department}
-                  </option>
-                ))}
-              </select>
-              <p className="form-text">
-                CHOOSE AND SELECT TEACHER/EMPLOYEE/STAFF BY THEIR DEPARTMENT
-              </p>
-              {state.errors.employees_department && (
-                <p className="text-danger">
-                  {state.errors.employees_department}
+          <Row className="mt-3">
+            <Col md={4}>
+              <Form.Floating>
+                <Form.Select
+                  name="employees_department"
+                  id="employees_department"
+                  className={`form-select ${
+                    state.errors.employees_department ? "is-invalid" : ""
+                  }`}
+                  value={state.employees_department}
+                  onChange={handleInput}
+                >
+                  <option value="">SELECT EMPLOYEE'S DEPARTMENT</option>
+                  {state.departments.map((department) => (
+                    <option
+                      value={department.department_id}
+                      key={department.department_id}
+                    >
+                      {department.department}
+                    </option>
+                  ))}
+                </Form.Select>
+                <label htmlFor="employees_department">
+                  EMPLOYEE'S/TEACHER'S/STAFF'S DEPARTMENT
+                </label>
+                <p className="form-text">
+                  CHOOSE AND SELECT TEACHER/EMPLOYEE/STAFF BY THEIR DEPARTMENT
                 </p>
-              )}
-            </div>
-          </div>
+                {state.errors.employees_department && (
+                  <p className="text-danger">
+                    {state.errors.employees_department}
+                  </p>
+                )}
+              </Form.Floating>
+            </Col>
+          </Row>
           <div className="table-responsive mb-3">
-            <table className="table table-hover">
+            <Table responsive hover>
               <thead>
-                <tr>
-                  <td>
+                <tr className="align-middle">
+                  <td className="text-center">
                     SELECT ALL
                     <br />
                     <input
@@ -466,15 +480,15 @@ const SendAnEvaluationToEmployees = () => {
               </thead>
               <tbody>
                 {state.loadingEmployees ? (
-                  <tr>
-                    <td colSpan={3}>
+                  <tr className="align-middle">
+                    <td className="text-center" colSpan={3}>
                       <Spinner />
                     </td>
                   </tr>
                 ) : (
                   state.employees.map((employee, index) => (
-                    <tr key={employee.employee_id}>
-                      <td>
+                    <tr className="align-middle" key={index}>
+                      <td className="text-center">
                         <input
                           type="checkbox"
                           className="form-check-input"
@@ -494,7 +508,7 @@ const SendAnEvaluationToEmployees = () => {
                   ))
                 )}
               </tbody>
-            </table>
+            </Table>
             {state.errors.selectedEmployees && (
               <p className="text-danger">{state.errors.selectedEmployees[0]}</p>
             )}

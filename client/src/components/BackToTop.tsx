@@ -30,7 +30,7 @@ const BackToTop = () => {
         className={`back-to-top ${isVisible ? "visible" : ""}`}
         onClick={handleScrollToTop}
       >
-        <i className="bi bi-arrow-up-short">↑</i>
+        <i className="bi bi-arrow-up"></i>
       </Button>
     </>
   );

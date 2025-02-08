@@ -46,7 +46,7 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::controller(EmployeeController::class)->prefix("employee")->group(function () {
         Route::get('/loadEmployees', 'loadEmployees');
         Route::get("/loadEmployeesByDepartment", "loadEmployeesByDepartment");
-        Route::get('/loadEmployeesByDepartmentForEvaluation/{departmentId}', 'loadByDepartmentForEvaluation');
+        Route::get('/loadEmployeesByDepartmentForEvaluation', 'loadEmployeesByDepartmentForEvaluation');
         Route::get("/load/by/academic_year/and/semester/{academicYearId}/{semesterId}", "loadEmployeesByAcademicYearAndSemester");
         Route::get("/get/employee/{employeeId}", "getEmployee");
         Route::post("/store", "store");

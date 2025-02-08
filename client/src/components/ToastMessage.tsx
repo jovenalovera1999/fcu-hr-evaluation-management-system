@@ -1,43 +1,39 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Toast, ToastBody, ToastContainer } from "react-bootstrap";
 
 interface ToastMessageProps {
-  message: string;
   success: boolean;
-  visible: boolean;
+  body: string;
+  showToast: boolean;
   onClose: () => void;
 }
 
-const ToastMessage = ({
-  message,
-  success,
-  visible,
-  onClose,
-}: ToastMessageProps) => {
-  useEffect(() => {
-    if (visible) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, 3000);
+const ToastMessage = ({ body, showToast, onClose }: ToastMessageProps) => {
+  const [show, setShow] = useState(showToast);
 
-      return () => clearTimeout(timer);
-    }
-  }, [visible, onClose]);
+  const handleClose = () => {
+    setShow(false);
+    onClose();
+  };
+
+  useEffect(() => {
+    setShow(showToast);
+  }, [showToast]);
 
   return (
     <>
       <div aria-live="polite" aria-atomic="true" className="position-relative">
-        <div className="toast-container top-0 end-0 p-3">
-          <div
-            className={`toast fade text-white ${
-              success ? "bg-success" : "bg-danger"
-            } ${visible ? "show" : ""}`}
-            role="alert"
-            aria-live="assertive"
-            aria-atomic="true"
+        <ToastContainer position="bottom-end" className="p-3 position-fixed">
+          <Toast
+            show={show}
+            bg="success"
+            onClose={handleClose}
+            delay={3000}
+            autohide
           >
-            <div className="toast-body">{message}</div>
-          </div>
-        </div>
+            <ToastBody className="text-white">{body}</ToastBody>
+          </Toast>
+        </ToastContainer>
       </div>
     </>
   );

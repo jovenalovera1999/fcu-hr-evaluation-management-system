@@ -19,7 +19,7 @@ import {
 } from "react-bootstrap";
 import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 import FormCheckLabel from "react-bootstrap/esm/FormCheckLabel";
-import AlertToastMessage from "../../components/AlertToastMessage";
+import ToastMessage from "../../components/ToastMessage";
 import { useNavigate } from "react-router-dom";
 
 interface Departments {
@@ -573,7 +573,7 @@ const Students = () => {
 
   const content = (
     <>
-      <AlertToastMessage
+      <ToastMessage
         success={state.toastSuccess}
         body={state.toastBody}
         showToast={state.showToast}

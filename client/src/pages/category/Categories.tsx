@@ -5,7 +5,6 @@ import Layout from "../layout/Layout";
 import {
   Button,
   ButtonGroup,
-  Form,
   FormControl,
   FormLabel,
   Modal,
@@ -15,7 +14,7 @@ import {
   Spinner,
   Table,
 } from "react-bootstrap";
-import AlertToastMessage from "../../components/AlertToastMessage";
+import ToastMessage from "../../components/ToastMessage";
 import { useNavigate } from "react-router-dom";
 
 interface Categories {
@@ -253,7 +252,7 @@ const Categories = () => {
 
   const content = (
     <>
-      <AlertToastMessage
+      <ToastMessage
         success={state.toastSuccess}
         body={state.toastBody}
         showToast={state.showToast}

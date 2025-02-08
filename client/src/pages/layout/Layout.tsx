@@ -14,7 +14,7 @@ import {
 } from "react-bootstrap";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
-import AlertToastMessage from "../../components/AlertToastMessage";
+import AlertToastMessage from "../../components/ToastMessage";
 import BackToTop from "../../components/BackToTop";
 
 interface ContentProps {
@@ -227,25 +227,24 @@ const Layout = ({ content }: ContentProps) => {
       <div className="wrapper">
         <Sidebar isCollapsed={isSidebarCollapsed} />
         <div className="main">
-          <nav className="navbar navbar-expand px-3 border-bottom sticky-top">
-            <div className="d-flex justify-content-between align-items-end w-100">
-              <div>
-                <button
-                  className="btn sidebar-toggler-btn"
-                  type="button"
-                  onClick={handleSidebar}
-                >
-                  <span className="navbar-toggler-icon"></span>
-                </button>
-              </div>
+          <nav className="navbar navbar-expand pl-1 pe-2 border-bottom">
+            <div className="d-flex justify-content-between align-items-center w-100">
+              <button
+                className="btn sidebar-toggler-btn"
+                type="button"
+                onClick={handleSidebar}
+              >
+                <span className="navbar-toggler-icon text-center"></span>
+              </button>
               <div className="ms-auto text-white">
                 <li className="nav-item dropdown">
                   <Link
-                    className="nav-link dropdown-toggle pb-1 pe-2"
+                    className="nav-link dropdown-toggle"
                     to={"#"}
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
+                    style={{ paddingTop: "1px" }}
                   >
                     {handleUserFullName()}
                   </Link>

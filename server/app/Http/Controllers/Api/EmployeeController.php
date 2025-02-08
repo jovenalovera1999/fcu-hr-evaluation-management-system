@@ -66,8 +66,10 @@ class EmployeeController extends Controller
         ], 200);
     }
 
-    public function loadByDepartmentForEvaluation($departmentId)
+    public function loadEmployeesByDepartmentForEvaluation(Request $request)
     {
+        $departmentId = $request->input('departmentId');
+
         $employees = Employee::leftJoin('tbl_departments', 'tbl_employees.department_id', '=', 'tbl_departments.department_id')
             ->leftJoin('tbl_positions', 'tbl_employees.position_id', '=', 'tbl_positions.position_id')
             ->leftJoin('tbl_users', 'tbl_employees.employee_id', '=', 'tbl_users.employee_id')

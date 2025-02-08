@@ -5,6 +5,7 @@ import ToastMessage from "../../components/ToastMessage";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import { Link, useNavigate } from "react-router-dom";
+import { Col, Form, Row } from "react-bootstrap";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -50,7 +51,7 @@ interface Errors {
   selectedEmployees?: string[];
 }
 
-const SendAnEvaluationToStudents = () => {
+const SendAnEvaluationToRegularStudents = () => {
   const token = localStorage.getItem("token");
 
   const user = localStorage.getItem("user");
@@ -370,9 +371,9 @@ const SendAnEvaluationToStudents = () => {
   const content = (
     <>
       <ToastMessage
-        message={state.toastMessage}
+        body={state.toastMessage}
         success={state.toastMessageSuccess}
-        visible={state.toastMessageVisible}
+        showToast={state.toastMessageVisible}
         onClose={handleCloseToastMessage}
       />
       <form onSubmit={handleSendEvaluation}>
@@ -392,11 +393,10 @@ const SendAnEvaluationToStudents = () => {
             </div>
             <hr />
           </div>
-          <div className="row">
-            <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="academic_year">ACADEMIC YEAR</label>
-                <select
+          <Row>
+            <Col md={3}>
+              <Form.Floating className="mb-3">
+                <Form.Select
                   name="academic_year"
                   id="academic_year"
                   className={`form-select ${
@@ -405,25 +405,22 @@ const SendAnEvaluationToStudents = () => {
                   value={state.academic_year}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
-                  {state.academic_years.map((academic_year) => (
-                    <option
-                      value={academic_year.academic_year_id}
-                      key={academic_year.academic_year_id}
-                    >
+                  <option value="">SELECT ACADEMIC YEAR</option>
+                  {state.academic_years.map((academic_year, index) => (
+                    <option value={academic_year.academic_year_id} key={index}>
                       {academic_year.academic_year}
                     </option>
                   ))}
-                </select>
+                </Form.Select>
+                <label htmlFor="academic_year">ACADEMIC YEAR</label>
                 {state.errors.academic_year && (
                   <p className="text-danger">{state.errors.academic_year[0]}</p>
                 )}
-              </div>
-            </div>
-            <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="semester">SEMESTER</label>
-                <select
+              </Form.Floating>
+            </Col>
+            <Col md={3}>
+              <Form.Floating className="mb-3">
+                <Form.Select
                   name="semester"
                   id="semester"
                   className={`form-select ${
@@ -432,33 +429,26 @@ const SendAnEvaluationToStudents = () => {
                   value={state.semester}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
+                  <option value="">SELECT SEMESTER</option>
                   {state.loadingSemesters ? (
                     <option value="">Loading...</option>
                   ) : (
-                    state.semesters.map((semester) => (
-                      <option
-                        value={semester.semester_id}
-                        key={semester.semester_id}
-                      >
+                    state.semesters.map((semester, index) => (
+                      <option value={semester.semester_id} key={index}>
                         {semester.semester}
                       </option>
                     ))
                   )}
-                </select>
+                </Form.Select>
+                <label htmlFor="semester">SEMESTER</label>
                 {state.errors.semester && (
                   <p className="text-danger">{state.errors.semester[0]}</p>
                 )}
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="students_department">
-                  STUDENT'S DEPARTMENT
-                </label>
-                <select
+              </Form.Floating>
+            </Col>
+            <Col md={3}>
+              <Form.Floating className="mb-3">
+                <Form.Select
                   name="students_department"
                   id="students_department"
                   className={`form-select ${
@@ -467,27 +457,26 @@ const SendAnEvaluationToStudents = () => {
                   value={state.students_department}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
-                  {state.departments.map((department) => (
-                    <option
-                      value={department.department_id}
-                      key={department.department_id}
-                    >
+                  <option value="">SELECT DEPARTMENT</option>
+                  {state.departments.map((department, index) => (
+                    <option value={department.department_id} key={index}>
                       {department.department}
                     </option>
                   ))}
-                </select>
+                </Form.Select>
+                <label htmlFor="students_department">
+                  STUDENT'S DEPARTMENT
+                </label>
                 {state.errors.students_department && (
                   <p className="text-danger">
                     {state.errors.students_department[0]}
                   </p>
                 )}
-              </div>
-            </div>
-            <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="course">STUDENT'S COURSE</label>
-                <select
+              </Form.Floating>
+            </Col>
+            <Col md={3}>
+              <Form.Floating className="mb-3">
+                <Form.Select
                   name="course"
                   id="course"
                   className={`form-select ${
@@ -496,7 +485,7 @@ const SendAnEvaluationToStudents = () => {
                   value={state.course}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
+                  <option value="">SELECT COURSE</option>
                   {state.loadingCourses ? (
                     <option value="">Loading...</option>
                   ) : (
@@ -506,18 +495,16 @@ const SendAnEvaluationToStudents = () => {
                       </option>
                     ))
                   )}
-                </select>
+                </Form.Select>
+                <label htmlFor="course">STUDENT'S COURSE</label>
                 {state.errors.course && (
                   <p className="text-danger">{state.errors.course[0]}</p>
                 )}
-              </div>
-            </div>
-            <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="students_year_level">
-                  STUDENT'S YEAR LEVEL
-                </label>
-                <select
+              </Form.Floating>
+            </Col>
+            <Col md={3}>
+              <Form.Floating className="mb-3">
+                <Form.Select
                   name="year_level"
                   id="year_level"
                   className={`form-select ${
@@ -526,7 +513,7 @@ const SendAnEvaluationToStudents = () => {
                   value={state.year_level}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
+                  <option value="">SELECT YEAR LEVEL</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
                   <option value="3">3</option>
@@ -535,16 +522,18 @@ const SendAnEvaluationToStudents = () => {
                   <option value="6">6</option>
                   <option value="7">7</option>
                   <option value="8">8</option>
-                </select>
+                </Form.Select>
+                <label htmlFor="students_year_level">
+                  STUDENT'S YEAR LEVEL
+                </label>
                 {state.errors.year_level && (
                   <p className="text-danger">{state.errors.year_level}</p>
                 )}
-              </div>
-            </div>
-            <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="students_section">STUDENT'S SECTION</label>
-                <select
+              </Form.Floating>
+            </Col>
+            <Col md={3}>
+              <Form.Floating className="mb-3">
+                <Form.Select
                   name="students_section"
                   id="students_section"
                   className={`form-select ${
@@ -553,28 +542,26 @@ const SendAnEvaluationToStudents = () => {
                   value={state.students_section}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
+                  <option value="">SELECT SECTION</option>
                   {state.loadingSections ? (
                     <option value="">Loading...</option>
                   ) : (
-                    state.sections.map((section) => (
-                      <option
-                        value={section.section_id}
-                        key={section.section_id}
-                      >
+                    state.sections.map((section, index) => (
+                      <option value={section.section_id} key={index}>
                         {section.section}
                       </option>
                     ))
                   )}
-                </select>
+                </Form.Select>
+                <label htmlFor="students_section">STUDENT'S SECTION</label>
                 {state.errors.students_section && (
                   <p className="text-danger">
                     {state.errors.students_section[0]}
                   </p>
                 )}
-              </div>
-            </div>
-          </div>
+              </Form.Floating>
+            </Col>
+          </Row>
           <div className="row mt-3">
             <div className="col-sm-4">
               <label htmlFor="employees_department">
@@ -688,4 +675,4 @@ const SendAnEvaluationToStudents = () => {
   );
 };
 
-export default SendAnEvaluationToStudents;
+export default SendAnEvaluationToRegularStudents;

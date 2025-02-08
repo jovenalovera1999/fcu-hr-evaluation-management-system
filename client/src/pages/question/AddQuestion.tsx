@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import Spinner from "../../components/Spinner";
-import ToastMessage from "../../components/ToastMessage";
+import ToastMessage from "../../components/ToastMessageOld";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import { useNavigate } from "react-router-dom";

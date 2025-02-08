@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import ToastMessage from "../../components/ToastMessage";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import { Spinner, Table } from "react-bootstrap";
+import ToastMessage from "../../components/ToastMessage";
 
 interface Employees {
   evaluation_id: number;
@@ -124,9 +124,9 @@ const Evaluations = () => {
   const content = (
     <>
       <ToastMessage
-        message={state.toastMessage}
+        body={state.toastMessage}
         success={state.toastMessageSuccess}
-        visible={state.toastMessageVisible}
+        showToast={state.toastMessageVisible}
         onClose={handleCloseToastMessage}
       />
       <div className="mx-auto mt-2">
