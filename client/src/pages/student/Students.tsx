@@ -656,9 +656,8 @@ const Students = () => {
           </div>
         </Row>
         <Table hover size="sm" responsive="sm">
-          <caption>LIST OF STUDENTS</caption>
           <thead>
-            <tr>
+            <tr className="align-middle">
               <th>NO.</th>
               <th>STUDENT NO.</th>
               <th>STUDENT NAME</th>

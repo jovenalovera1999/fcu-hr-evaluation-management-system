@@ -130,8 +130,12 @@ const Evaluations = () => {
         onClose={handleCloseToastMessage}
       />
       <div className="mx-auto mt-2">
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="mb-3">
+            <h3>EVALUATION</h3>
+          </div>
+        </div>
         <Table hover size="sm" responsive="sm">
-          <caption>LIST OF TEACHERS</caption>
           <thead>
             <tr className="align-middle">
               <th>NO.</th>

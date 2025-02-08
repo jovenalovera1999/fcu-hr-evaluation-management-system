@@ -462,7 +462,7 @@ const SendAnEvaluationToEmployees = () => {
             <Table responsive hover>
               <thead>
                 <tr className="align-middle">
-                  <td className="text-center">
+                  <th className="text-center">
                     SELECT ALL
                     <br />
                     <input
@@ -473,7 +473,7 @@ const SendAnEvaluationToEmployees = () => {
                       checked={state.selectAll}
                       onChange={handleSelectAll}
                     />
-                  </td>
+                  </th>
                   <th>NO.</th>
                   <th>NAME OF EMPLOYEES/TEACHERS/STAFFS</th>
                 </tr>

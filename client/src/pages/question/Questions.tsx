@@ -11,6 +11,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  Row,
   Spinner,
   Table,
 } from "react-bootstrap";
@@ -444,50 +445,52 @@ const Questions = () => {
           </div>
         </div>
         <div className="d-flex justify-content-between align-items-center">
-          <Col md={3}>
-            <Form.Floating className="mb-3">
-              <Form.Select
-                name="selected_category"
-                id="selected_category"
-                value={state.selected_category}
-                onChange={handleInput}
-              >
-                <option value="">N/A</option>
-                {state.loadingCategories ? (
-                  <option value="">LOADING...</option>
-                ) : (
-                  state.categories.map((category, index) => (
-                    <option value={category.category_id} key={index}>
-                      {category.category}
-                    </option>
-                  ))
-                )}
-              </Form.Select>
-              <label htmlFor="selected_category">CATEGORY</label>
-            </Form.Floating>
-          </Col>
-          <Col md={3}>
-            <Form.Floating className="mb-3">
-              <Form.Select
-                name="selected_position"
-                id="selected_position"
-                value={state.selected_position}
-                onChange={handleInput}
-              >
-                <option value="">N/A</option>
-                {state.loadingPositions ? (
-                  <option value="">LOADING...</option>
-                ) : (
-                  state.positions.map((position, index) => (
-                    <option value={position.position_id} key={index}>
-                      {position.position}
-                    </option>
-                  ))
-                )}
-              </Form.Select>
-              <label htmlFor="position">POSITION</label>
-            </Form.Floating>
-          </Col>
+          <Row>
+            <Col md={6}>
+              <Form.Floating className="mb-3">
+                <Form.Select
+                  name="selected_category"
+                  id="selected_category"
+                  value={state.selected_category}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.loadingCategories ? (
+                    <option value="">LOADING...</option>
+                  ) : (
+                    state.categories.map((category, index) => (
+                      <option value={category.category_id} key={index}>
+                        {category.category}
+                      </option>
+                    ))
+                  )}
+                </Form.Select>
+                <label htmlFor="selected_category">CATEGORY</label>
+              </Form.Floating>
+            </Col>
+            <Col md={6}>
+              <Form.Floating className="mb-3">
+                <Form.Select
+                  name="selected_position"
+                  id="selected_position"
+                  value={state.selected_position}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.loadingPositions ? (
+                    <option value="">LOADING...</option>
+                  ) : (
+                    state.positions.map((position, index) => (
+                      <option value={position.position_id} key={index}>
+                        {position.position}
+                      </option>
+                    ))
+                  )}
+                </Form.Select>
+                <label htmlFor="position">POSITION</label>
+              </Form.Floating>
+            </Col>
+          </Row>
           <ButtonGroup>
             <Button
               className="btn-theme"
@@ -510,7 +513,6 @@ const Questions = () => {
           </ButtonGroup>
         </div>
         <Table hover size="sm" responsive="sm">
-          <caption>LIST OF QUESTIONS</caption>
           <thead>
             <tr className="align-middle">
               <th>NO.</th>

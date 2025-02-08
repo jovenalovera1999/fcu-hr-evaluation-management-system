@@ -11,7 +11,10 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
 
   return (
     <>
-      <aside id="sidebar" className={isCollapsed ? "collapsed" : ""}>
+      <aside
+        id="sidebar"
+        className={`${isCollapsed ? "collapsed" : ""} sticky-top`}
+      >
         <div className="h-100">
           <div className="sidebar-logo">
             {/* <img src={CompanyLogo} alt="Company Logo" width={50} /> */}

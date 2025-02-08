@@ -599,8 +599,8 @@ const SendAnEvaluationToRegularStudents = () => {
           <div className="table-responsive mb-3">
             <table className="table table-sm table-hover">
               <thead>
-                <tr>
-                  <td className="text-center">
+                <tr className="align-middle">
+                  <th className="text-center">
                     SELECT ALL
                     <input
                       type="checkbox"
@@ -610,7 +610,7 @@ const SendAnEvaluationToRegularStudents = () => {
                       checked={state.selectAll}
                       onChange={handleSelectAll}
                     />
-                  </td>
+                  </th>
                   <th>NO.</th>
                   <th>NAME OF EMPLOYEES/TEACHERS/STAFFS</th>
                 </tr>

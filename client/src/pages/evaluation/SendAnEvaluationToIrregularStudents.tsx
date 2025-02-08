@@ -572,9 +572,8 @@ const SendAnEvaluationToIrregularStudents = () => {
                 </div>
               </div>
               <table className="table table-sm table-hover">
-                <caption>LIST OF IRREGULAR STUDENTS</caption>
                 <thead>
-                  <tr>
+                  <tr className="align-middle">
                     <th className="text-center">
                       SELECT ALL
                       <input

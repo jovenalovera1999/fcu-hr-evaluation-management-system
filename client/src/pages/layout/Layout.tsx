@@ -10,6 +10,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  Navbar,
   Spinner,
 } from "react-bootstrap";
 import axiosInstance from "../../axios/axiosInstance";
@@ -227,16 +228,16 @@ const Layout = ({ content }: ContentProps) => {
       <div className="wrapper">
         <Sidebar isCollapsed={isSidebarCollapsed} />
         <div className="main">
-          <nav className="navbar navbar-expand pl-1 pe-2 border-bottom">
+          <Navbar expand className="px-2 border-bottom">
             <div className="d-flex justify-content-between align-items-center w-100">
-              <button
+              <Button
                 className="btn sidebar-toggler-btn"
                 type="button"
                 onClick={handleSidebar}
               >
-                <span className="navbar-toggler-icon text-center"></span>
-              </button>
-              <div className="ms-auto text-white">
+                <span className="navbar-toggler-icon"></span>
+              </Button>
+              <div className="ms-auto">
                 <li className="nav-item dropdown">
                   <Link
                     className="nav-link dropdown-toggle"
@@ -269,7 +270,7 @@ const Layout = ({ content }: ContentProps) => {
                 </li>
               </div>
             </div>
-          </nav>
+          </Navbar>
           <main className="content px-3 py-2">
             <Container fluid>
               <div className="mb-3">{content}</div>
