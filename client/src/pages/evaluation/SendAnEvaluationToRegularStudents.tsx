@@ -4,8 +4,9 @@ import Spinner from "../../components/Spinner";
 import ToastMessage from "../../components/ToastMessage";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Col, Form, Row, Table } from "react-bootstrap";
+import SendAnEvaluationToIrregularStudents from "./SendAnEvaluationToIrregularStudents";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -73,6 +74,7 @@ const SendAnEvaluationToRegularStudents = () => {
     courses: [] as Courses[],
     sections: [] as Sections[],
     employees: [] as Employees[],
+    type_of_student: "",
     academic_year: "",
     semester: "",
     students_department: "",
@@ -386,6 +388,30 @@ const SendAnEvaluationToRegularStudents = () => {
     handleLoadEmployees();
   }, [state.employees_department]);
 
+  const selection = (
+    <>
+      <div className="row">
+        <hr />
+        <Col md={3}>
+          <Form.Floating className="mb-3">
+            <Form.Select
+              name="type_of_student"
+              id="type_of_student"
+              value={state.type_of_student}
+              onChange={handleInput}
+              autoFocus
+            >
+              <option value="1">REGULAR STUDENTS</option>
+              <option value="2">IRREGULAR STUDENTS</option>
+            </Form.Select>
+            <label htmlFor="type_of_student">TYPE OF STUDENT</label>
+          </Form.Floating>
+        </Col>
+        <hr />
+      </div>
+    </>
+  );
+
   const content = (
     <>
       <ToastMessage
@@ -397,20 +423,6 @@ const SendAnEvaluationToRegularStudents = () => {
       <form onSubmit={handleSendEvaluation}>
         <div className="mx-auto mt-2">
           <h4>SEND AN EVALUATION TO REGULAR STUDENTS</h4>
-          <div className="row">
-            <hr />
-            <div className="col-sm-6">
-              <div className="mb-3">
-                <Link
-                  to={"/evaluation/to/irregular/students"}
-                  className="btn btn-theme"
-                >
-                  TO SEND AN EVALUATION FOR IRREGULAR STUDENTS, CLICK HERE!
-                </Link>
-              </div>
-            </div>
-            <hr />
-          </div>
           <Row>
             <Col md={3}>
               <Form.Floating className="mb-3">
@@ -592,7 +604,7 @@ const SendAnEvaluationToRegularStudents = () => {
                   value={state.employees_department}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
+                  <option value="">SELECT DEPARTMENT</option>
                   {state.departments.map((department) => (
                     <option
                       value={department.department_id}
@@ -687,8 +699,16 @@ const SendAnEvaluationToRegularStudents = () => {
         state.loadingAcademicYears ||
         state.loadingDepartments ? (
           <Spinner />
+        ) : state.type_of_student === "1" ? (
+          <>
+            {selection}
+            {content}
+          </>
         ) : (
-          content
+          <>
+            {selection}
+            <SendAnEvaluationToIrregularStudents />
+          </>
         )
       }
     />

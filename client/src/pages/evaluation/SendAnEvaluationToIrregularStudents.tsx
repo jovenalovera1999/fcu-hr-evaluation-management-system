@@ -5,13 +5,12 @@ import {
   useEffect,
   useState,
 } from "react";
-import Layout from "../layout/Layout";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import Spinner from "../../components/Spinner";
 import { debounce } from "chart.js/helpers";
 import { useNavigate } from "react-router-dom";
-import { Table } from "react-bootstrap";
+import { Col, Form, Row, Table } from "react-bootstrap";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -246,18 +245,6 @@ const SendAnEvaluationToIrregularStudents = () => {
     debouncedPageChange(page);
   };
 
-  // const debouncedSearch = useCallback(
-  //   debounce((value: string) => {
-  //     setState((prevState) => ({
-  //       ...prevState,
-  //       search: value,
-  //       currentPage: 1,
-  //       loadingSearch: true,
-  //     }));
-  //   }, 300),
-  //   []
-  // );
-
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setState((prevState) => ({
       ...prevState,
@@ -321,8 +308,6 @@ const SendAnEvaluationToIrregularStudents = () => {
       selectAllStudents: allSelected,
       selectedStudents: updateSelectedStudents,
     }));
-
-    // console.log(updateSelectedStudents);
   };
 
   const handleSelectStudent = (studentId: number) => {
@@ -469,11 +454,10 @@ const SendAnEvaluationToIrregularStudents = () => {
       <form onSubmit={handleSendEvaluation}>
         <div className="mx-auto mt-2">
           <h4>SEND AN EVALUATION TO IRREGULAR STUDENTS</h4>
-          <div className="row">
-            <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="academic_year">ACADEMIC YEAR</label>
-                <select
+          <Row className="row">
+            <Col className="col-sm-3">
+              <Form.Floating className="mb-3">
+                <Form.Select
                   name="academic_year"
                   id="academic_year"
                   className={`form-select ${
@@ -491,16 +475,16 @@ const SendAnEvaluationToIrregularStudents = () => {
                       {academic_year.academic_year}
                     </option>
                   ))}
-                </select>
+                </Form.Select>
+                <label htmlFor="academic_year">ACADEMIC YEAR</label>
                 {state.errors.academic_year && (
                   <p className="text-danger">{state.errors.academic_year[0]}</p>
                 )}
-              </div>
-            </div>
+              </Form.Floating>
+            </Col>
             <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="semester">SEMESTER</label>
-                <select
+              <Form.Floating className="mb-3">
+                <Form.Select
                   name="semester"
                   id="semester"
                   className={`form-select ${
@@ -522,127 +506,124 @@ const SendAnEvaluationToIrregularStudents = () => {
                       </option>
                     ))
                   )}
-                </select>
+                </Form.Select>
+                <label htmlFor="semester">SEMESTER</label>
                 {state.errors.semester && (
                   <p className="text-danger">{state.errors.semester[0]}</p>
                 )}
-              </div>
+              </Form.Floating>
             </div>
-          </div>
+          </Row>
           <div className="row">
             <div className="col-sm-3">
-              <div className="mb-3">
-                <label htmlFor="search">SEARCH</label>
-                <input
+              <Form.Floating className="mb-3">
+                <Form.Control
                   type="text"
                   className="form-control"
+                  placeholder=""
                   value={state.search}
                   onChange={handleSearch}
                 />
-              </div>
+                <label htmlFor="search">SEARCH STUDENT</label>
+              </Form.Floating>
             </div>
           </div>
           <div className="row">
-            <div className="table-responsive">
-              <div className="d-flex justify-content-end mb-2">
-                <div className="btn-group">
-                  <button
-                    type="button"
-                    className="btn btn-theme"
-                    disabled={
-                      state.loadingPage ||
-                      state.loadingSearch ||
-                      state.currentPage <= 1
-                    }
-                    onClick={() => handlePageChange(state.currentPage - 1)}
-                  >
-                    PREVIOUS
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-theme"
-                    disabled={
-                      state.loadingPage ||
-                      state.loadingSearch ||
-                      state.currentPage >= state.lastPage
-                    }
-                    onClick={() => handlePageChange(state.currentPage + 1)}
-                  >
-                    NEXT
-                  </button>
-                </div>
+            <div className="d-flex justify-content-end mb-2">
+              <div className="btn-group">
+                <button
+                  type="button"
+                  className="btn btn-theme"
+                  disabled={
+                    state.loadingPage ||
+                    state.loadingSearch ||
+                    state.currentPage <= 1
+                  }
+                  onClick={() => handlePageChange(state.currentPage - 1)}
+                >
+                  PREVIOUS
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-theme"
+                  disabled={
+                    state.loadingPage ||
+                    state.loadingSearch ||
+                    state.currentPage >= state.lastPage
+                  }
+                  onClick={() => handlePageChange(state.currentPage + 1)}
+                >
+                  NEXT
+                </button>
               </div>
-              <Table hover>
-                <thead>
-                  <tr className="align-middle">
-                    <th className="text-center">
-                      SELECT ALL
-                      <input
-                        type="checkbox"
-                        className="form-check-input ms-2"
-                        name="irregular_students_select_all"
-                        id="irregular_students_select_all"
-                        checked={state.students.every((student) =>
-                          state.selectedStudents.includes(student.student_id)
-                        )}
-                        onChange={handleSelectAllStudents}
-                      />
-                    </th>
-                    <th>NO.</th>
-                    <th>STUDENT NO.</th>
-                    <th>STUDENT NAME</th>
-                    <th>DEPARTMENT/COURSE</th>
-                    <th>SECTION</th>
+            </div>
+            <Table responsive hover>
+              <thead>
+                <tr className="align-middle">
+                  <th className="text-center">
+                    SELECT ALL
+                    <input
+                      type="checkbox"
+                      className="form-check-input ms-2"
+                      name="irregular_students_select_all"
+                      id="irregular_students_select_all"
+                      checked={state.students.every((student) =>
+                        state.selectedStudents.includes(student.student_id)
+                      )}
+                      onChange={handleSelectAllStudents}
+                    />
+                  </th>
+                  <th>NO.</th>
+                  <th>STUDENT NO.</th>
+                  <th>STUDENT NAME</th>
+                  <th>DEPARTMENT/COURSE</th>
+                  <th>SECTION</th>
+                </tr>
+              </thead>
+              <tbody>
+                {state.loadingPage || state.loadingSearch ? (
+                  <tr>
+                    <td colSpan={6}>
+                      <Spinner />
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {state.loadingPage || state.loadingSearch ? (
-                    <tr>
-                      <td colSpan={6}>
-                        <Spinner />
+                ) : (
+                  state.students.map((student, index) => (
+                    <tr key={student.student_id}>
+                      <td className="text-center">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          name="irregular_student_select"
+                          id={`irregular_student_select_${student.student_id}`}
+                          checked={state.selectedStudents.includes(
+                            student.student_id
+                          )}
+                          onChange={() =>
+                            handleSelectStudent(student.student_id)
+                          }
+                        />
                       </td>
+                      <td>{(state.currentPage - 1) * 10 + index + 1}</td>
+                      <td>{student.student_no}</td>
+                      <td>{handleStudentFullName(student)}</td>
+                      <td>{handleDepartmentAndCourse(student)}</td>
+                      <td>{handleYearLevelAndSection(student)}</td>
                     </tr>
-                  ) : (
-                    state.students.map((student, index) => (
-                      <tr key={student.student_id}>
-                        <td className="text-center">
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            name="irregular_student_select"
-                            id={`irregular_student_select_${student.student_id}`}
-                            checked={state.selectedStudents.includes(
-                              student.student_id
-                            )}
-                            onChange={() =>
-                              handleSelectStudent(student.student_id)
-                            }
-                          />
-                        </td>
-                        <td>{(state.currentPage - 1) * 10 + index + 1}</td>
-                        <td>{student.student_no}</td>
-                        <td>{handleStudentFullName(student)}</td>
-                        <td>{handleDepartmentAndCourse(student)}</td>
-                        <td>{handleYearLevelAndSection(student)}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </Table>
-              {state.errors.selectedStudents && (
-                <p className="text-danger">
-                  {state.errors.selectedStudents[0]}
-                </p>
-              )}
-            </div>
+                  ))
+                )}
+              </tbody>
+            </Table>
+            {state.errors.selectedStudents && (
+              <p className="text-danger">{state.errors.selectedStudents[0]}</p>
+            )}
           </div>
-          <hr />
-          <div className="row">
-            <div className="col-sm-4">
-              <label htmlFor="employees_department">
-                EMPLOYEE'S/TEACHER'S/STAFF'S DEPARTMENT
-              </label>
-              <select
+        </div>
+        <hr />
+        <Row className="row">
+          <Col md={4}>
+            <Form.Floating>
+              <Form.Select
                 name="employees_department"
                 id="employees_department"
                 className={`form-select ${
@@ -651,7 +632,7 @@ const SendAnEvaluationToIrregularStudents = () => {
                 value={state.employees_department}
                 onChange={handleInput}
               >
-                <option value="">N/A</option>
+                <option value="">SELECT DEPARTMENT</option>
                 {state.departments.map((department) => (
                   <option
                     value={department.department_id}
@@ -660,7 +641,10 @@ const SendAnEvaluationToIrregularStudents = () => {
                     {department.department}
                   </option>
                 ))}
-              </select>
+              </Form.Select>
+              <label htmlFor="employees_department">
+                EMPLOYEE'S/TEACHER'S/STAFF'S DEPARTMENT
+              </label>
               <p className="form-text">
                 CHOOSE AND SELECT TEACHER/EMPLOYEE/STAFF BY THEIR DEPARTMENT
               </p>
@@ -669,90 +653,71 @@ const SendAnEvaluationToIrregularStudents = () => {
                   {state.errors.employees_department}
                 </p>
               )}
-            </div>
-            <div className="table-responsive">
-              <table className="table table-sm table-hover">
-                <caption>LIST OF EMPLOYEES/TEACHERS/STAFFS</caption>
-                <thead>
-                  <tr>
-                    <th className="text-center">
-                      SELECT ALL
+            </Form.Floating>
+          </Col>
+          <Table responsive hover>
+            <thead>
+              <tr>
+                <th className="text-center">
+                  SELECT ALL
+                  <input
+                    type="checkbox"
+                    className="form-check-input ms-2"
+                    name="employees_select_all"
+                    id="employees_select_all"
+                    checked={state.selectAllEmployees}
+                    onChange={handleSelectAllEmployees}
+                  />
+                </th>
+                <th>NO.</th>
+                <th>NAME OF EMPLOYEES/TEACHERS/STAFFS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.loadingEmployees ? (
+                <tr>
+                  <td colSpan={3}>
+                    <Spinner />
+                  </td>
+                </tr>
+              ) : (
+                state.employees.map((employee, index) => (
+                  <tr key={employee.employee_id}>
+                    <td className="text-center">
                       <input
                         type="checkbox"
-                        className="form-check-input ms-2"
-                        name="employees_select_all"
-                        id="employees_select_all"
-                        checked={state.selectAllEmployees}
-                        onChange={handleSelectAllEmployees}
+                        className="form-check-input"
+                        name="employee_select"
+                        id={`employee_select_${employee.employee_id}`}
+                        checked={state.selectedEmployees.includes(
+                          employee.employee_id
+                        )}
+                        onChange={() =>
+                          handleSelectEmployee(employee.employee_id)
+                        }
                       />
-                    </th>
-                    <th>NO.</th>
-                    <th>NAME OF EMPLOYEES/TEACHERS/STAFFS</th>
+                    </td>
+                    <td>{index + 1}</td>
+                    <td>{employeesFullName(employee)}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {state.loadingEmployees ? (
-                    <tr>
-                      <td colSpan={3}>
-                        <Spinner />
-                      </td>
-                    </tr>
-                  ) : (
-                    state.employees.map((employee, index) => (
-                      <tr key={employee.employee_id}>
-                        <td className="text-center">
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            name="employee_select"
-                            id={`employee_select_${employee.employee_id}`}
-                            checked={state.selectedEmployees.includes(
-                              employee.employee_id
-                            )}
-                            onChange={() =>
-                              handleSelectEmployee(employee.employee_id)
-                            }
-                          />
-                        </td>
-                        <td>{index + 1}</td>
-                        <td>{employeesFullName(employee)}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-              {state.errors.selectedEmployees && (
-                <p className="text-danger">
-                  {state.errors.selectedEmployees[0]}
-                </p>
+                ))
               )}
-            </div>
-          </div>
-          <div className="d-flex justify-content-end">
-            <button type="submit" className="btn btn-theme">
-              SEND EVALUATION
-            </button>
-          </div>
+            </tbody>
+          </Table>
+          {state.errors.selectedEmployees && (
+            <p className="text-danger">{state.errors.selectedEmployees[0]}</p>
+          )}
+        </Row>
+        <div className="d-flex justify-content-end">
+          <button type="submit" className="btn btn-theme">
+            SEND EVALUATION
+          </button>
         </div>
       </form>
     </>
   );
 
-  return (
-    <Layout
-      content={
-        state.loadingSubmit ||
-        state.loadingAcademicYears ||
-        state.loadingStudents ||
-        state.loadingDepartments ||
-        state.loadingStudentIds ? (
-          <Spinner />
-        ) : (
-          content
-        )
-      }
-    />
-  );
+  return content;
 };
 
 export default SendAnEvaluationToIrregularStudents;
