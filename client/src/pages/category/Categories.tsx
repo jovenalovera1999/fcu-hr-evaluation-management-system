@@ -262,12 +262,12 @@ const Categories = () => {
         <div className="d-flex justify-content-between align-items-center">
           <h3>CATEGORIES</h3>
           <div className="mb-3">
-            <Button className="btn-theme" onClick={handleOpenAddCategoryModal}>
+            <Button type="button" onClick={handleOpenAddCategoryModal}>
               ADD CATEGORY
             </Button>
           </div>
         </div>
-        <Table hover size="sm" responsive="sm">
+        <Table hover responsive>
           <thead>
             <tr className="align-middle">
               <th>NO.</th>
@@ -284,16 +284,14 @@ const Categories = () => {
                   <div className="btn-group"></div>
                   <ButtonGroup>
                     <Button
+                      type="button"
                       onClick={() => handleOpenEditCategoryModal(category)}
-                      className="btn-theme"
-                      size="sm"
                     >
                       EDIT
                     </Button>
                     <Button
+                      type="button"
                       onClick={() => handleOpenDeleteCategoryModal(category)}
-                      className="btn-theme"
-                      size="sm"
                     >
                       DELETE
                     </Button>
@@ -328,14 +326,14 @@ const Categories = () => {
         </ModalBody>
         <ModalFooter>
           <Button
-            className="btn-theme"
+            type="button"
             onClick={handleCloseAddCategoryModal}
             disabled={state.loadingCategory}
           >
             CLOSE
           </Button>
           <Button
-            className="btn-theme"
+            type="submit"
             onClick={handleStoreCategory}
             disabled={state.loadingCategory}
           >
@@ -380,14 +378,14 @@ const Categories = () => {
         </ModalBody>
         <ModalFooter>
           <Button
-            className="btn-theme"
+            type="button"
             onClick={handleCloseEditAndDeleteCategoryModal}
             disabled={state.loadingCategory}
           >
             CLOSE
           </Button>
           <Button
-            className="btn-theme"
+            type="submit"
             onClick={handleUpdateCategory}
             disabled={state.loadingCategory}
           >
@@ -430,14 +428,14 @@ const Categories = () => {
         </ModalBody>
         <ModalFooter>
           <Button
-            className="btn-theme"
+            type="button"
             onClick={handleCloseEditAndDeleteCategoryModal}
             disabled={state.loadingCategory}
           >
             CLOSE
           </Button>
           <Button
-            className="btn-theme"
+            type="submit"
             onClick={handleDeleteCategory}
             disabled={state.loadingCategory}
           >

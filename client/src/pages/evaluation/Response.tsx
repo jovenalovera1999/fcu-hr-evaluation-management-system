@@ -4,6 +4,7 @@ import Spinner from "../../components/Spinner";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
+import { Table } from "react-bootstrap";
 
 interface Categories {
   category_id: number;
@@ -266,7 +267,7 @@ const Response = () => {
             </div>
           </div>
           <div className="mb-3">
-            <div className="table-responsive">
+            <Table responsive hover>
               {state.categories.map((category) => (
                 <>
                   <h5>
@@ -369,7 +370,7 @@ const Response = () => {
                   </table>
                 </>
               ))}
-            </div>
+            </Table>
           </div>
           <div className="mb-3">
             <div className="row">

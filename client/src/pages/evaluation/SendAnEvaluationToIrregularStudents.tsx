@@ -11,6 +11,7 @@ import errorHandler from "../../handler/errorHandler";
 import Spinner from "../../components/Spinner";
 import { debounce } from "chart.js/helpers";
 import { useNavigate } from "react-router-dom";
+import { Table } from "react-bootstrap";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -571,7 +572,7 @@ const SendAnEvaluationToIrregularStudents = () => {
                   </button>
                 </div>
               </div>
-              <table className="table table-sm table-hover">
+              <Table hover>
                 <thead>
                   <tr className="align-middle">
                     <th className="text-center">
@@ -627,7 +628,7 @@ const SendAnEvaluationToIrregularStudents = () => {
                     ))
                   )}
                 </tbody>
-              </table>
+              </Table>
               {state.errors.selectedStudents && (
                 <p className="text-danger">
                   {state.errors.selectedStudents[0]}

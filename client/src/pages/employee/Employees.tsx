@@ -541,9 +541,7 @@ const Employees = () => {
         <div className="mb-3">
           <div className="d-flex justify-content-between align-items-center">
             <h3 className="mb-3">EMPLOYEES</h3>
-            <Button className="btn-theme" onClick={handleOpenAddEmployeeModal}>
-              ADD EMPLOYEE
-            </Button>
+            <Button onClick={handleOpenAddEmployeeModal}>ADD EMPLOYEE</Button>
           </div>
         </div>
         <div className="d-flex justify-content-between align-items-center">
@@ -571,7 +569,6 @@ const Employees = () => {
           </Col>
           <ButtonGroup>
             <Button
-              className="btn-theme"
               disabled={state.employeesCurrentPage <= 1}
               onClick={() =>
                 handleEmployeesPageChange(state.employeesCurrentPage - 1)
@@ -580,7 +577,6 @@ const Employees = () => {
               PREVIOUS
             </Button>
             <Button
-              className="btn-theme"
               disabled={state.employeesCurrentPage >= state.employeesLastPage}
               onClick={() =>
                 handleEmployeesPageChange(state.employeesCurrentPage + 1)
@@ -590,9 +586,9 @@ const Employees = () => {
             </Button>
           </ButtonGroup>
         </div>
-        <Table hover size="sm" responsive="sm">
+        <Table hover responsive>
           <thead>
-            <tr>
+            <tr className="align-middle">
               <th>NO.</th>
               <th>NAME OF EMPLOYEES</th>
               <th>POSITION</th>
@@ -603,12 +599,7 @@ const Employees = () => {
             {state.loadingEmployees ? (
               <tr key={1} className="align-middle">
                 <td colSpan={4} className="text-center">
-                  <Spinner
-                    as="span"
-                    animation="border"
-                    role="status"
-                    className="spinner-theme"
-                  />
+                  <Spinner as="span" animation="border" role="status" />
                 </td>
               </tr>
             ) : (
@@ -621,24 +612,18 @@ const Employees = () => {
                     <ButtonGroup>
                       <Button
                         type="button"
-                        className="btn-theme"
-                        size="sm"
                         onClick={() => handleOpenChangePasswordModal(employee)}
                       >
                         CHANGE PASSWORD
                       </Button>
                       <Button
                         type="button"
-                        className="btn-theme"
-                        size="sm"
                         onClick={() => handleOpenEditEmployeeModal(employee)}
                       >
                         EDIT
                       </Button>
                       <Button
                         type="button"
-                        className="btn-theme"
-                        size="sm"
                         onClick={() => handleOpenDeleteEmployeeModal(employee)}
                       >
                         DELETE
@@ -653,74 +638,75 @@ const Employees = () => {
       </div>
 
       <Modal
-        size="sm"
         show={state.showChangePasswordModal}
         onHide={handleCloseChangePasswordModal}
         backdrop="static"
       >
-        <Modal.Header>CHANGE PASSWORD</Modal.Header>
-        <Modal.Body>
-          <Form.Floating className="mb-3">
-            <Form.Control
-              type="password"
-              name="password"
-              className={`${state.errors.password ? "is-invalid" : ""}`}
-              id="password"
-              placeholder="PASSWORD"
-              value={state.password}
-              onChange={handleInput}
-              autoFocus
-            />
-            <label htmlFor="password">PASSWORD</label>
-            {state.errors.password && (
-              <p className="text-danger">{state.errors.password[0]}</p>
-            )}
-          </Form.Floating>
-          <Form.Floating className="mb-3">
-            <Form.Control
-              type="password"
-              className={`${
-                state.errors.password_confirmation ? "is-invalid" : ""
-              }`}
-              name="password_confirmation"
-              id="password_confirmation"
-              placeholder="PASSWORD CONFIRMATION"
-              value={state.password_confirmation}
-              onChange={handleInput}
-            />
-            <label htmlFor="password_confirmation">PASSWORD CONFIRMATION</label>
-            {state.errors.password_confirmation && (
-              <p className="text-danger">
-                {state.errors.password_confirmation[0]}
-              </p>
-            )}
-          </Form.Floating>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            type="button"
-            className="btn-theme"
-            onClick={handleCloseChangePasswordModal}
-            disabled={state.loadingEmployee}
-          >
-            CLOSE
-          </Button>
-          <Button
-            type="submit"
-            className="btn-theme"
-            onClick={handleUpdateEmployeePassword}
-            disabled={state.loadingEmployee}
-          >
-            {state.loadingEmployee ? (
-              <>
-                <Spinner as="span" animation="border" role="status" size="sm" />{" "}
-                UPDATING...
-              </>
-            ) : (
-              "SAVE"
-            )}
-          </Button>
-        </Modal.Footer>
+        <Form onSubmit={handleUpdateEmployeePassword}>
+          <Modal.Header>CHANGE PASSWORD</Modal.Header>
+          <Modal.Body>
+            <Form.Floating className="mb-3">
+              <Form.Control
+                type="password"
+                name="password"
+                className={`${state.errors.password ? "is-invalid" : ""}`}
+                id="password"
+                placeholder="PASSWORD"
+                value={state.password}
+                onChange={handleInput}
+                autoFocus
+              />
+              <label htmlFor="password">PASSWORD</label>
+              {state.errors.password && (
+                <p className="text-danger">{state.errors.password[0]}</p>
+              )}
+            </Form.Floating>
+            <Form.Floating className="mb-3">
+              <Form.Control
+                type="password"
+                className={`${
+                  state.errors.password_confirmation ? "is-invalid" : ""
+                }`}
+                name="password_confirmation"
+                id="password_confirmation"
+                placeholder="PASSWORD CONFIRMATION"
+                value={state.password_confirmation}
+                onChange={handleInput}
+              />
+              <label htmlFor="password_confirmation">
+                PASSWORD CONFIRMATION
+              </label>
+              {state.errors.password_confirmation && (
+                <p className="text-danger">
+                  {state.errors.password_confirmation[0]}
+                </p>
+              )}
+            </Form.Floating>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              type="button"
+              onClick={handleCloseChangePasswordModal}
+              disabled={state.loadingEmployee}
+            >
+              CLOSE
+            </Button>
+            <Button
+              type="submit"
+              onClick={handleUpdateEmployeePassword}
+              disabled={state.loadingEmployee}
+            >
+              {state.loadingEmployee ? (
+                <>
+                  <Spinner as="span" animation="border" role="status" />{" "}
+                  UPDATING...
+                </>
+              ) : (
+                "SAVE"
+              )}
+            </Button>
+          </Modal.Footer>
+        </Form>
       </Modal>
 
       <Modal
@@ -917,7 +903,7 @@ const Employees = () => {
         <Modal.Footer>
           <Button
             type="button"
-            className="btn-theme"
+            className="btn-close-custom"
             onClick={handleCloseAddEmployeeModal}
             disabled={state.loadingEmployee}
           >
@@ -925,14 +911,12 @@ const Employees = () => {
           </Button>
           <Button
             type="submit"
-            className="btn-theme"
             onClick={handleStoreEmployee}
             disabled={state.loadingEmployee}
           >
             {state.loadingEmployee ? (
               <>
-                <Spinner as="span" animation="border" role="status" size="sm" />{" "}
-                SAVING...
+                <Spinner as="span" animation="border" role="status" /> SAVING...
               </>
             ) : (
               "SAVE"
@@ -1097,7 +1081,7 @@ const Employees = () => {
         <Modal.Footer>
           <Button
             type="button"
-            className="btn-theme"
+            className="btn-close-custom"
             onClick={handleCloseEditEmployeeModal}
             disabled={state.loadingEmployee}
           >
@@ -1105,13 +1089,12 @@ const Employees = () => {
           </Button>
           <Button
             type="submit"
-            className="btn-theme"
             onClick={handleUpdateEmployee}
             disabled={state.loadingEmployee}
           >
             {state.loadingEmployee ? (
               <>
-                <Spinner as="span" animation="border" role="status" size="sm" />{" "}
+                <Spinner as="span" animation="border" role="status" />{" "}
                 UPDATING...
               </>
             ) : (
@@ -1225,7 +1208,7 @@ const Employees = () => {
         <Modal.Footer>
           <Button
             type="button"
-            className="btn-theme"
+            className="btn-close-custom"
             onClick={handleCloseDeleteEmployeeModal}
             disabled={state.loadingEmployee}
           >
@@ -1233,13 +1216,12 @@ const Employees = () => {
           </Button>
           <Button
             type="submit"
-            className="btn-theme"
             onClick={handleDeleteEmployee}
             disabled={state.loadingEmployee}
           >
             {state.loadingEmployee ? (
               <>
-                <Spinner as="span" animation="border" role="status" size="sm" />{" "}
+                <Spinner as="span" animation="border" role="status" />{" "}
                 DELETING...
               </>
             ) : (

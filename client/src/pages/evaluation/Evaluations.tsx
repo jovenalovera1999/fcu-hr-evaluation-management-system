@@ -135,7 +135,7 @@ const Evaluations = () => {
             <h3>EVALUATION</h3>
           </div>
         </div>
-        <Table hover size="sm" responsive="sm">
+        <Table hover responsive>
           <thead>
             <tr className="align-middle">
               <th>NO.</th>

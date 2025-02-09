@@ -439,14 +439,12 @@ const Questions = () => {
             <h3>QUESTIONS</h3>
           </div>
           <div className="mb-3">
-            <Button className="btn-theme" onClick={handleOpenAddQuestionModal}>
-              ADD QUESTION
-            </Button>
+            <Button onClick={handleOpenAddQuestionModal}>ADD QUESTION</Button>
           </div>
         </div>
         <div className="d-flex justify-content-between align-items-center">
           <Row>
-            <Col md={6}>
+            <Col md={8}>
               <Form.Floating className="mb-3">
                 <Form.Select
                   name="selected_category"
@@ -454,7 +452,7 @@ const Questions = () => {
                   value={state.selected_category}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
+                  <option value="">ALL CATEGORIES</option>
                   {state.loadingCategories ? (
                     <option value="">LOADING...</option>
                   ) : (
@@ -468,7 +466,7 @@ const Questions = () => {
                 <label htmlFor="selected_category">CATEGORY</label>
               </Form.Floating>
             </Col>
-            <Col md={6}>
+            <Col md={8}>
               <Form.Floating className="mb-3">
                 <Form.Select
                   name="selected_position"
@@ -476,7 +474,7 @@ const Questions = () => {
                   value={state.selected_position}
                   onChange={handleInput}
                 >
-                  <option value="">N/A</option>
+                  <option value="">ALL POSITIONS</option>
                   {state.loadingPositions ? (
                     <option value="">LOADING...</option>
                   ) : (
@@ -493,7 +491,7 @@ const Questions = () => {
           </Row>
           <ButtonGroup>
             <Button
-              className="btn-theme"
+              type="button"
               disabled={state.questionsCurrentPage <= 1}
               onClick={() =>
                 handleQuestionsPageChange(state.questionsCurrentPage - 1)
@@ -502,7 +500,7 @@ const Questions = () => {
               PREVIOUS
             </Button>
             <Button
-              className="btn-theme"
+              type="button"
               disabled={state.questionsCurrentPage >= state.questionsLastPage}
               onClick={() =>
                 handleQuestionsPageChange(state.questionsCurrentPage + 1)
@@ -543,13 +541,13 @@ const Questions = () => {
                   <td>
                     <ButtonGroup>
                       <Button
-                        className="btn-theme"
+                        type="button"
                         onClick={() => handleOpenEditQuestionModal(question)}
                       >
                         EDIT
                       </Button>
                       <Button
-                        className="btn-theme"
+                        type="button"
                         onClick={() => handleOpenDeleteQuestionModal(question)}
                       >
                         DELETE
@@ -641,14 +639,14 @@ const Questions = () => {
         </ModalBody>
         <ModalFooter>
           <Button
-            className="btn-theme"
+            type="button"
             onClick={handleCloseAddQuestionModal}
             disabled={state.loadingQuestion}
           >
             CLOSE
           </Button>
           <Button
-            className="btn-theme"
+            type="submit"
             onClick={handleStoreQuestion}
             disabled={state.loadingQuestion}
           >
@@ -751,17 +749,13 @@ const Questions = () => {
           </ModalBody>
           <ModalFooter>
             <Button
-              className="btn-theme"
+              type="button"
               onClick={handleCloseEditQuestionModal}
               disabled={state.loadingQuestion}
             >
               CLOSE
             </Button>
-            <Button
-              type="submit"
-              className="btn-theme"
-              disabled={state.loadingQuestion}
-            >
+            <Button type="submit" disabled={state.loadingQuestion}>
               {state.loadingQuestion ? (
                 <>
                   <Spinner
@@ -862,17 +856,13 @@ const Questions = () => {
           </ModalBody>
           <ModalFooter>
             <Button
-              className="btn-theme"
+              type="button"
               onClick={handleCloseDeleteQuestionModal}
               disabled={state.loadingQuestion}
             >
               CLOSE
             </Button>
-            <Button
-              type="submit"
-              className="btn-theme"
-              disabled={state.loadingQuestion}
-            >
+            <Button type="submit" disabled={state.loadingQuestion}>
               {state.loadingQuestion ? (
                 <>
                   <Spinner
@@ -894,30 +884,7 @@ const Questions = () => {
     </>
   );
 
-  return (
-    <Layout
-      content={
-        content
-        // state.loadingCategories || state.loadingQuestions ? (
-        //   <>
-        //     <div
-        //       className="d-flex justify-content-center align-items-center"
-        //       style={{ minHeight: "80vh" }}
-        //     >
-        //       <Spinner
-        //         as="span"
-        //         animation="border"
-        //         role="status"
-        //         className="spinner-theme"
-        //       />
-        //     </div>
-        //   </>
-        // ) : (
-        //   content
-        // )
-      }
-    />
-  );
+  return <Layout content={content} />;
 };
 
 export default Questions;

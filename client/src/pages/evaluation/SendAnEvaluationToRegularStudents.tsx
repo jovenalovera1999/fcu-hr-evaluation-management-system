@@ -5,7 +5,7 @@ import ToastMessage from "../../components/ToastMessage";
 import axiosInstance from "../../axios/axiosInstance";
 import errorHandler from "../../handler/errorHandler";
 import { Link, useNavigate } from "react-router-dom";
-import { Col, Form, Row } from "react-bootstrap";
+import { Col, Form, Row, Table } from "react-bootstrap";
 
 interface AcademicYears {
   academic_year_id: number;
@@ -130,7 +130,7 @@ const SendAnEvaluationToRegularStudents = () => {
         loadingEmployees: true,
       }));
 
-      handleLoadEmployees(parseInt(value));
+      handleLoadEmployees();
     }
   };
 
@@ -314,9 +314,17 @@ const SendAnEvaluationToRegularStudents = () => {
       });
   };
 
-  const handleLoadEmployees = async (departmentId: number) => {
+  const handleLoadEmployees = async () => {
+    setState((prevState) => ({
+      ...prevState,
+      loadingEmployees: true,
+      employees: [] as Employees[],
+    }));
+
     axiosInstance
-      .get(`/employee/loadEmployeesByDepartmentForEvaluation/${departmentId}`)
+      .get(
+        `/employee/loadEmployeesByDepartmentForEvaluation?departmentId=${state.employees_department}`
+      )
       .then((res) => {
         if (res.status === 200) {
           setState((prevState) => ({
@@ -330,6 +338,12 @@ const SendAnEvaluationToRegularStudents = () => {
       })
       .catch((error) => {
         errorHandler(error, navigate);
+      })
+      .finally(() => {
+        setState((prevState) => ({
+          ...prevState,
+          loadingEmployees: false,
+        }));
       });
   };
 
@@ -367,6 +381,10 @@ const SendAnEvaluationToRegularStudents = () => {
       handleLoadDepartments();
     }
   }, []);
+
+  useEffect(() => {
+    handleLoadEmployees();
+  }, [state.employees_department]);
 
   const content = (
     <>
@@ -562,30 +580,32 @@ const SendAnEvaluationToRegularStudents = () => {
               </Form.Floating>
             </Col>
           </Row>
-          <div className="row mt-3">
-            <div className="col-sm-4">
-              <label htmlFor="employees_department">
-                EMPLOYEE'S/TEACHER'S/STAFF'S DEPARTMENT
-              </label>
-              <select
-                name="employees_department"
-                id="employees_department"
-                className={`form-select ${
-                  state.errors.employees_department ? "is-invalid" : ""
-                }`}
-                value={state.employees_department}
-                onChange={handleInput}
-              >
-                <option value="">N/A</option>
-                {state.departments.map((department) => (
-                  <option
-                    value={department.department_id}
-                    key={department.department_id}
-                  >
-                    {department.department}
-                  </option>
-                ))}
-              </select>
+          <Row className="mt-3">
+            <Col md={4}>
+              <Form.Floating>
+                <Form.Select
+                  name="employees_department"
+                  id="employees_department"
+                  className={`${
+                    state.errors.employees_department ? "is-invalid" : ""
+                  }`}
+                  value={state.employees_department}
+                  onChange={handleInput}
+                >
+                  <option value="">N/A</option>
+                  {state.departments.map((department) => (
+                    <option
+                      value={department.department_id}
+                      key={department.department_id}
+                    >
+                      {department.department}
+                    </option>
+                  ))}
+                </Form.Select>
+                <label htmlFor="employees_department">
+                  EMPLOYEE'S/TEACHER'S/STAFF'S DEPARTMENT
+                </label>
+              </Form.Floating>
               <p className="form-text">
                 CHOOSE AND SELECT TEACHER/EMPLOYEE/STAFF BY THEIR DEPARTMENT
               </p>
@@ -594,10 +614,10 @@ const SendAnEvaluationToRegularStudents = () => {
                   {state.errors.employees_department}
                 </p>
               )}
-            </div>
-          </div>
-          <div className="table-responsive mb-3">
-            <table className="table table-sm table-hover">
+            </Col>
+          </Row>
+          <div className="mb-3">
+            <Table hover responsive>
               <thead>
                 <tr className="align-middle">
                   <th className="text-center">
@@ -645,7 +665,7 @@ const SendAnEvaluationToRegularStudents = () => {
                   ))
                 )}
               </tbody>
-            </table>
+            </Table>
             {state.errors.selectedEmployees && (
               <p className="text-danger">{state.errors.selectedEmployees[0]}</p>
             )}

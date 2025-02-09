@@ -582,59 +582,58 @@ const Students = () => {
       <div className="mx-auto mt-2">
         <div className="mb-3">
           <div className="d-flex justify-content-end">
-            <Button className="btn-theme" onClick={handleOpenAddStudentModal}>
-              ADD STUDENT
-            </Button>
+            <Button onClick={handleOpenAddStudentModal}>ADD STUDENT</Button>
           </div>
         </div>
         <Row>
           <div className="d-flex justify-content-between align-items-center">
-            <Col sm={3}>
-              <Form.Floating className="mb-3">
-                <FormSelect
-                  name="student_department"
-                  id="student_department"
-                  value={state.student_department}
-                  onChange={handleInput}
-                >
-                  <option value="">ALL DEPARTMENTS</option>
-                  {state.departments.map((department) => (
-                    <option
-                      value={department.department_id}
-                      key={department.department_id}
-                    >
-                      {department.department}
-                    </option>
-                  ))}
-                </FormSelect>
-                <label htmlFor="student_department">DEPARTMENT</label>
-              </Form.Floating>
-            </Col>
-            <Col sm={3}>
-              <Form.Floating className="mb-3">
-                <FormSelect
-                  name="student_year_level"
-                  id="student_year_level"
-                  value={state.student_year_level}
-                  onChange={handleInput}
-                >
-                  <option value="">ALL YEAR LEVELS</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                </FormSelect>
-                <label htmlFor="student_year_level">YEAR LEVEL</label>
-              </Form.Floating>
-            </Col>
+            <Row>
+              <Col sm={8}>
+                <Form.Floating className="mb-3">
+                  <FormSelect
+                    name="student_department"
+                    id="student_department"
+                    value={state.student_department}
+                    onChange={handleInput}
+                  >
+                    <option value="">ALL DEPARTMENTS</option>
+                    {state.departments.map((department) => (
+                      <option
+                        value={department.department_id}
+                        key={department.department_id}
+                      >
+                        {department.department}
+                      </option>
+                    ))}
+                  </FormSelect>
+                  <label htmlFor="student_department">DEPARTMENT</label>
+                </Form.Floating>
+              </Col>
+              <Col sm={8}>
+                <Form.Floating className="mb-3">
+                  <FormSelect
+                    name="student_year_level"
+                    id="student_year_level"
+                    value={state.student_year_level}
+                    onChange={handleInput}
+                  >
+                    <option value="">ALL YEAR LEVELS</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                  </FormSelect>
+                  <label htmlFor="student_year_level">YEAR LEVEL</label>
+                </Form.Floating>
+              </Col>
+            </Row>
             <ButtonGroup>
               <Button
                 type="button"
-                className="btn-theme"
                 disabled={state.studentsCurrentPage <= 1}
                 onClick={() =>
                   handleStudentsPageChange(state.studentsCurrentPage - 1)
@@ -644,7 +643,6 @@ const Students = () => {
               </Button>
               <Button
                 type="button"
-                className="btn-theme"
                 disabled={state.studentsCurrentPage >= state.studentsLastPage}
                 onClick={() =>
                   handleStudentsPageChange(state.studentsCurrentPage + 1)
@@ -655,7 +653,7 @@ const Students = () => {
             </ButtonGroup>
           </div>
         </Row>
-        <Table hover size="sm" responsive="sm">
+        <Table hover responsive>
           <thead>
             <tr className="align-middle">
               <th>NO.</th>
@@ -689,15 +687,13 @@ const Students = () => {
                   <td>
                     <div className="btn-group">
                       <Button
-                        className="btn-theme"
-                        size="sm"
+                        type="button"
                         onClick={() => handleOpenEditStudentModal(student)}
                       >
                         EDIT
                       </Button>
                       <Button
-                        className="btn-theme"
-                        size="sm"
+                        type="button"
                         onClick={() => handleOpenDeleteStudentModal(student)}
                       >
                         DELETE
@@ -985,7 +981,7 @@ const Students = () => {
         <ModalFooter>
           <Button
             type="button"
-            className="btn-theme"
+            className="btn-close-custom"
             onClick={handleCloseAddStudentModal}
             disabled={state.loadingStudent}
           >
@@ -993,7 +989,6 @@ const Students = () => {
           </Button>
           <Button
             type="submit"
-            className="btn-theme"
             onClick={handleStoreStudent}
             disabled={state.loadingStudent}
           >
@@ -1003,7 +998,6 @@ const Students = () => {
                   as="span"
                   animation="border"
                   role="status"
-                  size="sm"
                   className="spinner-theme"
                 />{" "}
                 SAVING...
@@ -1244,7 +1238,7 @@ const Students = () => {
         <ModalFooter>
           <Button
             type="button"
-            className="btn-theme"
+            className="btn-close-custom"
             onClick={handleCloseEditAndDeleteStudentModal}
             disabled={state.loadingStudent}
           >
@@ -1252,7 +1246,6 @@ const Students = () => {
           </Button>
           <Button
             type="submit"
-            className="btn-theme"
             onClick={handleUpdateStudent}
             disabled={state.loadingStudent}
           >
@@ -1262,7 +1255,6 @@ const Students = () => {
                   as="span"
                   animation="border"
                   role="status"
-                  size="sm"
                   className="spinner-theme"
                 />{" "}
                 UPDATING...
@@ -1418,7 +1410,7 @@ const Students = () => {
         <ModalFooter>
           <Button
             type="button"
-            className="btn-theme"
+            className="btn-close-custom"
             onClick={handleCloseEditAndDeleteStudentModal}
             disabled={state.loadingStudent}
           >
@@ -1426,7 +1418,6 @@ const Students = () => {
           </Button>
           <Button
             type="submit"
-            className="btn-theme"
             onClick={handleDeleteStudent}
             disabled={state.loadingStudent}
           >
@@ -1436,7 +1427,6 @@ const Students = () => {
                   as="span"
                   animation="border"
                   role="status"
-                  size="sm"
                   className="spinner-theme"
                 />{" "}
                 DELETING...
