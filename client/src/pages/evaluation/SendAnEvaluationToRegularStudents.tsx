@@ -381,6 +381,11 @@ const SendAnEvaluationToRegularStudents = () => {
     } else {
       handleLoadAcademicYears();
       handleLoadDepartments();
+
+      setState((prevState) => ({
+        ...prevState,
+        type_of_student: "1",
+      }));
     }
   }, []);
 
