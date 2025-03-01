@@ -209,7 +209,7 @@ const SendAnEvaluationToRegularStudents = () => {
             loadingSubmit: false,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       });
   };
@@ -236,7 +236,7 @@ const SendAnEvaluationToRegularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -255,7 +255,7 @@ const SendAnEvaluationToRegularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -274,7 +274,7 @@ const SendAnEvaluationToRegularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -293,7 +293,7 @@ const SendAnEvaluationToRegularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -312,7 +312,7 @@ const SendAnEvaluationToRegularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -339,7 +339,7 @@ const SendAnEvaluationToRegularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       })
       .finally(() => {
         setState((prevState) => ({
@@ -377,7 +377,7 @@ const SendAnEvaluationToRegularStudents = () => {
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      errorHandler(401, navigate);
+      errorHandler(401, navigate, null);
     } else {
       handleLoadAcademicYears();
       handleLoadDepartments();

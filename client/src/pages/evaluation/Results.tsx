@@ -138,7 +138,7 @@ const Results = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -157,7 +157,7 @@ const Results = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -181,7 +181,7 @@ const Results = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -237,7 +237,7 @@ const Results = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -270,7 +270,7 @@ const Results = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -299,7 +299,7 @@ const Results = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, null);
+        errorHandler(error, navigate, null);
       })
       .finally(() => {
         setState((prevState) => ({
@@ -347,7 +347,7 @@ const Results = () => {
           }
         })
         .catch((error) => {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         });
     };
 

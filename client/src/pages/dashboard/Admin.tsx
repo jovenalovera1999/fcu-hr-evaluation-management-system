@@ -106,7 +106,7 @@ const Admin = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -155,7 +155,7 @@ const Admin = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -250,7 +250,7 @@ const Admin = () => {
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      errorHandler(401, navigate);
+      errorHandler(401, navigate, null);
     } else {
       handleLoadAcademicYears();
     }

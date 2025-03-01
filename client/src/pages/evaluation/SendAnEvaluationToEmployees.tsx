@@ -157,7 +157,7 @@ const SendAnEvaluationToEmployees = () => {
             loadingSubmit: false,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       });
   };
@@ -191,7 +191,7 @@ const SendAnEvaluationToEmployees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       })
       .finally(() => {
         setState((prevState) => ({
@@ -221,7 +221,7 @@ const SendAnEvaluationToEmployees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, null);
+        errorHandler(error, navigate, null);
       })
       .finally(() => {
         setState((prevState) => ({
@@ -251,7 +251,7 @@ const SendAnEvaluationToEmployees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       })
       .finally(() => {
         setState((prevState) => ({
@@ -283,7 +283,7 @@ const SendAnEvaluationToEmployees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       })
       .finally(() => {
         setState((prevState) => ({
@@ -321,7 +321,7 @@ const SendAnEvaluationToEmployees = () => {
       !parsedUser.position ||
       parsedUser.position !== "ADMIN"
     ) {
-      errorHandler(401, navigate);
+      errorHandler(401, navigate, null);
     } else {
       handleLoadAcademicYears();
       handleLoadDepartments();

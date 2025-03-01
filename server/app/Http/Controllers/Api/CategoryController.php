@@ -30,8 +30,8 @@ class CategoryController extends Controller
         ]);
 
         return response()->json([
-            'status' => 200
-        ]);
+            'message' => 'Category Added Successfully.',
+        ], 200);
     }
 
     public function updateCategory(Request $request, $categoryId)
@@ -47,8 +47,8 @@ class CategoryController extends Controller
         ]);
 
         return response()->json([
-            'status' => 200
-        ]);
+            'message' => 'Category Updated Successfully.',
+        ], 200);
     }
 
     public function deleteCategory($categoryId)

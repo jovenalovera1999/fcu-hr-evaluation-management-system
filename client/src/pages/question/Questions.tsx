@@ -17,6 +17,10 @@ import {
 } from "react-bootstrap";
 import ToastMessage from "../../components/ToastMessage";
 import { useNavigate } from "react-router-dom";
+import CategoryTable from "../../components/tables/category/CategoryTable";
+import AddCategoryModal from "../../components/modals/category/AddCategoryModal";
+import EditCategoryModal from "../../components/modals/category/EditCategoryModal";
+import DeleteCategoryModal from "../../components/modals/category/DeleteCategoryModal";
 
 interface Categories {
   category_id: number;
@@ -126,7 +130,7 @@ const Questions = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       })
       .finally(() => {
         setState((prevState) => ({
@@ -168,7 +172,7 @@ const Questions = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       })
       .finally(() => {
         setState((prevState) => ({
@@ -198,7 +202,7 @@ const Questions = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, null);
+        errorHandler(error, null, null);
       })
       .finally(() => {
         setState((prevState) => ({ ...prevState, loadingPositions: false }));
@@ -243,7 +247,7 @@ const Questions = () => {
             loadingQuestion: false,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(401, navigate, null);
         }
       });
   };
@@ -279,7 +283,7 @@ const Questions = () => {
             errors: error.response.data.errors,
           }));
         } else {
-          errorHandler(error, null);
+          errorHandler(error, null, null);
         }
       })
       .finally(() => {
@@ -321,7 +325,7 @@ const Questions = () => {
             errors: error.response.data.errors,
           }));
         } else {
-          errorHandler(error, null);
+          errorHandler(error, null, null);
         }
       })
       .finally(() => {
@@ -399,6 +403,54 @@ const Questions = () => {
     }));
   };
 
+  const [refreshCategories, setRefreshCategories] = useState(false);
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
+  const [showDeleteCategoryModal, setShowDeleteCategoryModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Categories | null>(
+    null
+  );
+
+  const handleOpenEditCategoryModal = (category: Categories) => {
+    setSelectedCategory(category);
+    setShowEditCategoryModal(true);
+  };
+
+  const handleOpenDeleteCategoryModal = (category: Categories) => {
+    setSelectedCategory(category);
+    setShowDeleteCategoryModal(true);
+  };
+
+  const handleCloseEditCategoryModal = () => {
+    setSelectedCategory(null);
+    setShowEditCategoryModal(false);
+  };
+
+  const handleCloseDeleteCategoryModal = () => {
+    setSelectedCategory(null);
+    setShowDeleteCategoryModal(false);
+  };
+
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastMessageIsSuccess, setToastMessageIsSuccess] = useState(false);
+  const [toastMessageIsVisible, setToastMessageIsVisible] = useState(false);
+
+  const handleShowToastMessage = (
+    message: string,
+    isSuccess: boolean,
+    isVisible: boolean
+  ) => {
+    setToastMessage(message);
+    setToastMessageIsSuccess(isSuccess);
+    setToastMessageIsVisible(isVisible);
+  };
+
+  const handleCloseToastMessage = () => {
+    setToastMessage("");
+    setToastMessageIsSuccess(false);
+    setToastMessageIsVisible(false);
+  };
+
   useEffect(() => {
     document.title = "LIST OF QUESTIONS | FCU HR EMS";
 
@@ -409,7 +461,7 @@ const Questions = () => {
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      errorHandler(401, navigate);
+      errorHandler(401, navigate, null);
     } else {
       handleLoadQuestions();
       handleLoadCategories();
@@ -433,13 +485,60 @@ const Questions = () => {
         showToast={state.showToast}
         onClose={handleCloseToast}
       />
+      <ToastMessage
+        body={toastMessage}
+        success={toastMessageIsSuccess}
+        showToast={toastMessageIsVisible}
+        onClose={handleCloseToastMessage}
+      />
       <div className="mx-auto mt-2">
+        <div className="d-flex justify-content-between align-items-center">
+          <h3>CATEGORIES</h3>
+          <div className="mb-3">
+            <Button type="button" onClick={() => setShowAddCategoryModal(true)}>
+              ADD CATEGORY
+            </Button>
+          </div>
+        </div>
+        <AddCategoryModal
+          showModal={showAddCategoryModal}
+          onCategoryAdded={(message) => {
+            setRefreshCategories((prev) => !prev);
+            handleShowToastMessage(message, true, true);
+          }}
+          onClose={() => setShowAddCategoryModal(false)}
+        />
+        <EditCategoryModal
+          showModal={showEditCategoryModal}
+          category={selectedCategory}
+          onCategoryUpdated={(message) => {
+            setRefreshCategories((prev) => !prev);
+            handleShowToastMessage(message, true, true);
+          }}
+          onClose={handleCloseEditCategoryModal}
+        />
+        <DeleteCategoryModal
+          showModal={showDeleteCategoryModal}
+          category={selectedCategory}
+          onCategoryDeleted={(message) => {
+            setRefreshCategories((prev) => !prev);
+            handleShowToastMessage(message, true, true);
+          }}
+          onClose={handleCloseDeleteCategoryModal}
+        />
+        <CategoryTable
+          refreshCategories={refreshCategories}
+          onEditCategory={handleOpenEditCategoryModal}
+          onDeleteCategory={handleOpenDeleteCategoryModal}
+        />
         <div className="d-flex justify-content-between align-items-center">
           <div className="mb-3">
             <h3>QUESTIONS</h3>
           </div>
           <div className="mb-3">
-            <Button onClick={handleOpenAddQuestionModal}>ADD QUESTION</Button>
+            <Button type="button" onClick={handleOpenAddQuestionModal}>
+              ADD QUESTION
+            </Button>
           </div>
         </div>
         <div className="d-flex justify-content-between align-items-center">

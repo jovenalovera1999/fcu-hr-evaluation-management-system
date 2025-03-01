@@ -142,7 +142,7 @@ const Employees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -166,7 +166,7 @@ const Employees = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, null);
+        errorHandler(error, null, null);
       })
       .finally(() => {
         setState((prevState) => ({
@@ -210,7 +210,7 @@ const Employees = () => {
             errors: error.response.data.errors,
           }));
         } else {
-          errorHandler(error, null);
+          errorHandler(error, null, null);
         }
       })
       .finally(() => {
@@ -255,7 +255,7 @@ const Employees = () => {
             errors: error.response.data.errors,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       })
       .finally(() => {
@@ -300,7 +300,7 @@ const Employees = () => {
             errors: error.response.data.errors,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       })
       .finally(() => {
@@ -343,7 +343,7 @@ const Employees = () => {
             errors: error.response.data.errors,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       })
       .finally(() => {
@@ -388,7 +388,7 @@ const Employees = () => {
             errors: error.response.data.errors,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       })
       .finally(() => {
@@ -517,7 +517,7 @@ const Employees = () => {
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      errorHandler(401, navigate);
+      errorHandler(401, navigate, null);
     } else {
       handleLoadPositions();
       handleLoadDepartments();

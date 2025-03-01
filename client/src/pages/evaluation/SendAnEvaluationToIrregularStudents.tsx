@@ -157,7 +157,7 @@ const SendAnEvaluationToIrregularStudents = () => {
             loadingSubmit: false,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       });
   };
@@ -177,7 +177,7 @@ const SendAnEvaluationToIrregularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -223,7 +223,7 @@ const SendAnEvaluationToIrregularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -293,7 +293,7 @@ const SendAnEvaluationToIrregularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -353,7 +353,7 @@ const SendAnEvaluationToIrregularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -377,7 +377,7 @@ const SendAnEvaluationToIrregularStudents = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       })
       .finally(() => {
         setState((prevState) => ({

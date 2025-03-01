@@ -86,9 +86,9 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::controller(CategoryController::class)->prefix("category")->group(function () {
         Route::get("/index", "index");
-        Route::post("/store", "storeCategory");
+        Route::post("/storeCategory", "storeCategory");
         Route::put("/update/{categoryId}", "updateCategory");
-        Route::put("/delete/{categoryId}", "deleteCategory");
+        Route::put("/destroy/{categoryId}", "deleteCategory");
     });
 
     Route::controller(QuestionController::class)->prefix("question")->group(function () {
