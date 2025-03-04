@@ -178,7 +178,7 @@ const SendAnEvaluationToRegularStudents = () => {
     axiosInstance
       .post("/evaluation/store/evaluations/for/students", state)
       .then((res) => {
-        if (res.data.status === 200) {
+        if (res.status === 200) {
           setState((prevState) => ({
             ...prevState,
             employees: [] as Employees[],
@@ -193,7 +193,7 @@ const SendAnEvaluationToRegularStudents = () => {
             selectAll: false,
             errors: {} as Errors,
             loadingSubmit: false,
-            toastMessage: "EVALUATIONS HAS BEEN SENT TO STUDENTS!",
+            toastMessage: res.data.message,
             toastMessageSuccess: true,
             toastMessageVisible: true,
           }));

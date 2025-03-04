@@ -27,7 +27,7 @@ const CategoryService = {
   },
   destroyCategory: async (category_id: number) => {
     return axiosInstance
-      .delete(`/category/destroy/${category_id}`)
+      .put(`/category/destroy/${category_id}`)
       .then((response) => response)
       .catch((error) => {
         throw error;

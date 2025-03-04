@@ -51,7 +51,7 @@ class CategoryController extends Controller
         ], 200);
     }
 
-    public function deleteCategory($categoryId)
+    public function destroyCategory($categoryId)
     {
         $category = Category::find($categoryId);
 
@@ -60,7 +60,7 @@ class CategoryController extends Controller
         ]);
 
         return response()->json([
-            'status' => 200
-        ]);
+            'message' => 'CATEGORY SUCCESSFULLY DELETED.'
+        ], 200);
     }
 }

@@ -11,7 +11,6 @@ use App\Models\Response;
 use App\Models\Student;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class EvaluationController extends Controller
 {
@@ -60,11 +59,23 @@ class EvaluationController extends Controller
                 ->get();
         }
 
-
         return response()->json([
             "employees" => $employees,
             "status" => 200
         ]);
+    }
+
+    public function loadEvaluationsToCancel()
+    {
+        $evaluations = Evaluation::with(['employee_to_response', 'employee_to_evaluate', 'semester.academic_year'])
+            ->leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
+            ->where('tbl_evaluations.is_cancelled', false)
+            ->orderBy('tbl_employees.last_name', 'asc')
+            ->get();
+
+        return response()->json([
+            'evaluations' => $evaluations
+        ], 200);
     }
 
     public function storeEvaluationsForStudents(Request $request)
@@ -116,8 +127,8 @@ class EvaluationController extends Controller
         }
 
         return response()->json([
-            "status" => 200
-        ]);
+            "message" => 'EVALUATION SUCCESSFULLY SENT TO REGULAR STUDENTS.'
+        ], 200);
     }
 
     public function sendEvaluationsForIrregularStudents(Request $request)

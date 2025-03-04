@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, ButtonGroup, Table } from "react-bootstrap";
+import { Button, ButtonGroup, Spinner, Table } from "react-bootstrap";
 import Categories from "../../../pages/category/Categories";
 import CategoryService from "../../../services/CategoryService";
 import errorHandler from "../../../handler/errorHandler";
@@ -61,28 +61,36 @@ const CategoryTable = ({
           </tr>
         </thead>
         <tbody>
-          {state.categories.map((category, index) => (
-            <tr className="align-middle" key={category.category_id}>
-              <td>{index + 1}</td>
-              <td>{category.category}</td>
-              <td>
-                <ButtonGroup>
-                  <Button
-                    type="button"
-                    onClick={() => onEditCategory(category)}
-                  >
-                    EDIT
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => onDeleteCategory(category)}
-                  >
-                    DELETE
-                  </Button>
-                </ButtonGroup>
+          {state.loadingCategories ? (
+            <tr className="align-middle">
+              <td colSpan={3} className="text-center">
+                <Spinner as="span" animation="border" role="status" />
               </td>
             </tr>
-          ))}
+          ) : (
+            state.categories.map((category, index) => (
+              <tr className="align-middle" key={category.category_id}>
+                <td>{index + 1}</td>
+                <td>{category.category}</td>
+                <td>
+                  <ButtonGroup>
+                    <Button
+                      type="button"
+                      onClick={() => onEditCategory(category)}
+                    >
+                      EDIT
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() => onDeleteCategory(category)}
+                    >
+                      DELETE
+                    </Button>
+                  </ButtonGroup>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </Table>
     </>

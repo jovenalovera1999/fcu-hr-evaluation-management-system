@@ -88,7 +88,7 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::get("/index", "index");
         Route::post("/storeCategory", "storeCategory");
         Route::put("/update/{categoryId}", "updateCategory");
-        Route::put("/destroy/{categoryId}", "deleteCategory");
+        Route::put("/destroy/{categoryId}", "destroyCategory");
     });
 
     Route::controller(QuestionController::class)->prefix("question")->group(function () {
@@ -103,6 +103,7 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::controller(EvaluationController::class)->prefix("evaluation")->group(function () {
         Route::get("/index/{studentId}/{employeeId}", "index");
+        Route::get('/loadEvaluationsToCancel', 'loadEvaluationsToCancel');
         Route::post("/store/evaluations/for/students", "storeEvaluationsForStudents");
         Route::post("/send/evaluations/for/irregular/students", "sendEvaluationsForIrregularStudents");
         Route::post("/store/evaluation/for/employees", "storeEvaluationsForEmployees");

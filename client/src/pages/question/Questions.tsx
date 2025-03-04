@@ -609,7 +609,7 @@ const Questions = () => {
             </Button>
           </ButtonGroup>
         </div>
-        <Table hover size="sm" responsive="sm">
+        <Table hover responsive="sm">
           <thead>
             <tr className="align-middle">
               <th>NO.</th>
@@ -623,11 +623,7 @@ const Questions = () => {
             {state.loadingQuestions ? (
               <tr className="align-middle">
                 <td colSpan={5} className="text-center">
-                  <Spinner
-                    as={"span"}
-                    role="status"
-                    className="spinner-theme"
-                  />
+                  <Spinner as="span" animation="border" role="status" />
                 </td>
               </tr>
             ) : (

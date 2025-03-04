@@ -11,6 +11,7 @@ import SendAnEvaluationToIrregularStudents from "./pages/evaluation/SendAnEvalua
 import Categories from "./pages/category/Categories";
 import Results from "./pages/evaluation/Results";
 import Questions from "./pages/question/Questions";
+import CurrentEvaluations from "./pages/evaluation/CurrentEvaluations";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
   { path: "/evaluation/list", element: <Evaluations /> },
   { path: "/evaluation/response/:evaluation_id", element: <Response /> },
   { path: "/evaluation/results", element: <Results /> },
+  { path: "/evaluation/current", element: <CurrentEvaluations /> },
   { path: "/category/list", element: <Categories /> },
 ]);
 

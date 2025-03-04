@@ -5,7 +5,7 @@ import {
   Modal,
   Spinner,
 } from "react-bootstrap";
-import Categories from "../../../interfaces/Category";
+import Categories from "../../../interfaces/Categories";
 import { FormEvent, useEffect, useState } from "react";
 import CategoryService from "../../../services/CategoryService";
 import errorHandler from "../../../handler/errorHandler";
@@ -82,7 +82,7 @@ const DeleteCategoryModal = ({
               name="category"
               id="category"
               value={state.category}
-              autoFocus
+              readOnly
             />
           </Modal.Body>
           <Modal.Footer>

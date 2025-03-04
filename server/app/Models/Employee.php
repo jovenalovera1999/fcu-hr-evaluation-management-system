@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Employee extends Model
 {
@@ -20,4 +21,14 @@ class Employee extends Model
         'department_id',
         'is_deleted'
     ];
+
+    public function evaluation_to_response(): HasMany
+    {
+        return $this->hasMany(Evaluation::class, 'employee_to_response_id', 'employee_id');
+    }
+
+    public function evaluation_to_evaluate(): HasMany
+    {
+        return $this->hasMany(Evaluation::class, 'employee_to_evaluate_id', 'employee_id');
+    }
 }

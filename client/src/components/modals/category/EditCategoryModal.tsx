@@ -5,7 +5,7 @@ import {
   Modal,
   Spinner,
 } from "react-bootstrap";
-import Categories from "../../../interfaces/Category";
+import Categories from "../../../interfaces/Categories";
 import { FormEvent, useEffect, useState } from "react";
 import CategoryFieldErrors from "../../../interfaces/CategoryFieldErrors";
 import CategoryService from "../../../services/CategoryService";
