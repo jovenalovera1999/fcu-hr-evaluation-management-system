@@ -65,13 +65,30 @@ class EvaluationController extends Controller
         ]);
     }
 
-    public function loadEvaluationsToCancel()
+    public function loadEvaluationsToCancel(Request $request)
     {
-        $evaluations = Evaluation::with(['employee_to_response', 'employee_to_evaluate', 'semester.academic_year'])
-            ->leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
-            ->where('tbl_evaluations.is_cancelled', false)
-            ->orderBy('tbl_employees.last_name', 'asc')
-            ->get();
+        $evaluations = '';
+
+        if ($request->has('academicYearId') && $request->has('semesterId')) {
+            $academicYearId = $request->input('academicYearId');
+            $semesterId = $request->input('semesterId');
+
+            $evaluations = $evaluations = Evaluation::with(['employee_to_response', 'employee_to_evaluate', 'semester.academic_year'])
+                ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
+                ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+                ->where('tbl_academic_years.academic_year_id', $academicYearId)
+                ->where('tbl_semesters.semester_id', $semesterId)
+                ->where('tbl_evaluations.is_cancelled', false)
+                ->whereNotNull('tbl_academic_years.academic_year')
+                ->get();
+        } else {
+            $evaluations = Evaluation::with(['employee_to_response', 'employee_to_evaluate', 'semester.academic_year'])
+                ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
+                ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+                ->where('tbl_evaluations.is_cancelled', false)
+                ->whereNotNull('tbl_academic_years.academic_year')
+                ->get();
+        }
 
         return response()->json([
             'evaluations' => $evaluations
@@ -225,5 +242,20 @@ class EvaluationController extends Controller
             ->leftJoin("tbl_departments", "tbl_employees.department_id", "=", "tbl_departments.department_id")
             ->where("tbl_employees.first_name")
             ->count();
+    }
+
+    public function updateEvaluationToCancelled($academicYear)
+    {
+        $evaluations = Evaluation::with(['semester.academic_year'])
+            ->leftJoin('tbl_academic_years.academic_year', $academicYear)
+            ->get();
+
+        $evaluations->update([
+            'is_cancelled' => true
+        ]);
+
+        return response()->json([
+            'message' => 'EVALUATION HAS BEEN CANCELLED.'
+        ], 200);
     }
 }

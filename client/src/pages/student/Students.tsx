@@ -195,7 +195,7 @@ const Students = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -214,7 +214,7 @@ const Students = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -233,7 +233,7 @@ const Students = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -269,7 +269,7 @@ const Students = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       })
       .finally(() => {
         setState((prevState) => ({
@@ -315,7 +315,7 @@ const Students = () => {
             errors: error.response.data.errors,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       })
       .finally(() => {
@@ -360,7 +360,7 @@ const Students = () => {
             errors: error.response.data.errors,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       })
       .finally(() => {
@@ -399,7 +399,7 @@ const Students = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       })
       .finally(() => {
         setState((prevState) => ({
@@ -526,7 +526,7 @@ const Students = () => {
       parsedUser.position !== "ADMIN" ||
       !parsedUser.position
     ) {
-      errorHandler(401, navigate);
+      errorHandler(401, navigate, null);
     } else {
       handleLoadDepartments();
       handleLoadStudents();

@@ -1,19 +1,31 @@
 import { useEffect, useState } from "react";
-import { Button, ButtonGroup, Spinner, Table } from "react-bootstrap";
 import Evaluations from "../../../interfaces/Evaluations";
 import EvaluationService from "../../../services/EvaluationService";
 import errorHandler from "../../../handler/errorHandler";
+import Semesters from "../../../interfaces/Semesters";
+import AcademicYears from "../../../interfaces/AcademicYear";
+import Employees from "../../../interfaces/Employees";
+import { Spinner, Table } from "react-bootstrap";
 
-const CurrentEvaluationTable = () => {
+interface CurrentEvaluationTableProps {
+  refreshCurrentEvaluations: boolean;
+  academicYearId: number | null;
+  semesterId: number | null;
+}
+
+const CurrentEvaluationTable = ({
+  refreshCurrentEvaluations,
+  academicYearId,
+  semesterId,
+}: CurrentEvaluationTableProps) => {
   const [state, setState] = useState({
     loadingEvaluations: true,
     loadingUpdate: false,
     evaluations: [] as Evaluations[],
-    evaluation_id: 0,
   });
 
   const handleLoadCurrentEvaluations = () => {
-    EvaluationService.loadCurrentEvaluations()
+    EvaluationService.loadCurrentEvaluations(academicYearId, semesterId)
       .then((res) => {
         if (res.status === 200) {
           setState((prevState) => ({
@@ -35,30 +47,34 @@ const CurrentEvaluationTable = () => {
       });
   };
 
-  useEffect(() => {
-    handleLoadCurrentEvaluations();
-  }, []);
-
-  const handleEmployeeFullName = (
-    first_name: string = "",
-    middle_name: string = "",
-    last_name: string = "",
-    suffix_name: string = ""
-  ) => {
+  const handleEmployeeFullnameFormat = (employee: Employees) => {
     let fullName = "";
 
-    if (middle_name) {
-      fullName = `${last_name}, ${first_name} ${middle_name.charAt(0)}.`;
+    if (employee.middle_name) {
+      fullName = `${employee.last_name}, ${
+        employee.first_name
+      } ${employee.middle_name.charAt(0)}`;
     } else {
-      fullName = `${last_name}, ${first_name}`;
+      fullName = `${employee.last_name}, ${employee.first_name}`;
     }
 
-    if (suffix_name) {
-      fullName += ` ${suffix_name}`;
+    if (employee.suffix_name) {
+      fullName += ` ${employee.suffix_name}`;
     }
 
     return fullName;
   };
+
+  const handleSemesterAndAcademicYearFormat = (
+    semester: Semesters,
+    academic_year: AcademicYears
+  ) => {
+    return `${semester.semester}, ${academic_year.academic_year}`;
+  };
+
+  useEffect(() => {
+    handleLoadCurrentEvaluations();
+  }, [refreshCurrentEvaluations]);
 
   return (
     <>
@@ -66,9 +82,8 @@ const CurrentEvaluationTable = () => {
         <thead>
           <tr className="align-items">
             <th>NO.</th>
-            <th>EVALUATION FOR</th>
-            <th>ACADEMIC YEAR</th>
-            <th>ACTION</th>
+            <th>PERSON TO EVALUATE</th>
+            <th>SEMESTER AND ACADEMIC YEAR</th>
           </tr>
         </thead>
         <tbody>
@@ -80,21 +95,18 @@ const CurrentEvaluationTable = () => {
             </tr>
           ) : (
             state.evaluations.map((evaluation, index) => (
-              <tr className="align-middle" key={evaluation.evaluation_id}>
+              <tr className="align-middle" key={index}>
                 <td>{index + 1}</td>
                 <td>
-                  {handleEmployeeFullName(
-                    evaluation.employee_to_evaluate.first_name,
-                    evaluation.employee_to_evaluate.middle_name,
-                    evaluation.employee_to_evaluate.last_name,
-                    evaluation.employee_to_evaluate.suffix_name
+                  {handleEmployeeFullnameFormat(
+                    evaluation.employee_to_evaluate
                   )}
                 </td>
-                <td>{evaluation.semester.academic_year.academic_year}</td>
                 <td>
-                  <ButtonGroup>
-                    <Button type="button">CANCEL EVALUATION</Button>
-                  </ButtonGroup>
+                  {handleSemesterAndAcademicYearFormat(
+                    evaluation.semester,
+                    evaluation.semester.academic_year
+                  )}
                 </td>
               </tr>
             ))
