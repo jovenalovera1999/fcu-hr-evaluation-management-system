@@ -57,6 +57,7 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::controller(AcademicYearController::class)->prefix("academic_year")->group(function () {
         Route::get("/index", "index");
+        Route::get('/fetchAcademicYear/{academicYearId}', 'fetchAcademicYear');
     });
 
     Route::controller(PositionController::class)->prefix("position")->group(function () {
@@ -107,6 +108,7 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::post("/store/evaluations/for/students", "storeEvaluationsForStudents");
         Route::post("/send/evaluations/for/irregular/students", "sendEvaluationsForIrregularStudents");
         Route::post("/store/evaluation/for/employees", "storeEvaluationsForEmployees");
+        Route::put('/updateEvaluationToCancelled/{semesterId}/{academicYearId}', 'updateEvaluationToCancelled');
     });
 
     Route::controller(ResponseController::class)->prefix("response")->group(function () {
@@ -128,6 +130,7 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::controller(SemesterController::class)->prefix("semester")->group(function () {
         Route::get("/load/semesters/by/academic_year/{academicYearId}", "loadSemestersByAcademicYear");
+        Route::get('/fetchSemester/{semesterId}', 'fetchSemester');
     });
 
     Route::controller(CommentController::class)->prefix('comment')->group(function () {

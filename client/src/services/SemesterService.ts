@@ -9,6 +9,14 @@ const SemesterService = {
         throw error;
       });
   },
+  fetchSemester: async (semesterId: number) => {
+    return axiosInstance
+      .get(`/semester/fetchSemester/${semesterId}`)
+      .then((response) => response)
+      .catch((error) => {
+        throw error;
+      });
+  },
 };
 
 export default SemesterService;

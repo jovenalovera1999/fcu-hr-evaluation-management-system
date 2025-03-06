@@ -8,6 +8,13 @@ const AcademicYearService = {
         throw error;
       });
   },
+  fetchAcademicYear: async (academicYearId: number) => {
+    return axiosInstance(`/academic_year/fetchAcademicYear/${academicYearId}`)
+      .then((response) => response)
+      .catch((error) => {
+        throw error;
+      });
+  },
 };
 
 export default AcademicYearService;

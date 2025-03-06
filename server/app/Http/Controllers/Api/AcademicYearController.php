@@ -18,4 +18,13 @@ class AcademicYearController extends Controller
             'status' => 200
         ]);
     }
+
+    public function fetchAcademicYear($academicYearId)
+    {
+        $academicYear = AcademicYear::find($academicYearId);
+
+        return response()->json([
+            'academicYear' => $academicYear
+        ], 200);
+    }
 }

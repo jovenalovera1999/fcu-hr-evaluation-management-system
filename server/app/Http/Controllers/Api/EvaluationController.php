@@ -244,18 +244,22 @@ class EvaluationController extends Controller
             ->count();
     }
 
-    public function updateEvaluationToCancelled($academicYear)
+    public function updateEvaluationToCancelled($semesterId, $academicYearId)
     {
-        $evaluations = Evaluation::with(['semester.academic_year'])
-            ->leftJoin('tbl_academic_years.academic_year', $academicYear)
+        $evaluations = Evaluation::leftJoin('tbl_semesters', 'tbl_semesters.semester_id', '=', 'tbl_evaluations.semester_id')
+            ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+            ->where('tbl_semesters.semester_id', $semesterId)
+            ->where('tbl_academic_years.academic_year_id', $academicYearId)
             ->get();
 
-        $evaluations->update([
-            'is_cancelled' => true
-        ]);
+        foreach ($evaluations as $evaluation) {
+            $evaluation->update([
+                'is_cancelled' => true
+            ]);
+        }
 
         return response()->json([
-            'message' => 'EVALUATION HAS BEEN CANCELLED.'
+            'message' => 'EVALUATIONS HAS BEEN CANCELLED.'
         ], 200);
     }
 }

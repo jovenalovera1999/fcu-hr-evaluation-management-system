@@ -19,4 +19,13 @@ class SemesterController extends Controller
             'status' => 200
         ]);
     }
+
+    public function fetchSemester($semesterId)
+    {
+        $semester = Semester::find($semesterId);
+
+        return response()->json([
+            'semester' => $semester
+        ], 200);
+    }
 }

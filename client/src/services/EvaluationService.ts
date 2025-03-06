@@ -16,6 +16,19 @@ const EvaluationService = {
         throw error;
       });
   },
+  updateEvaluationToCancelled: async (
+    semesterId: number | null,
+    academicYearId: number | null
+  ) => {
+    return axiosInstance
+      .put(
+        `/evaluation/updateEvaluationToCancelled/${semesterId}/${academicYearId}`
+      )
+      .then((response) => response)
+      .catch((error) => {
+        throw error;
+      });
+  },
 };
 
 export default EvaluationService;

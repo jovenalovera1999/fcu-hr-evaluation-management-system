@@ -7,6 +7,8 @@ import errorHandler from "../../handler/errorHandler";
 import AcademicYears from "../../interfaces/AcademicYear";
 import Semesters from "../../interfaces/Semesters";
 import SemesterService from "../../services/SemesterService";
+import CancelEvaluationModal from "../../components/modals/evaluation/CancelEvaluationModal";
+import ToastMessage from "../../components/ToastMessage";
 
 const CurrentEvaluations = () => {
   const [state, setState] = useState({
@@ -17,6 +19,11 @@ const CurrentEvaluations = () => {
     semesters: [] as Semesters[],
     academic_year: "",
     semester: "",
+    refreshEvaluations: false,
+    showCancelEvaluationModal: false,
+    toastMessage: "",
+    toastSuccess: false,
+    toastVisible: false,
   });
 
   const handleInputChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -30,8 +37,11 @@ const CurrentEvaluations = () => {
       handleLoadSemesters(parseInt(value));
     }
 
-    if ((state.semester && name === "academic_year") || name === "semester") {
-      setRefreshEvaluations((prev) => !prev);
+    if (name === "academic_year" || name === "semester") {
+      setState((prevState) => ({
+        ...prevState,
+        refreshEvaluations: !prevState.refreshEvaluations,
+      }));
     }
   };
 
@@ -67,6 +77,7 @@ const CurrentEvaluations = () => {
     setState((prevState) => ({
       ...prevState,
       loadingSemesters: true,
+      semester: "",
     }));
 
     SemesterService.loadSemesters(academicYearId)
@@ -91,7 +102,31 @@ const CurrentEvaluations = () => {
       });
   };
 
-  const [refreshEvaluations, setRefreshEvaluations] = useState(false);
+  const handleOpenCancelEvaluationModal = () => {
+    setState((prevState) => ({
+      ...prevState,
+      showCancelEvaluationModal: true,
+    }));
+  };
+
+  const handleCloseCancelEvaluationModal = () => {
+    setState((prevState) => ({
+      ...prevState,
+      semesters: [] as Semesters[],
+      academic_year: "",
+      semester: "",
+      showCancelEvaluationModal: false,
+    }));
+  };
+
+  const handleCloseToastMessage = () => {
+    setState((prevState) => ({
+      ...prevState,
+      toastMessage: "",
+      toastSuccess: false,
+      toastVisible: false,
+    }));
+  };
 
   useEffect(() => {
     handleLoadAcademicYears();
@@ -99,7 +134,13 @@ const CurrentEvaluations = () => {
 
   const content = (
     <>
-      <Row>
+      <ToastMessage
+        showToast={state.toastVisible}
+        body={state.toastMessage}
+        success={state.toastSuccess}
+        onClose={handleCloseToastMessage}
+      />
+      <Row className="mb-3">
         <Col md={3}>
           <Form.Floating className="mb-3">
             <Form.Select
@@ -135,14 +176,37 @@ const CurrentEvaluations = () => {
           </Form.Floating>
         </Col>
         <Col md={3}>
-          <Button type="submit" className="mt-2" disabled={state.loadingUpdate}>
+          <Button
+            type="submit"
+            className="mt-2"
+            disabled={
+              state.loadingUpdate || !state.academic_year || !state.semester
+            }
+            onClick={handleOpenCancelEvaluationModal}
+          >
             CANCEL EVALUATION
           </Button>
         </Col>
       </Row>
 
+      <CancelEvaluationModal
+        showModal={state.showCancelEvaluationModal}
+        semesterId={parseInt(state.semester)}
+        academicYearId={parseInt(state.academic_year)}
+        onEvaluationCancelled={(message) =>
+          setState((prevState) => ({
+            ...prevState,
+            refreshEvaluations: !prevState.refreshEvaluations,
+            toastMessage: message,
+            toastSuccess: true,
+            toastVisible: true,
+          }))
+        }
+        onClose={handleCloseCancelEvaluationModal}
+      />
+
       <CurrentEvaluationTable
-        refreshCurrentEvaluations={refreshEvaluations}
+        refreshCurrentEvaluations={state.refreshEvaluations}
         academicYearId={parseInt(state.academic_year)}
         semesterId={parseInt(state.semester)}
       />
