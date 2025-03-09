@@ -461,14 +461,14 @@ const Results = () => {
             </tr>
           ) : (
             state.employees.map((employee, index) => (
-              <tr key={employee.employee_id} className="align-middle">
+              <tr key={index} className="align-middle table-row">
                 <td>{index + 1}</td>
                 <td>{handleEmployeeFullName(employee)}</td>
                 <td>{employee.department}</td>
                 <td>{employee.position}</td>
                 <td>
                   <Button
-                    className="btn-theme"
+                    className="btn-theme table-button-group"
                     size="sm"
                     onClick={() => handleOpenResultModal(employee)}
                   >

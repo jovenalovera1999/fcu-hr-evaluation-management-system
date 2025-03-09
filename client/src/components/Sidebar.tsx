@@ -75,7 +75,7 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                     QUESTIONS
                   </NavLink>
                 </li>
-                <li className="sidebar-item">
+                {/* <li className="sidebar-item">
                   <NavLink
                     to={"/category/list"}
                     className={({ isActive }) =>
@@ -84,7 +84,7 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                   >
                     CATEGORIES
                   </NavLink>
-                </li>
+                </li> */}
                 <li className="sidebar-item">
                   <Link
                     to={"#"}

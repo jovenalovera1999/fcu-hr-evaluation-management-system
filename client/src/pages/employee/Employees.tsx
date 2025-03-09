@@ -604,12 +604,12 @@ const Employees = () => {
               </tr>
             ) : (
               state.employees.map((employee, index) => (
-                <tr key={index} className="align-middle">
+                <tr key={index} className="align-middle table-row">
                   <td>{(state.employeesCurrentPage - 1) * 10 + index + 1}</td>
                   <td>{handleEmployeeFullName(employee)}</td>
                   <td>{employee.position}</td>
                   <td>
-                    <ButtonGroup>
+                    <ButtonGroup className="table-button-group">
                       <Button
                         type="button"
                         onClick={() => handleOpenChangePasswordModal(employee)}

@@ -628,13 +628,13 @@ const Questions = () => {
               </tr>
             ) : (
               state.questions.map((question, index) => (
-                <tr key={index} className="align-middle">
+                <tr key={index} className="align-middle table-row">
                   <td>{(state.questionsCurrentPage - 1) * 10 + index + 1}</td>
                   <td>{question.category}</td>
                   <td>{question.question}</td>
                   <td>{question.position}</td>
                   <td>
-                    <ButtonGroup>
+                    <ButtonGroup className="table-button-group">
                       <Button
                         type="button"
                         onClick={() => handleOpenEditQuestionModal(question)}

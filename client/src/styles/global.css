@@ -294,3 +294,15 @@ option:hover {
   visibility: visible;
   opacity: 1;
 }
+
+.table th, .table td {
+  padding: 0.75rem;
+}
+
+.table-row .table-button-group {
+  display: none;
+}
+
+.table-row:hover .table-button-group {
+  display: inline-block;
+}

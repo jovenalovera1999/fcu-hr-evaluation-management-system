@@ -678,14 +678,14 @@ const Students = () => {
               </tr>
             ) : (
               state.students.map((student, index) => (
-                <tr key={index} className="align-middle">
+                <tr key={index} className="align-middle table-row">
                   <td>{(state.studentsCurrentPage - 1) * 10 + index + 1}</td>
                   <td>{student.student_no}</td>
                   <td>{handleStudentFullName(student)}</td>
                   <td>{handleDepartmentAndCourse(student)}</td>
                   <td>{handleYearLevelAndSection(student)}</td>
                   <td>
-                    <div className="btn-group">
+                    <div className="btn-group table-button-group">
                       <Button
                         type="button"
                         onClick={() => handleOpenEditStudentModal(student)}

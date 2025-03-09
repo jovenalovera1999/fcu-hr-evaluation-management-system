@@ -69,11 +69,11 @@ const CategoryTable = ({
             </tr>
           ) : (
             state.categories.map((category, index) => (
-              <tr className="align-middle" key={category.category_id}>
+              <tr className="align-middle table-row" key={category.category_id}>
                 <td>{index + 1}</td>
                 <td>{category.category}</td>
                 <td>
-                  <ButtonGroup>
+                  <ButtonGroup className="table-button-group">
                     <Button
                       type="button"
                       onClick={() => onEditCategory(category)}
