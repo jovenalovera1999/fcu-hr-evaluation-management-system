@@ -1,5 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
-import InnerCompanyLogo from "../assets/img/inner_company_logo.png";
+import CompanyLogoWithLabel from "../assets/img/CompanyLogoWithLabel.png";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -21,12 +21,13 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
             <Link to={"#"}>
               {/* FCU HR EVALUATION MANAGEMENT SYSTEM */}
               <img
-                src={InnerCompanyLogo}
+                src={CompanyLogoWithLabel}
                 alt="Company Logo"
                 style={{
-                  width: "268px",
-                  marginLeft: "-28px",
-                  marginTop: "-20px",
+                  width: "230px",
+                  height: "100px",
+                  marginLeft: "-10px",
+                  marginTop: "-10px",
                 }}
               />
             </Link>

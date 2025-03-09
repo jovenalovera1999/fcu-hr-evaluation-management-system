@@ -8,7 +8,12 @@ interface ToastMessageProps {
   onClose: () => void;
 }
 
-const ToastMessage = ({ body, showToast, onClose }: ToastMessageProps) => {
+const ToastMessage = ({
+  success,
+  body,
+  showToast,
+  onClose,
+}: ToastMessageProps) => {
   const [show, setShow] = useState(showToast);
 
   const handleClose = () => {
@@ -24,15 +29,27 @@ const ToastMessage = ({ body, showToast, onClose }: ToastMessageProps) => {
     <>
       <div aria-live="polite" aria-atomic="true" className="position-relative">
         <ToastContainer position="bottom-end" className="p-3 position-fixed">
-          <Toast
-            show={show}
-            bg="success"
-            onClose={handleClose}
-            delay={3000}
-            autohide
-          >
-            <ToastBody className="text-white">{body}</ToastBody>
-          </Toast>
+          {success ? (
+            <Toast
+              show={show}
+              bg="success"
+              onClose={handleClose}
+              delay={3000}
+              autohide
+            >
+              <ToastBody className="text-white">{body}</ToastBody>
+            </Toast>
+          ) : (
+            <Toast
+              show={show}
+              bg="danger"
+              onClose={handleClose}
+              delay={3000}
+              autohide
+            >
+              <ToastBody className="text-white">{body}</ToastBody>
+            </Toast>
+          )}
         </ToastContainer>
       </div>
     </>

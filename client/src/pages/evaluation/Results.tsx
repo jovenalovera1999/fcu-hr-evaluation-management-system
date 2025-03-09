@@ -1,7 +1,7 @@
 import {
   Button,
   Col,
-  FormLabel,
+  Form,
   FormSelect,
   Modal,
   ModalBody,
@@ -391,8 +391,7 @@ const Results = () => {
     <>
       <Row className="mt-2">
         <Col sm={3}>
-          <div className="mb-3">
-            <FormLabel htmlFor="academic_year">ACADEMIC YEAR</FormLabel>
+          <Form.Floating className="mb-3">
             <FormSelect
               name="academic_year"
               id="academic_year"
@@ -409,11 +408,11 @@ const Results = () => {
                 </option>
               ))}
             </FormSelect>
-          </div>
+            <label htmlFor="academic_year">ACADEMIC YEAR</label>
+          </Form.Floating>
         </Col>
         <Col sm={3}>
-          <div className="mb-3">
-            <FormLabel htmlFor="semester">SEMESTER</FormLabel>
+          <Form.Floating className="mb-3">
             <FormSelect
               name="semester"
               id="semester"
@@ -434,7 +433,8 @@ const Results = () => {
                 ))
               )}
             </FormSelect>
-          </div>
+            <label htmlFor="semester">SEMESTER</label>
+          </Form.Floating>
         </Col>
       </Row>
       <Table hover size="sm" responsive="sm">

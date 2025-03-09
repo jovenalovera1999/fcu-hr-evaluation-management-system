@@ -59,6 +59,7 @@ li {
 
 .sidebar-logo {
   padding: 1.15rem 1.5rem;
+  overflow: hidden;
 }
 
 .sidebar-logo a {

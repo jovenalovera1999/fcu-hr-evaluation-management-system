@@ -2,6 +2,7 @@ import axios from "axios";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CompanyLogo from "../../assets/img/company_logo.png";
+import LoginBackgroundImage from "../../assets/img/LoginPageBackground.jpg";
 import ToastMessage from "../../components/ToastMessage";
 import {
   Button,
@@ -137,85 +138,101 @@ const Login = () => {
 
   const content = (
     <>
-      <ToastMessage
-        success={state.toastSuccess}
-        body={state.toastBody}
-        showToast={state.showToast}
-        onClose={handleCloseToast}
-      />
-      <form onSubmit={handleLogin}>
+      <div style={{ position: "relative", minHeight: "100vh" }}>
         <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ minHeight: "80vh" }}
-        >
-          <Card className="card shadow col-sm-3">
-            <Row className="m-0">
-              <CardTitle className="mt-3">
-                <div className="d-flex justify-content-center align-items-center">
-                  <CardImg
-                    variant="top"
-                    src={CompanyLogo}
-                    style={{ width: "115px" }}
+          style={{
+            backgroundImage: `url(${LoginBackgroundImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            minHeight: "100vh",
+            filter: "blur(3px)",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+        />
+        <ToastMessage
+          success={state.toastSuccess}
+          body={state.toastBody}
+          showToast={state.showToast}
+          onClose={handleCloseToast}
+        />
+        <form onSubmit={handleLogin}>
+          <div
+            className="d-flex justify-content-center align-items-center"
+            style={{ minHeight: "80vh" }}
+          >
+            <Card className="card shadow col-md-3">
+              <Row className="m-0">
+                <CardTitle className="mt-3">
+                  <div className="d-flex justify-content-center align-items-center">
+                    <CardImg
+                      variant="top"
+                      src={CompanyLogo}
+                      style={{ width: "115px" }}
+                    />
+                    USER AUTHENTICATION | FCU HR EMS
+                  </div>
+                </CardTitle>
+              </Row>
+              <CardBody>
+                <Form.Floating className="mb-3">
+                  <Form.Control
+                    type="text"
+                    className={`${state.errors.username ? "is-invalid" : ""}`}
+                    name="username"
+                    id="username"
+                    placeholder=""
+                    onChange={handleInput}
+                    value={state.username}
+                    autoFocus
                   />
-                  USER AUTHENTICATION | FCU HR EMS
-                </div>
-              </CardTitle>
-            </Row>
-            <CardBody>
-              <Form.Floating className="mb-3">
-                <Form.Control
-                  type="text"
-                  className={`${state.errors.username ? "is-invalid" : ""}`}
-                  name="username"
-                  id="username"
-                  placeholder=""
-                  onChange={handleInput}
-                  value={state.username}
-                  autoFocus
-                />
-                <label htmlFor="username">USERNAME</label>
-              </Form.Floating>
-              <Form.Floating className="mb-3">
-                <Form.Control
-                  type="password"
-                  className={`${state.errors.password ? "is-invalid" : ""}`}
-                  name="password"
-                  id="password"
-                  placeholder=""
-                  onChange={handleInput}
-                  value={state.password}
-                />
-                <label htmlFor="password">PASSWORD</label>
-                {state.errors.password && (
-                  <p className="text-danger">{state.errors.password[0]}</p>
-                )}
-              </Form.Floating>
-              <div className="d-flex justify-content-center">
-                <Button
-                  type="submit"
-                  className="btn-theme w-100"
-                  disabled={state.loadingLogin}
-                >
-                  {state.loadingLogin ? (
-                    <>
-                      <Spinner
-                        as="span"
-                        animation="border"
-                        role="status"
-                        size="sm"
-                        className="spinner-theme"
-                      />{" "}
-                      LOGGING IN...
-                    </>
-                  ) : (
-                    "LOGIN"
+                  <label htmlFor="username">USERNAME</label>
+                </Form.Floating>
+                <Form.Floating className="mb-3">
+                  <Form.Control
+                    type="password"
+                    className={`${state.errors.password ? "is-invalid" : ""}`}
+                    name="password"
+                    id="password"
+                    placeholder=""
+                    onChange={handleInput}
+                    value={state.password}
+                  />
+                  <label htmlFor="password">PASSWORD</label>
+                  {state.errors.password && (
+                    <p className="text-danger">{state.errors.password[0]}</p>
                   )}
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
-        </div>
-      </form>
+                </Form.Floating>
+                <div className="d-flex justify-content-center">
+                  <Button
+                    type="submit"
+                    className="btn-theme w-100"
+                    disabled={state.loadingLogin}
+                  >
+                    {state.loadingLogin ? (
+                      <>
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          role="status"
+                          size="sm"
+                          className="spinner-theme"
+                        />{" "}
+                        LOGGING IN...
+                      </>
+                    ) : (
+                      "LOGIN"
+                    )}
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+        </form>
+      </div>
     </>
   );
 

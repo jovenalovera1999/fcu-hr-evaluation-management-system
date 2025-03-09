@@ -9,16 +9,15 @@ use App\Models\EvaluationForStudent;
 use App\Models\Question;
 use App\Models\Response;
 use App\Models\Student;
-use Exception;
 use Illuminate\Http\Request;
 
 class EvaluationController extends Controller
 {
-    public function index($studentId, $employeeId)
+    public function index(Request $request)
     {
         $employees = "";
 
-        if ($studentId) {
+        if ($request->has('student_id')) {
             $employees = Evaluation::select(
                 "tbl_evaluations.evaluation_id",
                 "tbl_employees.first_name",
@@ -35,9 +34,9 @@ class EvaluationController extends Controller
                 ->where("tbl_evaluations.is_student", true)
                 ->where("tbl_evaluations.is_cancelled", false)
                 ->where("tbl_evaluations.is_completed", false)
-                ->where("tbl_students.student_id", $studentId)
+                ->where("tbl_students.student_id", $request->input('student_id'))
                 ->get();
-        } else if ($employeeId) {
+        } else if ($request->has('employee_id')) {
             $employees =
                 Evaluation::select(
                     "tbl_evaluations.evaluation_id",
@@ -55,14 +54,13 @@ class EvaluationController extends Controller
                 ->where("tbl_evaluations.is_student", false)
                 ->where("tbl_evaluations.is_cancelled", false)
                 ->where("tbl_evaluations.is_completed", false)
-                ->where("response.employee_id", $employeeId)
+                ->where("response.employee_id", $request->input('employee_id'))
                 ->get();
         }
 
         return response()->json([
-            "employees" => $employees,
-            "status" => 200
-        ]);
+            "employees" => $employees
+        ], 200);
     }
 
     public function loadEvaluationsToCancel(Request $request)

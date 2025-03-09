@@ -35,14 +35,19 @@ const Evaluations = () => {
     toastMessageVisible: false,
   });
 
-  const handleLoadEmployees = async (
-    studentId: string | number,
-    employeeId: string | number
-  ) => {
+  const handleLoadEmployees = async (primaryKeyId: number) => {
+    let apiRoute = "";
+
+    if (parsedUser.is_student) {
+      apiRoute = `/evaluation/index?student_id=${primaryKeyId}`;
+    } else {
+      apiRoute = `/evaluation/index?employee_id=${primaryKeyId}`;
+    }
+
     axiosInstance
-      .get(`/evaluation/index/${studentId}/${employeeId}`)
+      .get(apiRoute)
       .then((res) => {
-        if (res.data.status === 200) {
+        if (res.status === 200) {
           setState((prevState) => ({
             ...prevState,
             employees: res.data.employees,
@@ -112,9 +117,9 @@ const Evaluations = () => {
       errorHandler(401, navigate, null);
     } else {
       if (parsedUser.is_student) {
-        handleLoadEmployees(parsedUser.student_id, 0);
+        handleLoadEmployees(parsedUser.student_id);
       } else {
-        handleLoadEmployees(0, parsedUser.employee_id);
+        handleLoadEmployees(parsedUser.employee_id);
       }
 
       handleToastMessageFromResponse();
