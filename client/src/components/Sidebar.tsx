@@ -153,6 +153,16 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                         RESULTS
                       </NavLink>
                     </li>
+                    <li className="sidebar-item">
+                      <NavLink
+                        to={"/evaluation/own/results"}
+                        className={({ isActive }) =>
+                          `sidebar-link ${isActive ? "active" : ""}`
+                        }
+                      >
+                        OWN RESULTS
+                      </NavLink>
+                    </li>
                   </ul>
                 </li>
               </>
@@ -166,6 +176,16 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
                     }
                   >
                     EVALUATION
+                  </NavLink>
+                </li>
+                <li className="sidebar-item">
+                  <NavLink
+                    to={"/evaluation/own/results"}
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                  >
+                    OWN RESULTS
                   </NavLink>
                 </li>
               </>

@@ -120,6 +120,8 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::get("/count/overall/total/responses/{employeeId}/{semesterId}", "countOverallTotalResponses");
         Route::get("/load/categories", "loadCategories");
         Route::get("/load/questions/with/count/of/responses/{employeeId}/{semesterId}/{categoryId}", "loadQuestionsWithCountOfResponses");
+        Route::get('/loadCountOverallTotalResponses', 'loadCountOverallTotalResponses');
+        Route::get('/loadQuestionsWithCountOfResponsess', 'loadQuestionsWithCountOfResponsess');
         Route::get("/show/{evaluationId}", "show");
         Route::put("/update/{evaluationId}", "update");
     });

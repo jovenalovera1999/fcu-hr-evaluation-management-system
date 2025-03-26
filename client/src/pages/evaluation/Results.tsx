@@ -544,7 +544,7 @@ const Results = () => {
               </Row>
               {state.categories.map((category) => (
                 <Row key={category.category_id}>
-                  <Table hover size="sm" responsive="sm">
+                  <Table hover size="sm" responsive>
                     <caption>{category.category}</caption>
                     <thead>
                       <tr className="align-middle">

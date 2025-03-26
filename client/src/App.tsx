@@ -12,6 +12,7 @@ import Categories from "./pages/category/Categories";
 import Results from "./pages/evaluation/Results";
 import Questions from "./pages/question/Questions";
 import CurrentEvaluations from "./pages/evaluation/CurrentEvaluations";
+import OwnResults from "./pages/evaluation/OwnResults";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
   { path: "/evaluation/results", element: <Results /> },
   { path: "/evaluation/current", element: <CurrentEvaluations /> },
   { path: "/category/list", element: <Categories /> },
+  { path: "/evaluation/own/results", element: <OwnResults /> },
 ]);
 
 const App = () => <RouterProvider router={router} />;
