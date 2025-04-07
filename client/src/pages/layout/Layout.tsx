@@ -113,7 +113,7 @@ const Layout = ({ content }: ContentProps) => {
             loadingUser: false,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       });
   };
@@ -145,7 +145,7 @@ const Layout = ({ content }: ContentProps) => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -213,7 +213,7 @@ const Layout = ({ content }: ContentProps) => {
 
   useEffect(() => {
     if (!parsedUser) {
-      errorHandler(401, navigate);
+      errorHandler(401, navigate, null);
     }
   }, [parsedUser, navigate]);
 
