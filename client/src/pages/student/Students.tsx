@@ -1427,6 +1427,7 @@ const Students = () => {
                   as="span"
                   animation="border"
                   role="status"
+                  size="sm"
                   className="spinner-theme"
                 />{" "}
                 DELETING...

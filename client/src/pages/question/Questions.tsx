@@ -272,6 +272,7 @@ const Questions = () => {
           }));
 
           handleLoadQuestions();
+          handleCloseEditQuestionModal();
         } else {
           console.error("Unexpected error status: ", res.status);
         }
@@ -314,6 +315,7 @@ const Questions = () => {
           }));
 
           handleLoadQuestions();
+          handleCloseDeleteQuestionModal();
         } else {
           console.error("Unexpected error status: ", res.status);
         }

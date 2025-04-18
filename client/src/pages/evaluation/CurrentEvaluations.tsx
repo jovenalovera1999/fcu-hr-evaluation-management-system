@@ -149,6 +149,7 @@ const CurrentEvaluations = () => {
               value={state.academic_year}
               onChange={handleInputChange}
             >
+              <option value="">SELECT ACADEMIC YEAR</option>
               {state.academicYears.map((academicYear, index) => (
                 <option value={academicYear.academic_year_id} key={index}>
                   {academicYear.academic_year}
@@ -166,6 +167,7 @@ const CurrentEvaluations = () => {
               value={state.semester}
               onChange={handleInputChange}
             >
+              <option value="">SELECT SEMESTER</option>
               {state.semesters.map((semester, index) => (
                 <option value={semester.semester_id} key={index}>
                   {semester.semester}
