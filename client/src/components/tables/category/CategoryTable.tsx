@@ -76,12 +76,22 @@ const CategoryTable = ({
                   <ButtonGroup className="table-button-group">
                     <Button
                       type="button"
+                      style={{
+                        backgroundColor: "yellow",
+                        borderColor: "yellow",
+                        color: "black",
+                      }}
                       onClick={() => onEditCategory(category)}
                     >
                       EDIT
                     </Button>
                     <Button
                       type="button"
+                      style={{
+                        backgroundColor: "red",
+                        borderColor: "red",
+                        color: "white",
+                      }}
                       onClick={() => onDeleteCategory(category)}
                     >
                       DELETE

@@ -639,12 +639,22 @@ const Questions = () => {
                     <ButtonGroup className="table-button-group">
                       <Button
                         type="button"
+                        style={{
+                          backgroundColor: "yellow",
+                          borderColor: "yellow",
+                          color: "black",
+                        }}
                         onClick={() => handleOpenEditQuestionModal(question)}
                       >
                         EDIT
                       </Button>
                       <Button
                         type="button"
+                        style={{
+                          backgroundColor: "red",
+                          borderColor: "red",
+                          color: "white",
+                        }}
                         onClick={() => handleOpenDeleteQuestionModal(question)}
                       >
                         DELETE

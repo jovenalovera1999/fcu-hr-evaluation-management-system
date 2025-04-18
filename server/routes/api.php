@@ -109,6 +109,7 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::post("/send/evaluations/for/irregular/students", "sendEvaluationsForIrregularStudents");
         Route::post("/store/evaluation/for/employees", "storeEvaluationsForEmployees");
         Route::put('/updateEvaluationToCancelled/{semesterId}/{academicYearId}', 'updateEvaluationToCancelled');
+        Route::put('/updateSingleEvaluationToCancelled/{evaluation}', 'updateSingleEvaluationToCancelled');
     });
 
     Route::controller(ResponseController::class)->prefix("response")->group(function () {

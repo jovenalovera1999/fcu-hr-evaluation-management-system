@@ -145,9 +145,9 @@ th {
 }
 
 .btn {
-  background-color: #0c27ad !important;
-  border-color: #0c27ad !important;
-  color: #fff !important;
+  background-color: #0c27ad;
+  border-color: #0c27ad;
+  color: #fff ;
   border-radius: 4px;
   box-shadow: 0 0 0 0 transparent !important;
   transition: all 0.3s ease-in-out !important;
@@ -156,14 +156,14 @@ th {
 .btn:visited,
 .btn:active,
 .btn:disabled {
-  background-color: #0c27ad !important;
-  border-color: #0c27ad !important;
+  background-color: #0c27ad;
+  border-color: #0c27ad;
   color: #fff;
 }
 
 .btn:hover {
-  background-color: #0c1e7d !important;
-  border-color: #0c1e7d !important;
+  background-color: #0c1e7d;
+  border-color: #0c1e7d;
   color: #fff;
 }
 

@@ -29,6 +29,16 @@ const EvaluationService = {
         throw error;
       });
   },
+  updateSingleEvaluationToCancelled: async (evaluationId: number) => {
+    try {
+      const response = await axiosInstance.put(
+        `/evaluation/updateSingleEvaluationToCancelled/${evaluationId}`
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default EvaluationService;

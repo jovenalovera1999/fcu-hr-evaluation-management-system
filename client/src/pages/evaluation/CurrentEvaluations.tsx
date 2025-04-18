@@ -186,7 +186,7 @@ const CurrentEvaluations = () => {
             }
             onClick={handleOpenCancelEvaluationModal}
           >
-            CANCEL EVALUATION
+            CANCEL ALL EVALUATION
           </Button>
         </Col>
       </Row>

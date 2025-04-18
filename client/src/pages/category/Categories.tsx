@@ -69,7 +69,7 @@ const Categories = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -110,7 +110,7 @@ const Categories = () => {
             loadingCategory: false,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       });
   };
@@ -152,7 +152,7 @@ const Categories = () => {
             loadingCategory: false,
           }));
         } else {
-          errorHandler(error, navigate);
+          errorHandler(error, navigate, null);
         }
       });
   };
@@ -187,7 +187,7 @@ const Categories = () => {
         }
       })
       .catch((error) => {
-        errorHandler(error, navigate);
+        errorHandler(error, navigate, null);
       });
   };
 
@@ -285,12 +285,22 @@ const Categories = () => {
                   <ButtonGroup>
                     <Button
                       type="button"
+                      style={{
+                        backgroundColor: "yellow",
+                        borderColor: "yellow",
+                        color: "black",
+                      }}
                       onClick={() => handleOpenEditCategoryModal(category)}
                     >
                       EDIT
                     </Button>
                     <Button
                       type="button"
+                      style={{
+                        backgroundColor: "red",
+                        borderColor: "red",
+                        color: "white",
+                      }}
                       onClick={() => handleOpenDeleteCategoryModal(category)}
                     >
                       DELETE

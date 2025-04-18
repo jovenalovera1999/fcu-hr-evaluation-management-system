@@ -77,6 +77,7 @@ class EvaluationController extends Controller
                 ->where('tbl_academic_years.academic_year_id', $academicYearId)
                 ->where('tbl_semesters.semester_id', $semesterId)
                 ->where('tbl_evaluations.is_cancelled', false)
+                ->where('tbl_evaluations.is_completed', false)
                 ->whereNotNull('tbl_academic_years.academic_year')
                 ->get();
         } else {
@@ -84,6 +85,7 @@ class EvaluationController extends Controller
                 ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
                 ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
                 ->where('tbl_evaluations.is_cancelled', false)
+                ->where('tbl_evaluations.is_completed', false)
                 ->whereNotNull('tbl_academic_years.academic_year')
                 ->get();
         }
@@ -258,6 +260,17 @@ class EvaluationController extends Controller
 
         return response()->json([
             'message' => 'EVALUATIONS HAS BEEN CANCELLED.'
+        ], 200);
+    }
+
+    public function updateSingleEvaluationToCancelled(Evaluation $evaluation)
+    {
+        $evaluation->update([
+            'is_cancelled' => true
+        ]);
+
+        return response()->json([
+            'message' => 'Evaluation Successfully Cancelled.'
         ], 200);
     }
 }

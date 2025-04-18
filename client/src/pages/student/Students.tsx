@@ -581,7 +581,8 @@ const Students = () => {
       />
       <div className="mx-auto mt-2">
         <div className="mb-3">
-          <div className="d-flex justify-content-end">
+          <div className="d-flex justify-content-between align-tems-center">
+            <h3>STUDENTS</h3>
             <Button onClick={handleOpenAddStudentModal}>ADD STUDENT</Button>
           </div>
         </div>
@@ -688,22 +689,26 @@ const Students = () => {
                     <div className="btn-group table-button-group">
                       <Button
                         type="button"
+                        style={{
+                          backgroundColor: "yellow",
+                          borderColor: "yellow",
+                          color: "black",
+                        }}
                         onClick={() => handleOpenEditStudentModal(student)}
                       >
                         EDIT
                       </Button>
                       <Button
                         type="button"
+                        style={{
+                          backgroundColor: "red",
+                          borderColor: "red",
+                          color: "white",
+                        }}
                         onClick={() => handleOpenDeleteStudentModal(student)}
                       >
                         DELETE
                       </Button>
-                      {/* <Link
-                        to={`/student/delete/${student.student_id}`}
-                        className="btn btn-sm btn-theme"
-                      >
-                        DELETE
-                      </Link> */}
                     </div>
                   </td>
                 </tr>

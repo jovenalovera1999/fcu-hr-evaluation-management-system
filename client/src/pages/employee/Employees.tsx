@@ -618,12 +618,22 @@ const Employees = () => {
                       </Button>
                       <Button
                         type="button"
+                        style={{
+                          backgroundColor: "yellow",
+                          borderColor: "yellow",
+                          color: "black",
+                        }}
                         onClick={() => handleOpenEditEmployeeModal(employee)}
                       >
                         EDIT
                       </Button>
                       <Button
                         type="button"
+                        style={{
+                          backgroundColor: "red",
+                          borderColor: "red",
+                          color: "white",
+                        }}
                         onClick={() => handleOpenDeleteEmployeeModal(employee)}
                       >
                         DELETE

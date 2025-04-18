@@ -76,6 +76,7 @@ const CancelEvaluationModal = ({
       .then((res) => {
         if (res.status === 200) {
           onEvaluationCancelled(res.data.message);
+          onClose();
         } else {
           console.error("Unexpected error status: ", res.status);
         }
