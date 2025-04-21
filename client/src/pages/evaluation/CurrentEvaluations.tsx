@@ -140,6 +140,9 @@ const CurrentEvaluations = () => {
         success={state.toastSuccess}
         onClose={handleCloseToastMessage}
       />
+      <Row>
+        <h3>CURRENT EVALUATIONS</h3>
+      </Row>
       <Row className="mb-3">
         <Col md={3}>
           <Form.Floating className="mb-3">
