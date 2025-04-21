@@ -79,6 +79,7 @@ class EvaluationController extends Controller
                 ->where('tbl_evaluations.is_cancelled', false)
                 ->where('tbl_evaluations.is_completed', false)
                 ->whereNotNull('tbl_academic_years.academic_year')
+                ->orderBy('tbl_evaluations.is_student', 'asc')
                 ->get();
         } else {
             $evaluations = Evaluation::with(['employee_to_response', 'employee_to_evaluate', 'semester.academic_year'])
@@ -87,6 +88,7 @@ class EvaluationController extends Controller
                 ->where('tbl_evaluations.is_cancelled', false)
                 ->where('tbl_evaluations.is_completed', false)
                 ->whereNotNull('tbl_academic_years.academic_year')
+                ->orderBy('tbl_evaluations.is_student', 'asc')
                 ->get();
         }
 
