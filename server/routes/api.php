@@ -82,6 +82,7 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::get("/get/student/{studentId}", "getStudent");
         Route::post("/store", "store");
         Route::put("/update/{studentId}", "updateStudent");
+        Route::put('/updatePassword/{student}', 'updatePassword');
         Route::put("/delete/{studentId}", "deleteStudent");
     });
 

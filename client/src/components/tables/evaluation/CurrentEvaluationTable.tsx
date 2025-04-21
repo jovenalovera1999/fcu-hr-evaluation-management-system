@@ -179,6 +179,11 @@ const CurrentEvaluationTable = ({
                 <td>
                   <Button
                     type="button"
+                    style={{
+                      backgroundColor: "red",
+                      borderColor: "red",
+                      color: "white",
+                    }}
                     onClick={() =>
                       handleOpenCancelSingleEvaluationModal(evaluation)
                     }

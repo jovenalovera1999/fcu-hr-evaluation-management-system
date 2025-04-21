@@ -181,6 +181,11 @@ const CurrentEvaluations = () => {
           <Button
             type="submit"
             className="mt-2"
+            style={{
+              backgroundColor: "red",
+              borderColor: "red",
+              color: "white",
+            }}
             disabled={
               state.loadingUpdate || !state.academic_year || !state.semester
             }

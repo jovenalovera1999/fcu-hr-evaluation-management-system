@@ -21,6 +21,8 @@ import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 import FormCheckLabel from "react-bootstrap/esm/FormCheckLabel";
 import ToastMessage from "../../components/ToastMessage";
 import { useNavigate } from "react-router-dom";
+import ChangePasswordModal from "../../components/student/ChangePasswordModal";
+import type { Students as StudentInterface } from "../../interfaces/Students";
 
 interface Departments {
   department_id: number;
@@ -104,6 +106,7 @@ const Students = () => {
     password: "",
     password_confirmation: "",
     errors: {} as Errors,
+    showChangeStudentPasswordModal: false,
     showAddStudentModal: false,
     showEditStudentModal: false,
     showDeleteStudentModal: false,
@@ -111,6 +114,8 @@ const Students = () => {
     toastBody: "",
     showToast: false,
   });
+
+  const [selectedStudent, setSelectedStudent] = useState<Students | null>(null);
 
   const handleResetNecessaryFields = () => {
     setState((prevState) => ({
@@ -507,6 +512,35 @@ const Students = () => {
     }));
   };
 
+  const handleOpenChangePasswordModal = (student: Students) => {
+    setSelectedStudent(student);
+    setState((prevState) => ({
+      ...prevState,
+      showChangeStudentPasswordModal: true,
+    }));
+  };
+
+  const handleCloseChangePasswordModal = () => {
+    setSelectedStudent(null);
+    setState((prevState) => ({
+      ...prevState,
+      showChangeStudentPasswordModal: false,
+    }));
+  };
+
+  const handleOpenToast = (
+    message: string,
+    isSuccess: boolean,
+    isVisible: boolean
+  ) => {
+    setState((prevState) => ({
+      ...prevState,
+      toastSuccess: isSuccess,
+      toastBody: message,
+      showToast: isVisible,
+    }));
+  };
+
   const handleCloseToast = () => {
     setState((prevState) => ({
       ...prevState,
@@ -578,6 +612,14 @@ const Students = () => {
         body={state.toastBody}
         showToast={state.showToast}
         onClose={handleCloseToast}
+      />
+      <ChangePasswordModal
+        selectedStudent={selectedStudent}
+        isVisible={state.showChangeStudentPasswordModal}
+        onPasswordUpdated={(message) => {
+          handleOpenToast(message, true, true);
+        }}
+        onClose={handleCloseChangePasswordModal}
       />
       <div className="mx-auto mt-2">
         <div className="mb-3">
@@ -687,6 +729,12 @@ const Students = () => {
                   <td>{handleYearLevelAndSection(student)}</td>
                   <td>
                     <div className="btn-group table-button-group">
+                      <Button
+                        type="button"
+                        onClick={() => handleOpenChangePasswordModal(student)}
+                      >
+                        CHANGE PASSWORD
+                      </Button>
                       <Button
                         type="button"
                         style={{
@@ -1004,6 +1052,7 @@ const Students = () => {
                   animation="border"
                   role="status"
                   className="spinner-theme"
+                  size="sm"
                 />{" "}
                 SAVING...
               </>
@@ -1261,6 +1310,7 @@ const Students = () => {
                   animation="border"
                   role="status"
                   className="spinner-theme"
+                  size="sm"
                 />{" "}
                 UPDATING...
               </>

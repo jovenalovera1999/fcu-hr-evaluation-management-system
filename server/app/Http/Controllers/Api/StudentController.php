@@ -340,6 +340,25 @@ class StudentController extends Controller
         ]);
     }
 
+    public function updatePassword(Request $request, Student $student)
+    {
+        $validated = $request->validate([
+            'password' => ['required', 'max:15', 'confirmed'],
+            'password_confirmation' => ['required'],
+        ]);
+
+        $user = User::where('tbl_users.student_id', $student->student_id)
+            ->first();
+
+        $user->update([
+            'password' => bcrypt(strtoupper($validated['password'])),
+        ]);
+
+        return response()->json([
+            'message' => 'Password Successfully Updated.'
+        ], 200);
+    }
+
     public function deleteStudent($studentId)
     {
         $student = Student::find($studentId);

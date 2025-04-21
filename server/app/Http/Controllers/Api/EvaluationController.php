@@ -74,21 +74,31 @@ class EvaluationController extends Controller
             $evaluations = $evaluations = Evaluation::with(['employee_to_response', 'employee_to_evaluate', 'semester.academic_year'])
                 ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
                 ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+                ->leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
                 ->where('tbl_academic_years.academic_year_id', $academicYearId)
                 ->where('tbl_semesters.semester_id', $semesterId)
                 ->where('tbl_evaluations.is_cancelled', false)
                 ->where('tbl_evaluations.is_completed', false)
                 ->whereNotNull('tbl_academic_years.academic_year')
                 ->orderBy('tbl_evaluations.is_student', 'asc')
+                ->orderBy('tbl_employees.first_name', 'asc')
+                ->orderBy('tbl_employees.middle_name', 'asc')
+                ->orderBy('tbl_employees.suffix_name', 'asc')
+                ->orderBy('tbl_employees.last_name', 'asc')
                 ->get();
         } else {
             $evaluations = Evaluation::with(['employee_to_response', 'employee_to_evaluate', 'semester.academic_year'])
                 ->leftJoin('tbl_semesters', 'tbl_evaluations.semester_id', '=', 'tbl_semesters.semester_id')
                 ->leftJoin('tbl_academic_years', 'tbl_semesters.academic_year_id', '=', 'tbl_academic_years.academic_year_id')
+                ->leftJoin('tbl_employees', 'tbl_evaluations.employee_to_evaluate_id', '=', 'tbl_employees.employee_id')
                 ->where('tbl_evaluations.is_cancelled', false)
                 ->where('tbl_evaluations.is_completed', false)
                 ->whereNotNull('tbl_academic_years.academic_year')
                 ->orderBy('tbl_evaluations.is_student', 'asc')
+                ->orderBy('tbl_employees.first_name', 'asc')
+                ->orderBy('tbl_employees.middle_name', 'asc')
+                ->orderBy('tbl_employees.suffix_name', 'asc')
+                ->orderBy('tbl_employees.last_name', 'asc')
                 ->get();
         }
 

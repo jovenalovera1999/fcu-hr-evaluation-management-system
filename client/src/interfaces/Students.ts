@@ -2,7 +2,7 @@ import Courses from "./Courses";
 import Departments from "./Departments";
 import Sections from "./Sections";
 
-interface Students {
+export interface Students {
   student_id: number;
   student_no: string;
   first_name: string;
@@ -18,5 +18,3 @@ interface Students {
   created_at: string;
   updated_at: string;
 }
-
-export default Students;
