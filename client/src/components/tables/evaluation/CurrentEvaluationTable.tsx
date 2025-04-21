@@ -149,6 +149,7 @@ const CurrentEvaluationTable = ({
             <th>NO.</th>
             <th>PERSON TO EVALUATE</th>
             <th>SEMESTER AND ACADEMIC YEAR</th>
+            <th>SENT TO</th>
             <th>ACTION</th>
           </tr>
         </thead>
@@ -174,6 +175,7 @@ const CurrentEvaluationTable = ({
                     evaluation.semester.academic_year
                   )}
                 </td>
+                <td>{evaluation.is_student ? 'STUDENTS' : 'EMPLOYEES'}</td>
                 <td>
                   <Button
                     type="button"
