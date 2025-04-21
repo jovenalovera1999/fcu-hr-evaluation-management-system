@@ -22,7 +22,6 @@ import FormCheckLabel from "react-bootstrap/esm/FormCheckLabel";
 import ToastMessage from "../../components/ToastMessage";
 import { useNavigate } from "react-router-dom";
 import ChangePasswordModal from "../../components/student/ChangePasswordModal";
-import type { Students as StudentInterface } from "../../interfaces/Students";
 
 interface Departments {
   department_id: number;
