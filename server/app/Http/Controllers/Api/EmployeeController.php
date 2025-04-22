@@ -88,7 +88,7 @@ class EmployeeController extends Controller
 
     public function loadEmployeesByAcademicYearAndSemester($academicYearId, $semesterId)
     {
-        $employees = Employee::select("tbl_employees.employee_id", "tbl_employees.first_name", "tbl_employees.middle_name", "tbl_employees.last_name", "tbl_employees.suffix_name", "tbl_positions.position", "tbl_departments.department")
+        $employees = Employee::select("tbl_employees.employee_id", "tbl_employees.first_name", "tbl_employees.middle_name", "tbl_employees.last_name", "tbl_employees.suffix_name", "tbl_positions.position", "tbl_departments.department", "tbl_evaluations.is_student")
             ->leftJoin("tbl_positions", "tbl_employees.position_id", "=", "tbl_positions.position_id")
             ->leftJoin("tbl_departments", "tbl_employees.department_id", "=", "tbl_departments.department_id")
             ->leftJoin("tbl_evaluations", "tbl_employees.employee_id", "=", "tbl_evaluations.employee_to_evaluate_id")
@@ -98,6 +98,11 @@ class EmployeeController extends Controller
             ->where("tbl_employees.is_deleted", false)
             ->where("tbl_evaluations.is_cancelled", false)
             ->where("tbl_evaluations.is_completed", true)
+            ->orderBy('tbl_evaluations.is_student', 'asc')
+            ->orderBy('tbl_employees.last_name', 'asc')
+            ->orderBy('tbl_employees.first_name', 'asc')
+            ->orderBy('tbl_employees.middle_name', 'asc')
+            ->orderBy('tbl_employees.suffix_name', 'asc')
             ->distinct()
             ->get();
 

@@ -35,6 +35,7 @@ interface Employees {
   suffix_name: string;
   position: string;
   department: string;
+  is_student: number;
 }
 
 interface Categories {
@@ -444,13 +445,14 @@ const Results = () => {
             <th>NAME OF EMPLOYEE</th>
             <th>DEPARTMENT</th>
             <th>POSITION</th>
+            <th>EVALUATED BY</th>
             <th>ACTION</th>
           </tr>
         </thead>
         <tbody>
           {state.loadingEmployees ? (
             <tr>
-              <td colSpan={5} className="text-center">
+              <td colSpan={6} className="text-center">
                 <Spinner
                   as="span"
                   animation="border"
@@ -466,6 +468,7 @@ const Results = () => {
                 <td>{handleEmployeeFullName(employee)}</td>
                 <td>{employee.department}</td>
                 <td>{employee.position}</td>
+                <td>{employee.is_student ? 'STUDENTS' : 'EMPLOYEES'}</td>
                 <td>
                   <Button
                     className="btn-theme table-button-group"
